@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.arke.sdk.HomeActivity">
+
+    <WebView
+        android:id="@+id/homeWebView"
+        android:layout_width="match_parent"
+        android:layout_height="570dp"
+        android:clickable="false"
+        android:focusable="true">
+
+    </WebView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/backWebNavBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_arrow_back_orange_24dp"
+            android:focusable="true"
+            android:onClick="webviewGoBack"
+            android:paddingLeft="40dp"
+            android:paddingRight="0dp" />
+
+        <Button
+            android:id="@+id/forwardWebNavBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_arrow_forward_orange_24dp"
+            android:focusable="true"
+            android:onClick="webviewGoForward"
+            android:paddingLeft="40dp"
+            android:paddingRight="0dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="60dp"
+            android:layout_height="24dp"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:indeterminateTint="@color/custom_orange" />
+
+        <Button
+            android:id="@+id/refreshWebNavBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_refresh_orange_24dp"
+            android:focusable="true"
+            android:onClick="refreshPage"
+            android:paddingLeft="40dp"
+            android:paddingRight="0dp" />
+
+        <Button
+            android:id="@+id/menuNavBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_menu_on_orange_24dp"
+            android:focusable="true"
+            android:onClick="webviewPrint"
+            android:paddingLeft="40dp"
+            android:paddingRight="0dp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,30 @@
+stages:
+  - build
+
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  GRADLE_PATH: "./"
+  IS_PAYMENT_APP: "no"
+  
+before_script:
+  - cd $GRADLE_PATH
+  - chmod +x ./gradlew
+
+
+build:
+  only: 
+    - master
+  tags:
+    - androidstudio
+  stage: build
+  script:
+  - rm --force local.properties
+  - ./gradlew assembleRelease
+#  - /opt/landi/sign/sign.sh $GITLAB_USER_EMAIL v2 $IS_PAYMENT_APP ./app/build/outputs/apk/
+#  - cp -r /opt/landi/artifacts/ $CI_PROJECT_DIR/
+
+  artifacts:
+    paths:
+#    - $CI_PROJECT_DIR/artifacts
+    - ./app/build/outputs/apk/

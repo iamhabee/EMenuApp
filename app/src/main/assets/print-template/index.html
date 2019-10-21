@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="library/tmpl.min.js"></script>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="styles.css"/>
+
+<script type="text/javascript">
+	var mockData = { "ACQUIRER": "ACQUIRER",
+	    "AMOUNT": "AMOUNT", 
+	    "AUTH_NO": "AUTH NO", 
+	    "BATCH_NO": "BATCH NO", 
+	    "BONUS_POINTS": "Bonus points", 
+	    "CARDHOLDER_SIGN": "Cardholder Signature", 
+	    "CARDHOLDER_SIGN_UPCASE": "CARDHOLDER SIGNATURE", 
+	    "CARDHOLDER_TIP": "Cardholder Tip", 
+	    "CARD_NO": "CARD NO", 
+	    "CASH_SERIAL_NUMBER": "Cash serial number", 
+	    "COMMODITY_CODE": "Commodity Code", 
+	    "DATE_TIME": "DATE/TIME", 
+	    "DESKER": "DESKER", 
+	    "DOMESTIC_ACCOUNT_IS_BALANCED": "Domestic account is balanced", 
+	    "DOMESTIC_ACCOUNT_IS_UNBALANCED": "Domestic account is unbalanced", 
+	    "DOMESTIC_CARD": "Domestic Card", 
+	    "DOWN_PAYMENT_AMOUNT": "Down Payment Amount", 
+	    "DUPLICATED": "Duplicated", 
+	    "ECASH_BALANCE": "E-Cash balance", 
+	    "EXCHANGE_INTEGRAL": "Exchange integral", 
+	    "EXPIRY_DATE": "EXPIRY DATE", 
+	    "FOREIGN_ACCOUNT_IS_BALANCED": "Foreign account is balanced", 
+	    "FOREIGN_ACCOUNT_IS_UNBALANCED": "Foreign account is unbalanced", 
+	    "FOREIGN_CARD": "Foreign Card", 
+	    "FULL_PAYMENT": "Full Payment", 
+	    "INSTALLMENT": "Installment", 
+	    "ISSUER": "ISSUER", 
+	    "I_ACKNOWLEDGE_SATISFACTORY_OF_RELATIVE_GOODS_SERVICE": "I Acknowledge Satisfactory Of Relative Goods/Service", 
+	    "MERCHANT_NAME": "MERCHANT NAME", 
+	    "MERCHANT_NO": "MERCHANT NO", 
+	    "NUMBER": "Total", 
+	    "OLD_AUTH_NO": "OLD AUTHNO", 
+	    "OLD_DATE": "OLD DATE", 
+	    "OLD_REF_NO": "OLD REFNO", 
+	    "OLD_VOUCHER": "OLD VOUCHER", 
+	    "OPERATOR_NO": "OPERATOR NO", 
+	    "PAYMENT_AMOUNT": "Payment amount", 
+	    "PHONE_NUMBER": "Phone Number", 
+	    "REFERENCE": "REFERENCE", 
+	    "REFERENCE_NO": "REFER NO", 
+	    "REPAYMENT_CURRENCY": "Repayment Currency", 
+	    "RE_PRINT_THE_BILL": "Re-print the bill", 
+	    "RMB": "RMB", 
+	    "SERVICE_CHARGE_OF_DOWN_PAYMENT": "Service charge of down payment", 
+	    "SERVICE_CHARGE_OF_EACH_PERIODS": "Service charge of each periods", 
+	    "SERVICE_CHARGE_PAYMENT_MODE": "Service charge payment mode", 
+	    "SERVICE_HOTLINE": "Service Hotline", 
+	    "SETTLEMENT_STATISTIC": "Settlement Statistic", 
+	    "STATISTIC_LIST": "Statistics list", 
+	    "TERMINAL_NO": "TERMINAL NO", 
+	    "THE_BALANCE_OF_INTEGRAL": "The balance of integral", 
+	    "THE_NUMBER_OF_PERIODS": "The number of periods", 
+	    "TIP": "TIP", 
+	    "TOTAL": "TOTAL", 
+	    "TOTAL_AMOUNT": "Total amount", 
+	    "TOTAL_NUM": "Total num", 
+	    "TRANSACTION_AMOUNT": "TRANS AMT", 
+	    "TRANSACTION_LINES": "TRANS LINES", 
+	    "TRANSACTION_TYPE": "TRANS TYPE", 
+	    "TRANSFER_CARD_NUMBER": "Transfer card number", 
+	    "TYPE": "Type", 
+    	"VOUCHER_NO": "VOUCHER NO", 
+	    "batchNo": "100003", 
+	    "dateTime": "2015.7.1",
+	    "domesticSettleTotalInfoList": [
+	        {
+	            "readableAmount": "1.00", 
+	            "transactionAmount": 100, 
+	            "transactionLines": 10, 
+	            "transactionName": "消费"
+	        }, 
+	        {
+	            "readableAmount": "2.00", 
+	            "transactionAmount": 200, 
+	            "transactionLines": 20, 
+	            "transactionName": "消费撤销"
+	        }
+	    ], 
+	    "foreignSettleTotalInfoList": [
+	        {
+	            "readableAmount": "3.00", 
+	            "transactionAmount": 300, 
+	            "transactionLines": 30, 
+	            "transactionName": "Consume"
+	        }, 
+	        {
+	            "readableAmount": "4.00", 
+	            "transactionAmount": 400, 
+	            "transactionLines": 40, 
+	            "transactionName": "Void"
+	        }
+	    ], 
+	    "merchantName": "ABCDEFGHIJKLMNOPQRSTUV    12345678901234", 
+	    "merchantNo": "123456789012345", 
+	    "playEnglishFlag": false, 
+	    "reprintFlag": false, 
+	    "settleRMB": "1332.23", 
+	    "settleWB": "3322.33", 
+	    "terminalNo": "12345678",
+		"printTitle": "TRANSACTION LIST",
+	    "shouldPrintTitle": true,
+	    "transactionFlowDetails": [
+	        {
+	            "amount": "0.01",
+	            "authCode": "A54321",
+	            "cardNo": "621799*********5971",
+	            "systemTraceAuditNumber": "000053",
+	            "transactionType": "S"
+	        },
+	        {
+	            "amount": "0.01",
+	            "authCode": "A54321",
+	            "cardNo": "621799*********5971",
+	            "systemTraceAuditNumber": "000055",
+	            "transactionType": "S"
+	        }
+	    ],
+		"acquirer": "测试系统",
+	    "amtTrans": "0.01",
+	    "authCode": "A54321",
+	    "batchNo": "000001",
+	    "cardNo": "5187 10** **** 6333 /S",
+	    "copyType": "商户存根(MERCHANT COPY)",
+	    "dateTime": "2017/07/31 18:39:29",
+	    "hotline": "400-200-200",
+	    "icTagFlag": false,
+	    "issuer": "测试系统",
+	    "merchantName": "ABCDEFGHIJKLMNOPQRSTUV    12345678901234",
+	    "merchantNo": "123456789012345",
+	    "noSignText": "",
+	    "operatorNo": "01",
+	    "playEnglishFlag": true,
+	    "printTipFlag": false,
+	    "referenceNo": "220731183929",
+	    "reprintFlag": false,
+	    "shouldDeclare": true,
+	    "shouldSign": true,
+	    "signImage": "",
+	    "terminalNo": "12345678",
+	    "transTypePrint": "消费",
+	    "voucherNo": "000061"};
+
+    window.loadContent = function(templateId, jsonData) {
+            var startTime = (new Date()).getTime();
+
+            var elContent = document.getElementById("content");
+
+			var template = "";
+
+			if(jsonData) {
+                template = tmpl(templateId, jsonData);
+            } else {
+                template = tmpl(templateId, mockData);
+            }
+
+
+			var templateTime = (new Date()).getTime() - startTime ;
+            console.log("JavaScript tempate[" + templateTime +"]");
+
+            elContent.innerHTML = template;
+    }
+
+    window.clearContent = function() {
+        var elContent = document.getElementById("content");
+        elContent.innerHTML = "";
+    }
+</script>
+
+<script id="pay-template" type="text/x-tmpl">
+	<div class="font-size-14">
+        <div class="print-logo">
+        </div>
+        <hr class="print-hr"/>
+
+        <div class="line">
+        	{%=o.MERCHANT_NAME%}
+        	{% if (o.playEnglishFlag) { %}
+            <span class="sub-label">(MERCHANT NAME)</span>
+            {% } %}
+            :
+            <span class="value">{%=o.merchantName%}</span>
+        </div>
+
+        <div class="line">
+        	{%=o.MERCHANT_NO%}
+            {% if (o.playEnglishFlag) { %}
+            <span class="sub-label">(MERCHANT NO.)</span>
+            {% } %}
+            :
+            <span class="value">{%=o.merchantNo%}</span>
+        </div>
+
+        <div class="line">
+        	{%=o.TERMINAL_NO%}
+            {% if (o.playEnglishFlag) { %}
+            <span class="sub-label">(TERMINAL NO.)</span>
+            {% } %}
+            :
+            <span class="value">{%=o.terminalNo%}</span>
+        </div>
+
+        {% if (o.operatorNo) { %}
+        <div class="line">
+        	{%=o.OPERATOR_NO%}
+            {% if (o.playEnglishFlag) { %}
+            <span class="sub-label">(OPERATOR NO.)</span>
+            {% } %}
+            :
+            <span class="value">{%=o.operatorNo%}</span>
+        </div>
+        {% } %}
+
+		<div class="line">
+			{%=o.ACQUIRER %}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(ACQUIRER.)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.acquirer%}</span>
+		</div>
+
+		<div class="line">
+			{%=o.ISSUER%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(ISSUER.)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.issuer%}</span>
+		</div>
+
+		{% if (o.payTraceAuditNo) { %}
+		<div class="line">
+			{%=o.CASH_SERIAL_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(MIS-TRACE)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.payTraceAuditNo%}</span>
+		</div>
+		{% } %}
+
+		<div class="line">
+			{%=o.CARD_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(CARD NO.)</span>
+			{% } %}
+			:
+			<b class="value">{%=o.cardNo%}</b>
+		</div>
+
+		{% if (o.expiryDate) { %}
+		<div class="line">
+			{%=o.EXPIRY_DATE%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(EXP DATE)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.expiryDate%}</span>
+		</div>
+		{% } %}
+
+		<!-- 虚线 上下间距10px -->
+		<!-- dashed: up and down spacing 10px -->
+
+		<hr class="print-hr">
+		<div class="line">
+			<span class="type">{%=o.TRANSACTION_TYPE%}
+					{% if (o.playEnglishFlag) { %}
+					<span class="sub-label">(TRANS TYPE)</span>
+					{% } %}
+					:
+			</span>
+			<span class=value value-important">{%=o.transTypePrint%}</span>
+		</div>
+
+		<div class="clear"></div>
+		<hr class="print-hr">
+
+		{% if (o.batchNo) { %}
+		<div class="line">
+			{%=o.BATCH_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(BATCH NO.)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.batchNo%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.voucherNo) { %}
+		<div class="line">
+			{%=o.VOUCHER_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(VOUCHER NO.)</span>
+			{% } %}
+			:
+			<span class="value value-important">{%=o.voucherNo%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.authCode) { %}
+		<div class="line">
+			{%=o.AUTH_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(AUTH NO.)</span>
+			{% } %}
+			:
+			<span class="value value-important">{%=o.authCode%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.referenceNo) { %}
+		<div class="line">
+			{%=o.REFERENCE_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(REFER NO.)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.referenceNo%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.dateTime) { %}
+		<div class="line">
+			{%=o.DATE_TIME%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(DATE/TIME)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.dateTime%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.desker) { %}
+		<div class="line">
+			{%=o.DESKER%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(DESKER)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.desker%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.dateTime) { %}
+		<hr class="print-hr">
+		{% } %}
+
+		<div class="line">
+			{%=o.AMOUNT%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(AMOUNT)</span>
+			{% } %}
+			:
+		</div>
+
+		{% if (!o.printTipFlag) { %}
+		<div class="font-size-38">RMB:<span class="value">{%=o.amtTrans%}</span></div>
+		{% } %}
+
+		{% if (o.printTipFlag) { %}
+		<div>
+			<div class="font-size-38">RMB:<span class="value">{%=o.amtTrans - discount%}</span>
+			</div>
+			<div class="line">{%=o.TIP%} RMB:<span class="value">{%=o.discount%}</span></div>
+			<div class="line">{%=o.TOTAL%} RMB:<span class="value">{%=o.amtTrans%}</span></div>
+		</div>
+		{% } %}
+
+		<div class="line">{%=o.REFERENCE%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(REFERENCE)</span>
+			{% } %}
+		</div>
+
+		{% if (o.prevVoucherNo) { %}
+		<div class="line">{%=o.OLD_VOUCHER%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(OLD VOUCHER)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.prevVoucherNo%}</span>
+		</div>
+		{% } %}
+		 {% if (o.prevRetrievalRefNo) { %}
+		<div class="line">{%=o.OLD_REF_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(OLD REFNO)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.prevRetrievalRefNo%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.prevTransDate) { %}
+		<div class="line">{%=o.OLD_DATE%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(OLD DATE)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.prevTransDate%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.prevAuthCode) { %}
+		<div class="line">{%=o.OLD_AUTH_NO%}
+			{% if (o.playEnglishFlag) { %}
+			<span class="sub-label">(OLD AUTHNO)</span>
+			{% } %}
+			:
+			<span class="value">{%=o.prevAuthCode%}</span>
+		</div>
+		{% } %}
+
+
+		<!--用于分期付款-->
+		<!--for installment-->
+		{% if (o.installmentPeriod) { %}
+		<div class="line">
+			{%=o.THE_NUMBER_OF_PERIODS%}:
+			<span class="value">{%=o.installmentPeriod%}</span>
+		</div>
+
+		<div class="line">
+			{%=o.REPAYMENT_CURRENCY%}:
+			<span class="value">{%=o.chargeCurrencyCode%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.initialInstallmentPayment) { %}
+		<div class="line">
+			{%=o.DOWN_PAYMENT_AMOUNT%}:
+			<span class="value">{%=o.initialInstallmentPayment%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.chargeMethod=="0") { %}
+		<div class="line">
+			{%=o.SERVICE_CHARGE_PAYMENT_MODE%}:
+			<span class="value">{%=o.FULL_PAYMENT%}</span>
+		</div>
+
+		{% if (o.installmentCharge) { %}
+		<div class="line">
+			{%=o.CARDHOLDER_TIP%}:
+			<span class="value">{%=o.installmentCharge%}</span>
+		</div>
+		{% } %}
+		{% } %}
+
+		{% if (o.chargeMethod == "1") { %}
+		<div class="line">
+			{%=o.SERVICE_CHARGE_PAYMENT_MODE%}:
+			<span class="value">{%=o.INSTALLMENT%}</span>
+		</div>
+		{% if (o.initialInstallmentCharge) { %}
+		<div class="line">
+			{%=o.SERVICE_CHARGE_OF_DOWN_PAYMENT%}:
+			<span class="value">{%=o.initialInstallmentCharge%}</span>
+		</div>
+		{% } %}
+		{% if (o.installmentPerCharge) { %}
+		<div class="line">
+			{%=o.SERVICE_CHARGE_OF_EACH_PERIODS%}:
+			<span class="value">{%=o.installmentPerCharge%}</span>
+		</div>
+		{% } %}
+		{% } %}
+
+		{% if (o.rewardPoints) { %}
+		<div class="line">
+			{%=o.BONUS_POINTS%}
+			<span class="value">{%=o.rewardPoints%}</span>
+		</div>
+		{% } %}
+
+		<!--用于积分交易-->
+		<!--for integral transactions-->
+		{% if (o.itemCode) { %}
+		<div class="line">
+			{%=o.COMMODITY_CODE%}:
+			<span class="value">{%=o.itemCode%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.exchangePoints) { %}
+		<div class="line">
+			{%=o.EXCHANGE_INTEGRAL%}:
+			<span class="value">{%=o.exchangePoints%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.pointsBanlance) { %}
+		<div class="line">
+			{%=o.THE_BALANCE_OF_INTEGRAL%}:
+			<span class="value">{%=o.pointsBanlance%}</span>
+		</div>
+		{% } %}
+
+		{% if (o.pointsOutstandingAmt) { %}
+		<div class="line">
+			{%=o.PAYMENT_AMOUNT%}:
+			<span class="value">{%=o.pointsOutstandingAmt%}</span>
+		</div>
+		{% } %}
+
+		<!--用于预约消费-->
+		<!--for reservation consumption-->
+		{% if (o.mobileNo) { %}
+		<div class="line">
+			{%=o.PHONE_NUMBER%}
+			<span class="value">{%=o.mobileNo%}</span>
+		</div>
+		{% } %}
+
+		<!--用于非指定账户圈存、转账-->
+		<!--fro Credit for load on undesignated account、transfer-->
+		{% if (o.intoAcc) { %}
+		<div class="line">
+			{%=o.TRANSFER_CARD_NUMBER%}:
+			<span class="value">{%=o.intoAcc%}</span>
+		</div>
+		{% } %}
+
+		<!--IC 卡交易需要打印 TAG-->
+		<!--IC card transaction need to print TAG-->
+		{% if (o.icTagFlag) { %}
+			<div>
+				{% if (o.balance) { %}
+				<div class="line">{%=o.ECASH_BALANCE%}:{%=o.balance%}</div>
+				{% } %}
+
+				<div class="line">{%=o.appCryptogramType%}:{%=o.appCryptogram%}</div>
+				<div class="line">TVR:{%=o.termVerificationResult%}<span class="sub-label"> CSN:{%=o.panSeqNo%}</span>
+				</div>
+				<div class="line">AID:{%=o.appId%}</div>
+				<div class="line">ATC:{%=o.appTransCounter%}<span class="sub-label"> TSI:{%=o.appStatusInfo%}</span>
+				</div>
+				{% if (o.appName) { %}
+				<div class="line">APN:{%=o.appName%}</div>
+				{% } %}
+				<div class="line">APP LABEL:{%=o.appLable%}</div>
+				<div class="line">UNPR NUM:{%=o.unpredictableNo%}</div>
+				<div class="line">AIP:{%=o.appInterchangerProfile%}<span class="sub-label">CVMR:{%=o.cvmResults%}</span>
+				</div>
+				{% if (o.issuerAppData) { %}
+				<div class="line">IAD:{%=o.issuerAppData.substr(0,34)%}
+				</div>
+				{% if (o.issuerAppData.length > 34) { %}
+				<div class="line">{%=o.issuerAppData.substr(34)%}</div>
+				{% } %}
+				{% } %}
+				<div class="line">Term Cap:{%=o.termCap%}</div>
+				{% if (o.cardProductId) { %}
+				<div class="line">9F63:{%=o.cardProductId%}</div>
+				{% } %}
+				</div>
+				{% if (o.issuerMsg) { %}
+				<div class="line">{%=o.issuerMsg%}<span class="sub-label"></span></div>
+				{% } %}
+				{% if (o.cpuMsg) { %}
+				<div class="line">{%=o.cpuMsg%}<span class="sub-label"></span></div>
+				{% } %}
+				{% if (o.acquireMsg) { %}
+				<div class="line">{%=o.acquireMsg%}<span class="sub-label"></span></div>
+				{% } %}
+			</div>
+		{% } %}
+
+
+		<!-- 打印公用底部 -->
+		<!-- print common buttom -->
+
+		{% if (o.reprintFlag || o.noSignText || o.shouldSign) { %}
+		<hr class="print-hr">
+		{% } %}
+
+		<!-- 大字体 字体大小 24px -->
+		{% if (o.reprintFlag) { %}
+		<div class="font-size-24">{%=o.DUPLICATED%}</div>
+		{% } %}
+
+		{% if (o.noSignText) { %}
+		<div class="line">{%=o.noSignText%}</div>
+		{% } %}
+
+		{% if (o.shouldSign) { %}
+		<div class="line">{%=o.CARDHOLDER_SIGN_UPCASE%}</div>
+
+			{% if (o.signImage) { %}
+			<div class="print-signature">
+					<img src="{%=o.signImage%}">
+			</div>
+			{% } else { %}
+			<div>
+				<div class="line">&nbsp;</div>
+				<div class="line">&nbsp;</div>
+				<div class="line">&nbsp;</div>
+				<div class="line">&nbsp;</div>
+			</div>
+			{% } %}
+		{% } %}
+
+		<hr class="print-hr">
+		<div class="line">{%=o.copyType%}</div>
+		{% if (o.shouldDeclare) { %}
+		<div class="line">{%=o.I_ACKNOWLEDGE_SATISFACTORY_OF_RELATIVE_GOODS_SERVICE%}</div>
+		{% if (o.playEnglishFlag) { %}
+		<div class="line">I ACKNOWLEDGE SATISFACTORY,RECEIPT OF RELATIVE GOODS/SERVICE</div>
+		{% } %}
+		{% } %}
+
+		{% if (o.hotline) { %}
+		<div class="line">{%=o.SERVICE_HOTLINE%}:{%=o.hotline%}</div>
+		{% } %}
+
+	</div>
+</script>
+
+<script id="multi-languages-template" type="text/x-tmpl">
+	<div class="font-size-14">
+
+        <div class="title">Cambodia</div>
+        <div class="line">ពត៍មានអំពីសំបុត្រ</div>
+        <div class="line">Information about tickets</div>
+        <div class="line">ពេលបោះបង់សំបុត្រ</div>
+        <div class="line">Canceled mail</div>
+        <div class="line">លេខកូដសំបុត្រ</div>
+        <div class="line">Ticket code</div>
+        <hr class="print-hr"/>
+
+        <div class="title">Laos</div>
+        <div class="line">ຍີນດີຕອນຮັບປາກຊັນລາວ</div>
+        <div class="line">Welcome to Parkson Lao</div>
+        <div class="line">ສຸດຍອດອະລັງການແຫ່ງການຊ໋ອບປີ້ງ</div>
+        <div class="line">The best place for shopping</div>
+        <hr class="print-hr"/>
+    </div>
+</script>
+
+</head>
+<body>
+<div id="content"></div>
+<script type="text/javascript">
+	// loadContent('pay-template', mockData);
+</script>
+</body>
+</html>
