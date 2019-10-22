@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.parse-community:ParseLiveQuery-Android:1.1.0@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/fc21ba2503983c47e2c0eb4648a6e98c/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/fc21ba2503983c47e2c0eb4648a6e98c/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.parse-community/ParseLiveQuery-Android/1.1.0/6c441218aed18d416a97fa417b2bc167052b2cc7/ParseLiveQuery-Android-1.1.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

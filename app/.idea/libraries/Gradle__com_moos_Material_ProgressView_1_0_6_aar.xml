@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.moos:Material-ProgressView:1.0.6@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/587664fa74ef7275a6009206a33de5b0/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/587664fa74ef7275a6009206a33de5b0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/587664fa74ef7275a6009206a33de5b0/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.moos/Material-ProgressView/1.0.6/31510ee942f2b670584b227145b2c856f001a42a/Material-ProgressView-1.0.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

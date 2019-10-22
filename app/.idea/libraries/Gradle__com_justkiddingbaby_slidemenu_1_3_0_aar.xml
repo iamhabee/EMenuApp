@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.justkiddingbaby:slidemenu:1.3.0@aar">
+    <ANNOTATIONS>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f1e21ae8d6a7dfa3abf1bfce3480d1a2/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f1e21ae8d6a7dfa3abf1bfce3480d1a2/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/f1e21ae8d6a7dfa3abf1bfce3480d1a2/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.justkiddingbaby/slidemenu/1.3.0/504f868ccb58f8a23feee921e2a4a152f6060b15/slidemenu-1.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

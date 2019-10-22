@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.hanks:htextview-fade:0.1.6@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cbb74349700ec542f17dd5849027937a/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/cbb74349700ec542f17dd5849027937a/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.hanks/htextview-fade/0.1.6/631bd8dcbac7efe8a533536d610725cca01fb028/htextview-fade-0.1.6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

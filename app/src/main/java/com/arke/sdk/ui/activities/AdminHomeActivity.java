@@ -37,6 +37,7 @@ import com.arke.sdk.utilities.CryptoUtils;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMailClient;
 import com.arke.sdk.utilities.EMenuGenUtils;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 //import com.elitepath.android.emenu.R;
 import com.arke.sdk.ui.adapters.AdminHomeContentRecyclerAdapter;
@@ -135,6 +136,9 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.forgot_password_view)
     TextView forgotPasswordView;
 
+    @BindView(R.id.printt)
+    Button printtt;
+
     private List<AdminSummaryItem> adminSummaryItems = new ArrayList<>();
     private Calendar fromCalendar, toCalendar;
     private AtomicBoolean adminPassword = new AtomicBoolean(false);
@@ -148,6 +152,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private AtomicBoolean canFetchData = new AtomicBoolean(true);
 
     private LottieAlertDialog operationsProgressDialog;
+    private AlertDialog dialog;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -174,7 +179,26 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         toDateView.setOnClickListener(this);
         Date currentDate = new Date();
         prepareDateBasedData(currentDate, currentDate);
+
+
+
+
+
+        dialog = new   AlertDialog.Builder(this)
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .create();
+
+        printtt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OrderPrint orderPrint = new OrderPrint(AdminHomeActivity.this, dialog);
+                orderPrint.validateSlipThenPrint("nvnvnv");
+            }
+        });
     }
+
+
 
     @Override
     public void onBackPressed() {
