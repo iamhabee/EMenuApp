@@ -92,7 +92,7 @@
         app:base_alpha="0.8"
         app:duration="2500">
 
-        <com.arke.sdkui.views.EMenuTextView
+        <com.arke.sdk.ui.views.EMenuTextView
             android:id="@+id/progress_update"
             android:layout_width="match_parent"
             android:layout_height="60dp"
