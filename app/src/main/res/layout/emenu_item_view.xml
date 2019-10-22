@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.arke.sdk.ui.views.EMenuItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="3dp"
+    app:cardElevation="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.arke.sdk.ui.views.LoadingImageView
+            android:id="@+id/emenu_item_preview_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/download" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/emenu_item_name_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:text="@string/item_name"
+                android:maxLines="2"
+                android:textColor="@color/black"
+                android:textSize="19sp"
+                app:textStyle="medium" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/emenu_item_description_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:paddingTop="5dp"
+                android:paddingEnd="5dp"
+                android:paddingBottom="5dp"
+                android:text="@string/item_description"
+                android:textSize="14sp"
+                app:textStyle="regular"
+                tools:ignore="RtlSymmetry" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/currency_indicator"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/naira_icon"
+                    app:tint="@color/colorGreen" />
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:id="@+id/emenu_item_price_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="2dp"
+                    android:text="2000"
+                    android:textColor="@color/colorGreen"
+                    android:textSize="18sp"
+                    app:textStyle="medium" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/metadata_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/top_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/meta_data_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        app:srcCompat="@drawable/table_label" />
+
+                    <com.arke.sdk.ui.views.EMenuTextView
+                        android:id="@+id/meta_data_description"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Table 9"
+                        android:textColor="@color/ease_gray_dark"
+                        android:textSize="12sp"
+                        app:textStyle="medium" />
+
+                </LinearLayout>
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:id="@+id/meta_data_time_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/top_view"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="end"
+                    android:gravity="end"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="2dp"
+                    android:text="10:00am"
+                    android:textColor="@color/ease_gray_dark"
+                    android:textSize="10sp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/quantity_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/lighter_blue"
+            android:minWidth="60dp"
+            android:orientation="vertical"
+            android:padding="5dp"
+            android:visibility="gone">
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/increment_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/light_blue"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:text="+"
+                android:textSize="30sp"
+                app:textStyle="medium" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/item_quantity_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="0"
+                android:textSize="20sp"
+                app:textStyle="bold" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/decrement_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/light_blue"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_horizontal"
+                android:text="-"
+                android:textSize="30sp"
+                app:textStyle="medium" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/unavailable_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#9bfafafa"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/out_of_stock"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </FrameLayout>
+
+</com.arke.sdk.ui.views.EMenuItemView>

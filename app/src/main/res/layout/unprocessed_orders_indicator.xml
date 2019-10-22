@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:layout_marginEnd="10dp">
+
+    <ImageView
+        android:id="@+id/unprocessed_orders"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ic_shopping_cart_black_48dp"
+        tools:ignore="ContentDescription" />
+
+    <com.arke.sdk.ui.views.EMenuTextView
+        android:id="@+id/unprocessed_orders_availability_indicator"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/unprocessed_orders_badge"
+        android:padding="2dp"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        android:visibility="invisible"
+        tools:ignore="SmallSp" />
+
+</FrameLayout>

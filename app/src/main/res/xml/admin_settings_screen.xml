@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="Settings">
+
+    <androidx.preference.PreferenceCategory android:title="Color Preferences">
+
+        <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+            android:defaultValue="@color/colorPrimary"
+            android:key="primary_color_pref"
+            android:summary="Pick the primary color that is unique to this Restaurant/Bar"
+            android:title="Primary Color" />
+
+        <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+            android:defaultValue="@color/colorAccent"
+            android:key="secondary_color_pref"
+            android:summary="Pick the secondary color that is unique to this Restaurant/Bar"
+            android:title="Secondary Color" />
+
+        <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+            android:defaultValue="@color/colorAccent"
+            android:key="tertiary_color_pref"
+            android:summary="Pick the tertiary color that is unique to this Restaurant/Bar"
+            android:title="Tertiary Color" />
+
+        <androidx.preference.Preference
+            android:key="reset_prefs"
+            android:summary="Reset all color preferences to default"
+            android:title="Reset Color Preferences" />
+
+    </androidx.preference.PreferenceCategory>
+    
+    <androidx.preference.PreferenceCategory android:title="Restaurant Authorizations">
+
+        <androidx.preference.Preference
+            android:key="restaurant_password_update_pref"
+            android:summary="Set a new Restaurant Password"
+            android:title="Update Restaurant Password" />
+
+        <androidx.preference.Preference
+            android:key="admin_password_update_pref"
+            android:summary="Set a new Admin Password"
+            android:title="Update Admin Password" />
+
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

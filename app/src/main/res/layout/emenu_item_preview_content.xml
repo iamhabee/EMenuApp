@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/search_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/close_activity"
+                    android:layout_width="30dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+                    app:tint="@color/black"
+                    app:tintMode="multiply" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/search_box"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:hint="@string/search_here_to_add_more_items"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:paddingStart="10dp"
+                    android:paddingEnd="10dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/ease_gray_dark"
+                    android:textSize="16sp"
+                    tools:ignore="Autofill,LabelFor" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/end_search_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_search_black_24dp"
+                    app:tint="@color/ease_gray_dark"
+                    app:tintMode="multiply" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/ease_gray" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:id="@+id/scroll_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <com.arke.sdk.ui.views.LoadingImageView
+                android:id="@+id/item_preview"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:scaleType="centerCrop"
+                tools:ignore="ContentDescription" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:id="@+id/item_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Chicken Roll"
+                    android:textColor="@color/emenu_material_grey_800"
+                    android:textSize="20sp"
+                    app:textStyle="medium" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/currency_indicator"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/naira_icon"
+                        app:tint="@color/colorGreen" />
+
+                    <com.arke.sdk.ui.views.EMenuTextView
+                        android:id="@+id/item_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:paddingBottom="2dp"
+                        android:text="2000"
+                        android:textColor="@color/colorGreen"
+                        android:textSize="18sp"
+                        app:textStyle="medium" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/quantity_available_in_stock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:text="2 in Stock" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#f7f7f7"
+                android:orientation="vertical">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:text="Description"
+                    android:textColor="@color/ease_black"
+                    android:textSize="18sp"
+                    app:textStyle="medium" />
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:id="@+id/item_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/item_description"
+                    android:textSize="16sp"
+                    app:textStyle="regular" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/take_a_way_switch_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="20dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="@string/is_take_away"
+                    android:textColor="@color/ease_gray_dark" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/take_a_way_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/quantity_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:text="Quantity:"
+                    android:textColor="@color/black"
+                    android:textSize="19sp"
+                    app:textStyle="medium" />
+
+                <EditText
+                    android:id="@+id/quantity_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="Enter Quantity here"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/table_tag_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="10dp">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="Table Tag:"
+                    android:textColor="@color/black"
+                    android:textSize="19sp"
+                    app:textStyle="medium" />
+
+                <EditText
+                    android:id="@+id/table_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/fancy_input_background"
+                    android:hint="(E.g  4)"
+                    android:inputType="text"
+                    android:padding="6dp"
+                    android:paddingBottom="5dp"
+                    android:textColorHint="@color/ease_gray"
+                    android:textSize="16sp"
+                    tools:ignore="Autofill" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/customer_tag_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="10dp">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="Customer Tag:"
+                    android:textColor="@color/black"
+                    android:textSize="19sp"
+                    app:textStyle="medium" />
+
+                <EditText
+                    android:id="@+id/customer_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/fancy_input_background"
+                    android:hint="(E.g 1)"
+                    android:inputType="text"
+                    android:padding="6dp"
+                    android:paddingBottom="5dp"
+                    android:textColorHint="@color/ease_gray"
+                    android:textSize="16sp"
+                    tools:ignore="Autofill" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/waiter_tag_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:paddingTop="10dp">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="Waiter Tag:"
+                    android:textColor="@color/black"
+                    android:textSize="19sp"
+                    app:textStyle="medium" />
+
+                <EditText
+                    android:id="@+id/waiter_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/fancy_input_background"
+                    android:hint="(E.g amaka)"
+                    android:inputType="text"
+                    android:padding="6dp"
+                    android:paddingBottom="5dp"
+                    android:textColorHint="@color/ease_gray"
+                    android:textSize="16sp"
+                    tools:ignore="Autofill" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/bottom_view"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/item_preview_cart_background"
+        android:orientation="horizontal">
+
+        <com.arke.sdk.ui.views.EMenuTextView
+            android:id="@+id/add_to_table"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="@string/add_to_customer_cart"
+            android:textColor="@color/white"
+            app:textStyle="medium" />
+
+        <RelativeLayout
+            android:id="@+id/open_drinks_or_modify_item_view"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/drinks_or_more_icon_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                app:srcCompat="@drawable/ic_local_bar_white_24dp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/drinks_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/drinks_or_more_icon_view"
+                android:layout_centerHorizontal="true"
+                android:text="@string/drinks"
+                android:textColor="@color/white"
+                android:textSize="8sp"
+                tools:ignore="SmallSp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

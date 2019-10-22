@@ -1,0 +1,125 @@
+<com.arke.sdk.ui.views.DrinksOnlyView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_view"
+    android:layout_width="match_parent"
+    android:layout_height="250dp">
+
+    <com.arke.sdk.ui.views.LoadingImageView
+        android:id="@+id/drink_photo_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#6b000000" />
+
+    <com.arke.sdk.ui.views.EMenuTextView
+        android:id="@+id/drink_name_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/drink"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:textStyle="medium" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="5dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/naira_icon"
+                app:tint="@color/white" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/drink_price_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:textStyle="medium" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#7b000000"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/remove_drink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/remove_drinks_indicator"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                app:textStyle="bold" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/drinks_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:textStyle="bold" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/add_drink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/add_drinks_indicator"
+                android:textColor="@color/white"
+                android:textSize="40sp"
+                app:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/unavailable_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#9bfafafa"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/out_of_stock"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </FrameLayout>
+
+</com.arke.sdk.ui.views.DrinksOnlyView>

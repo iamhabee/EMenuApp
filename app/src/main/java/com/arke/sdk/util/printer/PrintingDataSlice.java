@@ -1,12 +1,14 @@
 package com.arke.sdk.util.printer;
 
+import androidx.annotation.NonNull;
+
 /**
  * Printing data slice.
  *
  * @author feiq
  */
 
-import android.support.annotation.NonNull;
+//import android.support.annotation.NonNull;
 
 class PrintingDataSlice implements Comparable<PrintingDataSlice> {
     public PrintingDataSlice(int index, byte[] data) {

@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
+//import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -21,6 +21,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSON;
 

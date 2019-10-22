@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_restaurant_prof_info"
+            android:icon="@drawable/restaurant_or_bar_info"
+            android:title="@string/restaurant_prof_info" />
+        <item
+            android:id="@+id/waiter_view"
+            android:icon="@drawable/waiter_view"
+            android:title="@string/waiter_view" />
+        <item
+            android:id="@+id/kitchen_view"
+            android:icon="@drawable/kitchen_view"
+            android:title="@string/kitchen_view" />
+        <item
+            android:id="@+id/bar_view"
+            android:icon="@drawable/bar_view"
+            android:title="@string/bar_view" />
+
+        <item
+            android:id="@+id/admin_view"
+            android:icon="@drawable/admin_view"
+            android:title="@string/admin_view" />
+
+    </group>
+
+    <item android:title="Help Section">
+        <menu>
+            <item
+                android:id="@+id/how_tos"
+                android:icon="@drawable/ic_help_black_48dp"
+                android:title="@string/app_tour" />
+        </menu>
+    </item>
+    <item android:title="@string/settings_and_authorizations">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/settings"
+                android:title="@string/settings" />
+            <item
+                android:id="@+id/nav_log_out"
+                android:icon="@drawable/log_out"
+                android:title="@string/action_logout" />
+        </menu>
+    </item>
+</menu>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/root_view_background_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/welcome_background"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:id="@+id/parent_background_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#c4000000"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:layout_weight="0.1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/admin_view_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    app:srcCompat="@drawable/dashboard_icon" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/admin_dashboard"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/close_activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    app:srcCompat="@drawable/close_icon" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="20dp"
+                android:paddingTop="15dp"
+                android:animateLayoutChanges="true"
+                android:orientation="vertical">
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:id="@+id/total_sales_count"
+                    style="@style/TextAppearance.AppCompat.Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="16dp"
+                    android:text="0 Items"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    app:textStyle="medium" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="( "
+                        android:textColor="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/currency_indicator"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/naira_icon"
+                        app:tint="@color/colorGreen" />
+
+                    <com.arke.sdk.ui.views.EMenuTextView
+                        android:id="@+id/total_sales_cost"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:text="0"
+                        android:textColor="@color/colorGreen"
+                        android:textSize="18sp"
+                        app:textStyle="medium" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text=" )"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+                <com.arke.sdk.ui.views.EMenuTextView
+                    android:id="@+id/total_sales_count_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="Total Sales made today"
+                    android:textColor="@color/text_white_87"
+                    android:textSize="15sp"
+                    app:textStyle="light" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/date_background"
+                        android:orientation="horizontal"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            app:srcCompat="@drawable/calendar_icon"
+                            app:tint="@color/text_white_87"
+                            app:tintMode="src_atop" />
+
+                        <com.arke.sdk.ui.views.EMenuTextView
+                            android:id="@+id/from_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:padding="10dp"
+                            android:text="01/01/19"
+                            android:textColor="@color/text_white_87"
+                            android:textSize="17sp"
+                            app:textStyle="medium" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/dates_gap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:text="  -  "
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/date_background"
+                        android:orientation="horizontal"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            app:srcCompat="@drawable/calendar_icon"
+                            app:tint="@color/text_white_87"
+                            app:tintMode="src_atop" />
+
+                        <com.arke.sdk.ui.views.EMenuTextView
+                            android:id="@+id/to_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical"
+                            android:padding="10dp"
+                            android:text="01/01/19"
+                            android:textColor="@color/text_white_87"
+                            android:textSize="17sp"
+                            app:textStyle="medium" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <ViewFlipper
+                    android:id="@+id/progress_update_content_flipper"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+
+                    <com.arke.sdk.ui.views.EMenuTextView
+                        android:id="@+id/feed_back_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text="Network Error"
+                        android:textColor="@color/white"
+                        app:textStyle="light" />
+
+                    <ProgressBar
+                        android:id="@+id/summary_loader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="15dp"
+                        android:layout_gravity="center" />
+
+                    <com.arke.sdk.ui.views.EMenuTextView
+                        android:id="@+id/fetch_data_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text="Fetch Records within this dates"
+                        android:textColor="@color/white"
+                        app:textStyle="light" />
+
+                </ViewFlipper>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:background="@drawable/top_convex_background"
+            android:orientation="vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="20dp">
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/header_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today's Summary"
+                android:textColor="@color/dark_gray"
+                android:textSize="18sp"
+                app:textStyle="medium" />
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/header_date_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:text="May 30"
+                android:textColor="@color/ease_gray_dark"
+                android:textSize="13sp"
+                app:textStyle="regular" />
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.arke.sdk.ui.views.AutofitRecyclerView
+                    android:id="@+id/admin_main_auto_fit_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:columnWidth="100dp"
+                    android:padding="@dimen/item_margin"
+                    tools:listitem="@layout/admin_summary_recycler_item" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

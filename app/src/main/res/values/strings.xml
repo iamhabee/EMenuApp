@@ -1,6 +1,146 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RukkaBet Agent</string>
+
+    <string name="app_name">EMenu</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings/Customizations</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="food_search_hint">What do you care for?</string>
+    <string name="hello">Hello!</string>
+    <string name="get_started">GET STARTED</string>
+    <string name="loading_animation">Loading Animation</string>
+    <string name="please_wait_we_are_getting_things_ready">Please wait, we are getting things ready…</string>
+    <string name="action_next">NEXT</string>
+    <string name="authentication_instruction">Please simply Sign In if your Restaurant/Bar is already on EMenu, otherwise Create Account.</string>
+    <string name="create_account">CREATE ACCOUNT</string>
+    <string name="log_in">SIGN IN</string>
+    <string name="sign_in_header">Sign In to your Restaurant/Bar</string>
+    <string name="create_account_header">Setup your Restaurant/Bar on EMenu</string>
+    <string name="skip">SKIP</string>
+    <string name="home">Home</string>
+    <string name="recent_orders">Recent Orders</string>
+    <string name="menu_categories">Menu Categories</string>
+    <string name="more">More</string>
+    <string name="create_a_new_emenu_item_for_your_restaurant_bar">Create a new EMenu Item for your Restaurant/Bar</string>
+    <string name="add_an_image_to_showcase_this_menu_item">Add an image to showcase this menu item</string>
+    <string name="loading">Loading…</string>
+    <string name="fetching_menu">Fetching Menu…</string>
+    <string name="nothing_in_menu">Sorry, our menu is empty for now. Check back later.</string>
+    <string name="network_glitch_error_msg">Please review your data connection</string>
+    <string name="create_item">Create</string>
+    <string name="sms_permission">Allow EMenu to send and receive one time SMS</string>
+    <string name="storage_permission">Allow EMenu to access your storage</string>
+    <string name="read_sms_permission">Allow EMenu to send and receive one time SMS</string>
+    <string name="location_permission">To enjoy all features of EMenu, please allow access to your location.</string>
+    <string name="phone_state_permission">Allow EMenu to read your phone state.</string>
+    <string name="phone_call_permission">Allow EMenu to make a one time phone call</string>
+    <string name="phone_camera_permission">Allow EMenu to access your camera</string>
+    <string name="record_audio">Allow EMenu to record audio</string>
+
+    <string name="contact_permission">Allow EMenu to access your contacts</string>
+    <string name="contact_permission_not_granted">Permissions were not granted for Contact</string>
+    <string name="storage_permission_not_granted">Permissions were not granted for Storage</string>
+    <string name="read_sms_permission_not_granted">Permissions were not granted for Read</string>
+    <string name="location_permission_not_granted">Permissions were not granted for Location</string>
+    <string name="phone_state_permission_not_granted">Permissions were not granted for Phone state</string>
+    <string name="phone_call_permission_not_granted">Permissions were not granted for Phone call</string>
+    <string name="phone_camera_permission_not_granted">Permissions were not granted for Camera</string>
+    <string name="record_audio_permission_not_granted">Permissions were not granted for Audio recording</string>
+
+    <string name="contact_permission_granted">Contacts Permission have been granted</string>
+    <string name="storage_permission_granted">Storage Permissions have been granted</string>
+    <string name="read_sms_permission_granted">Read sms Permissions have been granted</string>
+    <string name="location_permission_granted">Location Permissions has been granted</string>
+    <string name="phone_state_permission_granted">Phone state Permissions has been granted</string>
+    <string name="phone_call_permission_granted">Phone call Permission has been granted</string>
+    <string name="phone_camera_permission_granted">Camera permission has been granted</string>
+    <string name="record_audio_permission_granted">Audio Record permissions has been granted</string>
+    <string name="file_cloud_api_key">213134416871217</string>
+    <string name="file_cloud_api_secret">NEmAwHYI13iyUf5X5YeelhTagZk</string>
+    <string name="item_category_e_g_grains">Item Category (E.g Grains)</string>
+    <string name="item_name_e_g_fried_rice">Item Name (E.g Fried Rice)</string>
+    <string name="item_description">Item Description (E.g  A dish of cooked rice that has been stir-fried in a wok or a frying pan and is usually mixed with other ingredients such as eggs, vegetables, seafood, or meat)</string>
+    <string name="item_price">Item Price</string>
+    <string name="text_ham_button_text_normal">Configure Settings</string>
+    <string name="text_ham_button_sub_text_normal">Close</string>
+    <string name="restaurant_prof_info">Restaurant/Bar Information</string>
+    <string name="switch_to_waiter_view">Switch to Waiter View</string>
+    <string name="switch_to_kitchen_view">Switch To Kitchen View</string>
+    <string name="action_logout">Log Out</string>
+    <string name="kitchen_view">Kitchen View</string>
+    <string name="shared_cloud_name">elitepath</string>
+    <string name="place_order">Place Order</string>
+    <string name="item_name">Item Name</string>
+    <string name="unresolvable_error_msg">An unresolvable error has occurred</string>
+    <string name="roboto_light">sans-serif-light</string>
+    <string name="un_processed_orders">Un-Processed Orders</string>
+    <string name="send_all_to_kitchen">Send All Orders to The Kitchen/Bar</string>
+    <string name="wel">Wel</string>
+    <string name="come">come!</string>
+    <string name="default_channel_id">Default Channel Id</string>
+    <string name="fetching_recent_orders">Fetching Recent Orders</string>
+    <string name="no_recent_order_available">No Recent Orders Found</string>
+    <string name="recent">Recent</string>
+    <string name="orders">Orders</string>
+    <string name="item">Item</string>
+    <string name="categories">Categories</string>
+    <string name="add_to_customer_cart">Add To Customer Cart</string>
+    <string name="fetching_incoming_orders">Fetching Incoming Orders</string>
+    <string name="no_incoming_orders">When new orders are received from the Waiter/Waitress, they\'ll show up here.</string>
+    <string name="fetching_categories">Fetching Categories</string>
+    <string name="nothing_in_category">Nothing in Menu Categories</string>
+    <string name="out_of_stock">Out Of Stock</string>
+    <string name="add_drinks_indicator">+</string>
+    <string name="remove_drinks_indicator">-</string>
+    <string name="drink">Drink</string>
+    <string name="not_yet_sent_to_kitchen">Not Yet Sent to Kitchen</string>
+    <string name="total_">Total:</string>
+    <string name="search_here_to_add_more_items">Search here to add more items</string>
+    <string name="drinks">Drinks</string>
+    <array name="quantities">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </array>
+    <string name="title_activity_dummy_drawer">DummyDrawerActivity</string>
+    <string name="waiter_view">Waiter View</string>
+    <string name="bar_view">Bar View</string>
+    <string name="admin_view">Admin View</string>
+    <string name="settings">Settings</string>
+    <string name="settings_and_authorizations">Settings and Authorizations</string>
+    <string name="name_">Name</string>
+    <string name="secondary_color">Secondary Color</string>
+    <string name="main_color">Main Color</string>
+    <string name="admin_dashboard">Admin Dashboard</string>
+    <string name="welcome_admin">Welcome, admin</string>
+    <string name="confirm_">CONFIRM</string>
+    <string name="default_is_12345">Default is 12345</string>
+    <string name="enter_admin_password">Enter Admin Password</string>
+    <string name="update_admin_password">Update Admin Password</string>
+    <string name="update_">Update</string>
+    <string name="new_admin_password">New Password</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="old_admin_password">Old Admin Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="app_tour">App Tour</string>
+    <string name="search_drinks">Search Drinks</string>
+    <string name="is_take_away">Is Take Away?</string>
+
     <string name="succeed">Succeed</string>
     <string name="failed">Failed</string>
     <string name="cancel">Cancel</string>
@@ -357,4 +497,5 @@
     <string name="webview">Webview</string>
     <string name="title_activity_print_preview">PrintPreviewActivity</string>
     <string name="enter_code">Enter Slip Code</string>
+
 </resources>
