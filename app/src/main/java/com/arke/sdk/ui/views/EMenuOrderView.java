@@ -539,6 +539,7 @@ public class EMenuOrderView extends MaterialCardView implements
                 dismissProgressDialog();
                 if (paymentException == null) {
                     UiUtils.showSafeToast("Payment successfully registered for Customer " + customerKey + "!!!");
+
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + paymentException.getMessage() + ")");
                 }

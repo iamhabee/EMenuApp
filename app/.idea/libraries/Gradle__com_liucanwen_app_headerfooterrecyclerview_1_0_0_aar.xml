@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.liucanwen.app:headerfooterrecyclerview:1.0.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8d7df65c0a2d4e9720a44f89358881d9/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/8d7df65c0a2d4e9720a44f89358881d9/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.liucanwen.app/headerfooterrecyclerview/1.0.0/53a59dc21baa2e9cad8ef18af3eec14ab4cbf596/headerfooterrecyclerview-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

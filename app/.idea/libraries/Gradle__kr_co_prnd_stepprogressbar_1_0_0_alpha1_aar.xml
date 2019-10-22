@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: kr.co.prnd:stepprogressbar:1.0.0-alpha1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0234243be60822b0f65537befb6edfa1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/0234243be60822b0f65537befb6edfa1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/kr.co.prnd/stepprogressbar/1.0.0-alpha1/9560b1549d290b8c21c5b49c3191ce0132e6dc03/stepprogressbar-1.0.0-alpha1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

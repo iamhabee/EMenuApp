@@ -3,10 +3,12 @@ buildscript {
         jcenter()
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         mavenCentral()
+        google()
     }
 
     dependencies {
         classpath 'me.tatarka:gradle-retrolambda:3.4.0'
+        classpath 'com.android.tools.build:gradle:3.4.2'
 
     }
 }
@@ -18,7 +20,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.0"
+    buildToolsVersion '29.0.1'
     defaultConfig {
         applicationId 'com.arke.sdk.demo'
         minSdkVersion 21
