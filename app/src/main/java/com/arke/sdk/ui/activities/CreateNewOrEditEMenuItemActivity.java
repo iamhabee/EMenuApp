@@ -11,6 +11,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -68,8 +69,8 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     @BindView(R.id.create_item)
     Button upsertItemButton;
 
-    @BindView(R.id.add_photo_button)
-    ImageView addPhotoButton;
+//    @BindView(R.id.add_photo_button)
+//    ImageView addPhotoButton;
 
     @BindView(R.id.selected_photo_preview)
     ImageView emenuItemPreviewImageView;
@@ -104,6 +105,10 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.create_new_emenu_item_layout);
         ButterKnife.bind(this);
+
+        // hide keyboard layout when activity start
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         int primaryColor = AppPrefs.getPrimaryColor();
         if (UiUtils.whitish(primaryColor)) {
             closeActivityView.setImageResource(getBlackBackButton());
@@ -194,14 +199,14 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
 
     private void initEventHandlers() {
         upsertItemButton.setOnClickListener(this);
-        addPhotoButton.setOnClickListener(this);
+        emenuItemPreviewImageView.setOnClickListener(this);
         closeActivityView.setOnClickListener(this);
         itemPriceView.addTextChangedListener(new NumberTextWatcherForThousand(itemPriceView));
     }
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.add_photo_button) {
+        if (view.getId() == R.id.selected_photo_preview) {
             selectImage(view);
         } else if (view.getId() == R.id.create_item) {
             UiUtils.dismissKeyboard(itemDescriptionView);
