@@ -82,12 +82,12 @@
             android:name=".ui.activities.RestaurantOrBarProfileInformationActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".ui.activities.EMenuItemPreviewActivity"
             android:theme="@style/AppTheme.DarkTheme"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".ui.activities.UnProcessedOrdersActivity"

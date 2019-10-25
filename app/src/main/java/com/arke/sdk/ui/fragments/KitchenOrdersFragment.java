@@ -253,6 +253,7 @@ public class KitchenOrdersFragment extends BaseFragment {
                 }
             } else {
                 loadDataInToAdapter(skip == 0, results);
+                //TODO: Add notification
             }
             UiUtils.toggleViewVisibility(footerView, false);
         });
