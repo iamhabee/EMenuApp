@@ -201,6 +201,7 @@ public class KitchenOrdersFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         loaderProgressMessageView.setText(getString(R.string.fetching_incoming_orders));
+        // TODO(2): fix crash when there is no internet and fragment is been switched
         emptyViewMessageView.setText(getString(R.string.no_recent_order_available));
         networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
         setupRecyclerView();

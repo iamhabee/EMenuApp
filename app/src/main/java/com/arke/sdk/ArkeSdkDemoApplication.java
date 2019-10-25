@@ -1,12 +1,15 @@
 package com.arke.sdk;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
@@ -54,6 +57,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
@@ -78,6 +82,13 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
     private static ParseLiveQueryClient parseLiveQueryClient;
     private static ParseQuery<ParseObject> notificationsQuery;
 
+    public static final String CHANNEL_ORDER_COMPLETED_ID = "orderCompleted";
+    public static final String CHANNEL_ORDER_RECEIVED_ID = "orderReceived";
+    public static final String CHANNEL_PAYMENT_SUCCESSFUL_ID = "paymentSuccessful";
+    public static final String CHANNEL_PAYMENT_FAILED_ID = "paymentFailed";
+    public static final String CHANNEL_PURCHASE_COMPLETED_ID = "purchaseCompleted";
+    public static final String CHANNEL_PURCHASE_FAILED_ID = "purchaseFailed";
+
     /**
      * Create.
      */
@@ -97,6 +108,7 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
                 .andThen(Printer.preLoadHtml("multi-languages-template", "{}"))
                 .subscribe();
 
+        // Debug for errors
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
@@ -106,6 +118,8 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         setupDatabase();
         initParse();
         listenToIncomingNotifications();
+        //create notification with channel id
+        createNotificationChannels();
     }
 
     @Override
@@ -412,6 +426,70 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
 
     public static ParseLiveQueryClient getParseLiveQueryClient() {
         return parseLiveQueryClient;
+    }
+
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            /* Order completed notification id */
+            NotificationChannel orderCompleted = new NotificationChannel(
+                    CHANNEL_ORDER_COMPLETED_ID,
+                    "Channel 1",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            orderCompleted.setDescription("This is Channel 1");
+
+            /* Order received notification id */
+            NotificationChannel orderReceived = new NotificationChannel(
+                    CHANNEL_ORDER_RECEIVED_ID,
+                    "Channel 2",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            orderReceived.setDescription("This is Channel 2");
+
+            /* Payment successful notification id */
+            NotificationChannel paymentSuccessful = new NotificationChannel(
+                    CHANNEL_PAYMENT_SUCCESSFUL_ID,
+                    "Channel 3",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            paymentSuccessful.setDescription("This is Channel 3");
+
+            /* Payment failed notification id */
+            NotificationChannel paymentFailed = new NotificationChannel(
+                    CHANNEL_PAYMENT_FAILED_ID,
+                    "Channel 4",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            paymentFailed.setDescription("This is Channel 4");
+
+
+            /* Purchase completed notification id */
+            NotificationChannel purchaseCompleted = new NotificationChannel(
+                    CHANNEL_PURCHASE_COMPLETED_ID,
+                    "Channel 5",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            purchaseCompleted.setDescription("This is Channel 5");
+
+            /* Purchase failed notification id */
+            NotificationChannel purchaseFailed = new NotificationChannel(
+                    CHANNEL_PURCHASE_FAILED_ID,
+                    "Channel 6",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            purchaseFailed.setDescription("This is Channel 6");
+
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            Objects.requireNonNull(manager).createNotificationChannel(orderCompleted);
+            manager.createNotificationChannel(orderReceived);
+            manager.createNotificationChannel(paymentSuccessful);
+            manager.createNotificationChannel(paymentFailed);
+            manager.createNotificationChannel(purchaseCompleted);
+            manager.createNotificationChannel(purchaseFailed);
+
+        }
     }
 
 }

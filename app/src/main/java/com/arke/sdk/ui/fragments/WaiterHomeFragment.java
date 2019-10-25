@@ -206,6 +206,7 @@ public class WaiterHomeFragment extends BaseFragment {
         loaderProgressMessageView.setText(getString(R.string.fetching_menu));
         emptyViewMessageView.setText(getString(R.string.nothing_in_menu));
         networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
+        // TODO(3): fix crash when there is no internet and fragment is been switched
         initEventHandlers();
         setupRecyclerView();
         if (eMenuItems.isEmpty()) {
