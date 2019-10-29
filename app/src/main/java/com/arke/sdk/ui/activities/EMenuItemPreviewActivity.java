@@ -4,10 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -166,10 +169,20 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private List<EMenuItem> searchList = new ArrayList<>();
     private EMenuItemAutoCompleteSearchAdapter searchAdapter;
 
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    Context mContext;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emenu_item_preview_layout);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
+
+
+
         ButterKnife.bind(this);
         Bundle intentExtras = getIntent().getExtras();
         if (intentExtras != null) {
@@ -682,14 +695,14 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
-        String indieTagValue = customerTag.getText().toString().trim();
+        String customerTagValue = customerTag.getText().toString().trim();
         String waiterTagValue = waiterTag.getText().toString().trim();
         boolean isTakeAway = takeAway.isChecked();
         if (!isTakeAway && StringUtils.isEmpty(tableTagValue)) {
             tableTag.setError("Please provide a table tag to associate with this Item.");
             return;
         }
-        if (StringUtils.isEmpty(indieTagValue)) {
+        if (StringUtils.isEmpty(customerTagValue)) {
             customerTag.setError("Please add a customer on table " + tableTagValue + " to this order.");
             return;
         }
@@ -700,30 +713,38 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         if (deviceId == null) {
             pickDeviceId(granted -> {
                 if (granted) {
-                    prepareItemForAdditionToCart(tableTagValue, indieTagValue, waiterTagValue, deviceId);
+                    prepareItemForAdditionToCart(tableTagValue, customerTagValue, waiterTagValue, deviceId);
                 }
             });
             return;
         }
-        prepareItemForAdditionToCart(tableTagValue, indieTagValue, waiterTagValue, deviceId);
+        prepareItemForAdditionToCart(tableTagValue, customerTagValue, waiterTagValue, deviceId);
     }
 
-    private void prepareItemForAdditionToCart(String tableTagValue, String indieTagValue, String waiterTagValue, String deviceId) {
+    private void prepareItemForAdditionToCart(String tableTagValue, String customerTagValue, String waiterTagValue, String deviceId) {
         tableTag.setError(null);
         customerTag.setError(null);
         waiterTag.setError(null);
         processSelections(eMenuItem, EMenuGenUtils.getDecimalFormattedString(eMenuItem.getMenuItemPrice()));
-        addItemToCustomerOrders(tableTagValue, indieTagValue, waiterTagValue, deviceId, Integer.parseInt(quantityBox.getText().toString().trim()), eMenuItem);
+        addItemToCustomerOrders(tableTagValue, customerTagValue, waiterTagValue, deviceId, Integer.parseInt(quantityBox.getText().toString().trim()), eMenuItem);
         DataStoreClient.addWaiterIfNotExisting(waiterTagValue);
         AppPrefs.persistWaiterTag(waiterTagValue);
     }
+
+
 
     public void addItemToCustomerOrders(String tableTagValue, String customerTagValue, String waiterTagValue, String deviceId, int quantityCount, EMenuItem item) {
         if (takeAway.isChecked()) {
             tableTagValue = Globals.TAKE_AWAY_TABLE_TAG;
         }
+
+        item.setTableTag(tableTagValue);
+        item.setCustomerTag(customerTagValue);
+        item.setWaiterTag(waiterTagValue);
+
         showOperationsDialog("Adding " + WordUtils.capitalize(eMenuItem.getMenuItemName()) + " Customer " + customerTagValue + " Orders", "Please wait...");
-        DataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTagValue, customerTagValue, waiterTagValue, quantityCount, item, (eMenuOrder, eMenuItem, e) -> {
+        DataStoreClient dataStoreClient = new DataStoreClient(this);
+        dataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTagValue, customerTagValue, waiterTagValue, quantityCount, item, (eMenuOrder, eMenuItem, e) -> {
             dismissProgressDialog();
             if (e == null) {
                 UiUtils.showSafeToast(WordUtils.capitalize(eMenuItem.getMenuItemName()) + " was successfully added to Customer " + eMenuOrder.getCustomerTag() + " orders ");

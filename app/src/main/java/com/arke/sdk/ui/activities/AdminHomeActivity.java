@@ -154,11 +154,15 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private LottieAlertDialog operationsProgressDialog;
     private AlertDialog dialog;
 
+
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_view);
+
+
         ButterKnife.bind(this);
         mainViewContentFlipper.setInAnimation(this, R.anim.animation_toggle_in);
         mainViewContentFlipper.setOutAnimation(this, R.anim.animation_toggle_out);
@@ -182,20 +186,20 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
 
 
-
-
-        dialog = new   AlertDialog.Builder(this)
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .create();
-
-        printtt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                OrderPrint orderPrint = new OrderPrint(AdminHomeActivity.this, dialog);
-                orderPrint.validateSlipThenPrint("nvnvnv");
-            }
-        });
+//
+//
+//        dialog = new   AlertDialog.Builder(this)
+//                .setNegativeButton("Cancel", null)
+//                .setCancelable(false)
+//                .create();
+//
+//        printtt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                OrderPrint orderPrint = new OrderPrint(AdminHomeActivity.this, dialog);
+//                orderPrint.validateSlipThenPrint("oya");
+//            }
+//        });
     }
 
 

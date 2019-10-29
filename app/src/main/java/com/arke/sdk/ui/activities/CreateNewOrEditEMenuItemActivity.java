@@ -113,7 +113,7 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
         if (UiUtils.whitish(primaryColor)) {
             closeActivityView.setImageResource(getBlackBackButton());
             titleView.setTextColor(Color.BLACK);
-            upsertItemButton.setBackgroundColor(Color.BLACK);
+            upsertItemButton.setBackgroundColor(Color.BLUE);
             tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
         } else {
             upsertItemButton.setBackgroundColor(Color.parseColor(primaryColorHex));

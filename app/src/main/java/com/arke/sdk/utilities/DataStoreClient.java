@@ -1,6 +1,10 @@
 package com.arke.sdk.utilities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -10,6 +14,8 @@ import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 //import com.elitepath.android.emenu.R;
+
+
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.contracts.BaseModelOperationDoneCallback;
 import com.arke.sdk.contracts.BooleanOperationDoneCallback;
@@ -52,6 +58,17 @@ import java.util.Locale;
 public class DataStoreClient {
 
     public static String TAG = DataStoreClient.class.getSimpleName();
+     SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+     Context mContext;
+
+    public DataStoreClient(Context context) {
+        this.preferences = preferences;
+        this.mContext = context;
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+        editor = preferences.edit();
+    }
 
     public static void logInAccount(BaseModelOperationDoneCallback baseModelOperationDoneCallback) {
         String emailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
@@ -851,13 +868,13 @@ public class DataStoreClient {
         });
     }
 
-    public static void addEMenuItemToCustomerCart(String deviceId,
-                                                  String tableTagValue,
-                                                  String customerTagValue,
-                                                  String waiterTagValue,
-                                                  int increment,
-                                                  EMenuItem eMenuItem,
-                                                  EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
+    public void addEMenuItemToCustomerCart(String deviceId,
+                                           String tableTagValue,
+                                           String customerTagValue,
+                                           String waiterTagValue,
+                                           int increment,
+                                           EMenuItem eMenuItem,
+                                           EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
         EMenuOrder customerOrder = getCustomerOrder(tableTagValue, customerTagValue);
         if (customerOrder == null) {
             customerOrder = createNewOrderInLocalDataStore(deviceId, tableTagValue, customerTagValue, waiterTagValue, eMenuItem);
@@ -872,9 +889,16 @@ public class DataStoreClient {
                 eMenuItem = existingItems.get(indexOfEMenuItem);
                 int previouslyOrderedQuantity = eMenuItem.getOrderedQuantity();
                 int quantityIncrement = previouslyOrderedQuantity + increment;
+
+
                 eMenuItem.setOrderedQuantity(quantityIncrement);
+                eMenuItem.setTableTag(tableTagValue);
+                eMenuItem.setCustomerTag(customerTagValue);
+                eMenuItem.setWaiterTag(waiterTagValue);
                 existingItems.set(indexOfEMenuItem, eMenuItem);
             } else {
+
+
                 existingItems.add(eMenuItem);
             }
             customerOrder.setItems(existingItems);
