@@ -97,8 +97,17 @@ public class OnBoardingActivity extends BaseActivity {
     }
 
     private void initSignIn() {
+        String resId = AppPrefs.getRestaurantOrBarId();
+        boolean isAppSetup = AppPrefs.isAppSetup();
+        if (resId != null && isAppSetup){
+            // Navigate to user login page
+            Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+            startActivity(userLoginIntent);
+        }else {
         Intent accountCreationIntent = new Intent(this, LogInActivity.class);
         startActivity(accountCreationIntent);
+
+        }
     }
 
     private void initAccountCreation() {

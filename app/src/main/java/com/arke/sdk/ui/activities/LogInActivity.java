@@ -57,10 +57,21 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
 
 
 
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_auth_form);
+
+
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
+
+
 
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
@@ -118,6 +129,9 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         accountLogInView.setup(this, restaurantEmailAddressStep, restaurantPassword).init();
 
 
+//        editor.putString(getString(""));
+//        editor.putString(getString(restaurantEmailAddressStep,restaurantEmailAddressStep));
+        editor.commit();
     }
 
 

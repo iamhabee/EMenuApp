@@ -726,10 +726,16 @@ public class DataStoreClient {
                                                  String restaurantPasswordRevealed,
                                                  RestaurantUpdateDoneCallback restaurantUpdateDoneCallback) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+
+//        this means selecting all from the table EmenuRestaurantAndBars
         ParseQuery<ParseObject> restaurantOrBarQuery = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
+
+//        object holds the response while e means error
         restaurantOrBarQuery.getInBackground(restaurantOrBarId, (object, e) -> {
             if (e == null && object != null) {
                 if (StringUtils.isNotEmpty(newRestaurantName)) {
+
+//                    this means that the field in the database has been updated using the newRestaurantName variable
                     object.put(Globals.RESTAURANT_OR_BAR_NAME, newRestaurantName);
                 }
                 if (StringUtils.isNotEmpty(newRestaurantEmail)) {
