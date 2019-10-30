@@ -896,6 +896,7 @@ public class DataStoreClient {
                 eMenuItem.setCustomerTag(customerTagValue);
                 eMenuItem.setWaiterTag(waiterTagValue);
                 existingItems.set(indexOfEMenuItem, eMenuItem);
+
             } else {
 
 

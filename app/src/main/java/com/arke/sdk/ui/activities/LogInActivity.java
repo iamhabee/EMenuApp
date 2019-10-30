@@ -3,8 +3,10 @@ package com.arke.sdk.ui.activities;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Patterns;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,10 +55,13 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
     private LottieAlertDialog accountCreationProgressDialog;
     private LottieAlertDialog accountCreationSuccessDialog;
 
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_auth_form);
+
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
@@ -105,11 +110,16 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         }
     }
 
+
+
     private void setupForm() {
         AuthFormStep restaurantEmailAddressStep = new AuthFormStep("Restaurant Email Address", "Enter Restaurant Email Address", Globals.AuthFormStepType.STEP_TYPE_EMAIL, accountLogInView);
         AuthFormStep restaurantPassword = new AuthFormStep("Restaurant Password", "Provide Restaurant/Bar Password", Globals.AuthFormStepType.STEP_TYPE_PASSWORD, accountLogInView);
         accountLogInView.setup(this, restaurantEmailAddressStep, restaurantPassword).init();
+
+
     }
+
 
     private void enableNextButton() {
         if (accountLogInView != null) {
@@ -240,6 +250,16 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         });
         deviceUserDialogBuilder.create().show();
     }
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onCompletedForm() {

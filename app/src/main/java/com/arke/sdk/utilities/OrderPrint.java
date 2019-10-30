@@ -74,102 +74,90 @@ public class OrderPrint {
             // Loop through stakes array list and add items
 
             if (orders != null && !orders.isEmpty()) {
+                int count = 1, itemQty = 0;
+                double total = 0, unitPrice = 0, sumTotal = 0;
+
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+                setFontSpec(FONT_SIZE_LARGE);
+                Printer.getInstance().addText(AlignMode.CENTER, "ORDER ITEMS");
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+
 
                 for (EMenuItem eMenuItem : orders) {
+                    unitPrice = Double.parseDouble(eMenuItem.getMenuItemPrice());
+                    itemQty = eMenuItem.getOrderedQuantity();
+                    total = unitPrice * itemQty;
+                    sumTotal = sumTotal + total;
 
+                    if (count == 1) {
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("CUSTOMER TAG", "" + eMenuItem.getCustomerTag()));
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG", "" + eMenuItem.getTableTag()));
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG", "" + eMenuItem.getWaiterTag()));
+                    }
 
                     setFontSpec(FONT_SIZE_NORMAL);
                     Printer.getInstance().addText(AlignMode.CENTER, divider);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM", "" + eMenuItem.getMenuItemName()));
+
+                    setFontSpec(FONT_SIZE_NORMAL);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY", "" + eMenuItem.getOrderedQuantity()));
 
 
                     setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT,  formatAlignedJustified("CUSTOMER TAG",""+eMenuItem.getCustomerTag()));
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE", formatAmount(unitPrice, true)));
 
                     setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG",""+ eMenuItem.getTableTag()));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG",""+ eMenuItem.getWaiterTag()));
-
-
-
-
-                    Printer.getInstance().addText(AlignMode.CENTER, single_divider);
-                    setFontSpec(FONT_SIZE_LARGE);
-                    Printer.getInstance().addText(AlignMode.CENTER, "ORDER ITEMS");
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, single_divider);
-
-
-
-
-                    double overall = Double.parseDouble(eMenuItem.getMenuItemPrice());
-                    int quantity = eMenuItem.getOrderedQuantity();
-
-                    double theOne = overall*quantity;
-
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT,  formatAlignedJustified("ID",""+ eMenuItem.getMenuItemId()));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM NAME",""+ eMenuItem.getMenuItemName()));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM PRICE",formatAmount(theOne, true)));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM QUANTITY",""+ eMenuItem.getOrderedQuantity()));
-
-
-
-
-                    Printer.getInstance().addText(AlignMode.CENTER, single_divider);
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, "SUMMARY");
-                    setFontSpec(FONT_SIZE_LARGE);
-                    Printer.getInstance().addText(AlignMode.CENTER, formatAmount(theOne, true));
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, single_divider);
-
-//
-
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL", formatAmount(total, true)));
+                    count = count + 1;
                 }
+
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, "SUMMARY");
+                setFontSpec(FONT_SIZE_LARGE);
+                Printer.getInstance().addText(AlignMode.CENTER, formatAmount(sumTotal, true));
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+
+
+                // Add company details
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, "E-MENU");
+                Printer.getInstance().addText(AlignMode.CENTER, "VERSION 1.0");
+                Printer.getInstance().addText(AlignMode.CENTER, "Powered By:");
+                Printer.getInstance().addText(AlignMode.CENTER, "Efull Technologies Nigeria");
+
+
+
+                // Add whitespace
+                Printer.getInstance().feedLine(6);
+                // Start printing
+                Printer.getInstance().start(new OnPrintListener.Stub() {
+
+                    @Override
+                    public void onFinish() throws RemoteException {
+                        Log.d("Print", "----- onFinish -----");
+
+                        hideDialog();
+                        Toast.makeText(context.getApplicationContext(), R.string.succeed, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(int error) throws RemoteException {
+                        Log.d("Print", "----- onError ----");
+
+                        hideDialog();
+                        Toast.makeText(context.getApplicationContext(), Printer.getErrorId(error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else{
+                // notify user abt empty order
             }
-
-            // Add company details
-            setFontSpec(FONT_SIZE_NORMAL);
-            Printer.getInstance().addText(AlignMode.CENTER, "E-MENU");
-            Printer.getInstance().addText(AlignMode.CENTER, "VERSION 1.0");
-            Printer.getInstance().addText(AlignMode.CENTER, "Powered By:");
-            Printer.getInstance().addText(AlignMode.CENTER, "Efull Technologies Nigeria");
-
-
-            setFontSpec(FONT_SIZE_NORMAL);
-            Printer.getInstance().addText(AlignMode.CENTER, divider);
-
-
-            // Add whitespace
-            Printer.getInstance().feedLine(6);
-            // Start printing
-            Printer.getInstance().start(new OnPrintListener.Stub() {
-
-                @Override
-                public void onFinish() throws RemoteException {
-                    Log.d("Print", "----- onFinish -----");
-
-                    hideDialog();
-                    Toast.makeText(context.getApplicationContext(), R.string.succeed, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onError(int error) throws RemoteException {
-                    Log.d("Print", "----- onError ----");
-
-                    hideDialog();
-                    Toast.makeText(context.getApplicationContext(), Printer.getErrorId(error), Toast.LENGTH_SHORT).show();
-                }
-            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }
