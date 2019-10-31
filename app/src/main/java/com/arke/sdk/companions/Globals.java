@@ -12,6 +12,9 @@ public class Globals {
     public static final SimpleDateFormat MONTH_AND_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d", Locale.getDefault());
     public static final SimpleDateFormat DATE_FORMATTER_IN_12HRS = new SimpleDateFormat("h:mm a", Locale.getDefault());
     public static final String USE_TYPE = "emenu_use_type";
+    public static final String ADMIN_TAG = "admin";
+    public static final int ADMIN_TAG_ID = 263389;
+    public static final String DEFAULT_PWD = "12345";
     public static final String RESTAURANT_OR_BAR_NAME = "emenu_restaurant_or_bar_name";
     public static final String IS_APP_SETUP = "is_app_setup";
     public static final String RESTAURANT_OR_BAR_EMAIL_ADDRESS = "emenu_restaurant_or_bar_email_address";

@@ -41,6 +41,8 @@ import com.google.gson.reflect.TypeToken;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -227,12 +229,39 @@ public class DataStoreClient {
         newRestaurantOrBar.saveInBackground(e -> {
             if (e == null) {
                 RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(newRestaurantOrBar);
+                // create a default admin account using the provided details
+                createNewAdminAccount(result, newRestaurantOrBar);
                 baseModelOperationDoneCallback.done(result, null);
             } else {
                 if (e.getCode() == ParseException.CONNECTION_FAILED) {
                     baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
                 } else {
                     baseModelOperationDoneCallback.done(null, getException("Error creating new Restaurant/Bar. Please try again"));
+                }
+            }
+        });
+    }
+
+    private static void createNewAdminAccount(RestaurantOrBarInfo restaurantOrBarInfo, ParseObject restaurant){
+        String passCode = restaurant.getString(Globals.RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED);
+
+        ParseUser user = new ParseUser();
+        // Set the user's username and password, which can be obtained by a forms
+        user.setUsername(restaurantOrBarInfo.getRestaurantOrBarEmailAddress());
+        user.setEmail(restaurantOrBarInfo.getRestaurantOrBarEmailAddress()+"/"+passCode);
+        user.setPassword(passCode);
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    try {
+                        user.put("res_id", restaurantOrBarInfo.getRestaurantOrBarId()); // restaurant ID
+                        user.put("account_type", "Admin");
+                        user.put("user_type", Globals.ADMIN_TAG_ID);
+                        user.save();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });

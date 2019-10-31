@@ -7,6 +7,7 @@ import android.util.SparseIntArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -99,11 +100,13 @@ public class OnBoardingActivity extends BaseActivity {
     private void initSignIn() {
         String resId = AppPrefs.getRestaurantOrBarId();
         boolean isAppSetup = AppPrefs.isAppSetup();
+        Toast.makeText(this, "resid = "+resId + "isAppsetup" +isAppSetup, Toast.LENGTH_LONG).show();
+
         if (resId != null && isAppSetup){
             // Navigate to user login page
-            Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
-            startActivity(userLoginIntent);
-        }else {
+         Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+         startActivity(userLoginIntent);
+  }else {
         Intent accountCreationIntent = new Intent(this, LogInActivity.class);
         startActivity(accountCreationIntent);
 

@@ -18,7 +18,9 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.UserLoginActivity"></activity>
+        <activity android:name=".ui.activities.InitialAccountSetupActivity"></activity>
+        <activity android:name=".ui.activities.UserLoginActivity"
+            android:label="SIGN IN"/>
         <activity android:name=".demo.UserLoginActivity" />
 
         <uses-library

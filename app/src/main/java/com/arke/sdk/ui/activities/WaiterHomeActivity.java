@@ -65,6 +65,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -625,14 +626,28 @@ public class WaiterHomeActivity extends BaseActivity {
         }
     }
 
-    private void attemptLogOut() {
-        showOperationsDialog("Logging You Out of " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
-        AppPrefs.setUp(false);
+//    private void attemptLogOut() {
+//        showOperationsDialog("Logging You Out of " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
+//        AppPrefs.setUp(false);
+//        AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
+//        AppPrefs.persistRestaurantOrBarEmailAddress(null);
+//        new Handler().postDelayed(() -> {
+//            dismissProgressDialog();
+//            Intent splashIntent = new Intent(WaiterHomeActivity.this, SplashActivity.class);
+//            startActivity(splashIntent);
+//            finish();
+//        }, 2000);
+//    }
+
+
+
+    private void attemptUserLogOut() {
+        showOperationsDialog("Logging You Out", "Please Wait");
+        ParseUser.logOut();
         AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
-        AppPrefs.persistRestaurantOrBarEmailAddress(null);
         new Handler().postDelayed(() -> {
             dismissProgressDialog();
-            Intent splashIntent = new Intent(WaiterHomeActivity.this, SplashActivity.class);
+            Intent splashIntent = new Intent(WaiterHomeActivity.this, UserLoginActivity.class);
             startActivity(splashIntent);
             finish();
         }, 2000);
@@ -717,18 +732,21 @@ public class WaiterHomeActivity extends BaseActivity {
         MenuItem kitchenItem = navigationView.getMenu().findItem(R.id.kitchen_view);
         MenuItem barItem = navigationView.getMenu().findItem(R.id.bar_view);
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.admin_view);
-        if (currentUseType == Globals.UseType.USE_TYPE_ADMIN.ordinal()) {
+        if (currentUseType != Globals.UseType.USE_TYPE_ADMIN.ordinal()) {
             adminItem.setVisible(false);
-        }
-        if (currentUseType == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
             waiterMenuItem.setVisible(false);
-        }
-        if (currentUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
             kitchenItem.setVisible(false);
-        }
-        if (currentUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
             barItem.setVisible(false);
         }
+//        if (currentUseType == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
+//            waiterMenuItem.setVisible(false);
+//        }
+//        if (currentUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
+//            kitchenItem.setVisible(false);
+//        }
+//        if (currentUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
+//            barItem.setVisible(false);
+//        }
         supportInvalidateOptionsMenu();
         navHeaderView.invalidate();
     }
@@ -767,9 +785,13 @@ public class WaiterHomeActivity extends BaseActivity {
                 .setNegativeText("CANCEL")
                 .setPositiveListener(lottieAlertDialog -> {
                     lottieAlertDialog.dismiss();
-                    attemptLogOut();
+                    attemptUserLogOut();
                 }).setNegativeListener(Dialog::dismiss);
         logOutDialogBuilder.build().show();
     }
+
+
+
+
 
 }
