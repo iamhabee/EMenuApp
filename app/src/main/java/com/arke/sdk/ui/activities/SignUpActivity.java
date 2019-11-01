@@ -134,7 +134,7 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
     }
 
     private void configureDeviceUser(){
-        ParseUser.logInInBackground("admin", Globals.DEFAULT_PWD, new LogInCallback() {
+        ParseUser.logInInBackground(AppPrefs.getRestaurantOrBarEmailAddress(), Globals.DEFAULT_PWD, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
                 if (parseUser != null) {
@@ -153,7 +153,7 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
                         }
                     }else {
                         // user is not assigned to logged in restaurant
-                        Toast.makeText(SignUpActivity.this, "usernis not assigned to logged in res", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SignUpActivity.this, "user is not assigned to logged in res", Toast.LENGTH_LONG).show();
 
                         ParseUser.logOut();
                     }

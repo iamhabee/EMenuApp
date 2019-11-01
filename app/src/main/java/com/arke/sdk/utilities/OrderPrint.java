@@ -14,7 +14,8 @@ import android.util.Log;
 import com.arke.sdk.R;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.util.printer.Printer;
-        import com.usdk.apiservice.aidl.printer.ASCScale;
+import com.parse.ParseUser;
+import com.usdk.apiservice.aidl.printer.ASCScale;
         import com.usdk.apiservice.aidl.printer.ASCSize;
         import com.usdk.apiservice.aidl.printer.AlignMode;
         import com.usdk.apiservice.aidl.printer.HZScale;
@@ -97,7 +98,7 @@ public class OrderPrint {
                         setFontSpec(FONT_SIZE_NORMAL);
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG", "" + eMenuItem.getTableTag()));
                         setFontSpec(FONT_SIZE_NORMAL);
-                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG", "" + eMenuItem.getWaiterTag()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG", "" + ParseUser.getCurrentUser().getUsername()));
                     }
 
                     setFontSpec(FONT_SIZE_NORMAL);

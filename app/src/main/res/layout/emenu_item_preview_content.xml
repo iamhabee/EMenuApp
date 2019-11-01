@@ -319,12 +319,13 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Waiter Tag:"
+                    android:text="Waiter"
                     android:textColor="@color/black"
                     android:textSize="19sp"
                     app:textStyle="medium" />
 
-                <EditText
+                <com.arke.sdk.ui.views.EMenuTextView
+
                     android:id="@+id/waiter_tag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -332,8 +333,6 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:background="@drawable/fancy_input_background"
-                    android:hint="(E.g amaka)"
-                    android:inputType="text"
                     android:padding="6dp"
                     android:paddingBottom="5dp"
                     android:textColorHint="@color/ease_gray"

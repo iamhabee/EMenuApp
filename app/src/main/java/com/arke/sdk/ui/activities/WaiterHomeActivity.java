@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -728,11 +729,14 @@ public class WaiterHomeActivity extends BaseActivity {
             UiUtils.loadImageIntoView(restaurantOrBarCoverPhotoView, restaurantOrBarPhotoUrl);
         }
         int currentUseType = AppPrefs.getUseType();
+        Toast.makeText(this, "User: "+currentUseType, Toast.LENGTH_SHORT).show();
         MenuItem waiterMenuItem = navigationView.getMenu().findItem(R.id.waiter_view);
         MenuItem kitchenItem = navigationView.getMenu().findItem(R.id.kitchen_view);
         MenuItem barItem = navigationView.getMenu().findItem(R.id.bar_view);
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.admin_view);
-        if (currentUseType != Globals.UseType.USE_TYPE_ADMIN.ordinal()) {
+
+
+        if (ParseUser.getCurrentUser().getInt("user_type") != Globals.ADMIN_TAG_ID) {
             adminItem.setVisible(false);
             waiterMenuItem.setVisible(false);
             kitchenItem.setVisible(false);

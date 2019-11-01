@@ -248,8 +248,8 @@ public class DataStoreClient {
         ParseUser user = new ParseUser();
         // Set the user's username and password, which can be obtained by a forms
         user.setUsername(restaurantOrBarInfo.getRestaurantOrBarEmailAddress());
-        user.setEmail(restaurantOrBarInfo.getRestaurantOrBarEmailAddress()+"/"+passCode);
-        user.setPassword(passCode);
+        user.setEmail(restaurantOrBarInfo.getRestaurantOrBarEmailAddress());
+        user.setPassword(Globals.DEFAULT_PWD);
         user.signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {

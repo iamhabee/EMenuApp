@@ -53,11 +53,15 @@ public class UserLoginActivity extends AppCompatActivity {
         welcomeText = findViewById(R.id.welcome_text);
         switchAccount = findViewById(R.id.switchAccount);
 
-
         switchAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent switchA = new Intent(UserLoginActivity.this, LogInActivity.class);
+                AppPrefs.setUp(false);
+                AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
+                AppPrefs.persistRestaurantOrBarId(null);
+                AppPrefs.persistRestaurantOrBarEmailAddress(null);
+                Intent switchA = new Intent(UserLoginActivity.this, OnBoardingActivity.class);
+                switchA.putExtra("overrideAppSetup", true);
                 startActivity(switchA);
                 finish();
             }

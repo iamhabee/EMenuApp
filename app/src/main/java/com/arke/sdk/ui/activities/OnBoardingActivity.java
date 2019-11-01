@@ -34,6 +34,7 @@ public class OnBoardingActivity extends BaseActivity {
 
     private DisplayMetrics displayMetrics;
     private CurvedBottomSheet curvedBottomSheet;
+    private Boolean overrideAppSetup;
 
     @BindView(R.id.button_log_in)
     Button logInButton;
@@ -51,6 +52,9 @@ public class OnBoardingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_on_boarding);
         ButterKnife.bind(this);
+        //get intent extras
+        Intent intent = getIntent();
+        overrideAppSetup = intent.getBooleanExtra("overrideAppSetup", false);
         ArkeSdkDemoApplication.silenceIncomingNotifications();
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         displayMetrics = new DisplayMetrics();
@@ -80,8 +84,11 @@ public class OnBoardingActivity extends BaseActivity {
     }
 
     private void checkAndFinish() {
-        if (AppPrefs.isAppSetup()) {
+        if (AppPrefs.isAppSetup() && !overrideAppSetup) {
             finish();
+        }else{
+            initAuthenticationScreen();
+            skipOnBoarding.setVisibility(View.GONE);
         }
     }
 

@@ -20,6 +20,8 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
     defaultConfig {
+//        this should be changed when it
+//        is similar with another app on the same device
         applicationId 'com.arke.sdk.demo'
         minSdkVersion 21
         targetSdkVersion 29

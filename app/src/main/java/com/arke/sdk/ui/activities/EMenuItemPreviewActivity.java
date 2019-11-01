@@ -53,6 +53,7 @@ import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAda
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -110,7 +111,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     EditText customerTag;
 
     @BindView(R.id.waiter_tag)
-    EditText waiterTag;
+    TextView waiterTag;
 
     @BindView(R.id.waiter_tag_container)
     View waiterTagContainer;
@@ -177,11 +178,10 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emenu_item_preview_layout);
-
+        waiterTag = findViewById(R.id.waiter_tag);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
-
-
+        waiterTag.setText(""+ParseUser.getCurrentUser().getString("username"));
 
         ButterKnife.bind(this);
         Bundle intentExtras = getIntent().getExtras();
@@ -463,25 +463,26 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
             }
         });
-        waiterTag.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String waiterTagVal = charSequence.toString().trim();
-                if (StringUtils.isNotEmpty(waiterTagVal)) {
-                    drinksAdapter.setWaiterTag(waiterTagVal);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+//        waiterTag.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                String waiterTagVal = charSequence.toString().trim();
+//                if (StringUtils.isNotEmpty(waiterTagVal)) {
+//                    drinksAdapter.setWaiterTag(waiterTagVal);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//            }
+//        });
         drinksEndSearchIcon.setOnClickListener(view -> UiUtils.forceShowKeyboard(drinksSearchBox));
         endSearchIconView.setOnClickListener(view -> UiUtils.forceShowKeyboard(searchBox));
     }
@@ -696,7 +697,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
         String customerTagValue = customerTag.getText().toString().trim();
-        String waiterTagValue = waiterTag.getText().toString().trim();
+        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
         boolean isTakeAway = takeAway.isChecked();
         if (!isTakeAway && StringUtils.isEmpty(tableTagValue)) {
             tableTag.setError("Please provide a table tag to associate with this Item.");
@@ -727,7 +728,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         waiterTag.setError(null);
         processSelections(eMenuItem, EMenuGenUtils.getDecimalFormattedString(eMenuItem.getMenuItemPrice()));
         addItemToCustomerOrders(tableTagValue, customerTagValue, waiterTagValue, deviceId, Integer.parseInt(quantityBox.getText().toString().trim()), eMenuItem);
-        DataStoreClient.addWaiterIfNotExisting(waiterTagValue);
+//        DataStoreClient.addWaiterIfNotExisting(waiterTagValue);
         AppPrefs.persistWaiterTag(waiterTagValue);
     }
 
