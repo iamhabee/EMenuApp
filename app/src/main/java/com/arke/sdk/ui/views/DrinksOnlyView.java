@@ -168,7 +168,8 @@ public class DrinksOnlyView extends FrameLayout {
 
     public void addItemToTableOrders() {
         drinkItem.setOrderedQuantity(1);
-        DataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTag, customerTag, waiterTag, 1, drinkItem, (eMenuOrder, eMenuItem, e) -> {
+        DataStoreClient dataStoreClient = new DataStoreClient(getContext());
+        dataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTag, customerTag, waiterTag, 1, drinkItem, (eMenuOrder, eMenuItem, e) -> {
             if (e == null) {
                 EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
             }

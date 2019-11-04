@@ -84,6 +84,10 @@
 
     </FrameLayout>
 
+
+
+
+
     <com.arke.sdk.ui.views.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"
         android:layout_width="match_parent"
@@ -92,20 +96,49 @@
         app:base_alpha="0.8"
         app:duration="2500">
 
-        <com.arke.sdk.ui.views.EMenuTextView
-            android:id="@+id/progress_update"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@color/colorPrimary"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:text="Hello Kitchen, Where are you on this?"
-            android:textColor="@color/white"
-            app:textStyle="medium"
-            tools:ignore="HardcodedText" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_height="match_parent">
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/progress_update"
+                android:layout_width="180dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/colorPrimary"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Hello Kitchen, Where are you on this?"
+                android:textColor="@color/white"
+                app:textStyle="medium"
+                tools:ignore="HardcodedText" />
+
+
+
+            <com.arke.sdk.ui.views.EMenuTextView
+                android:id="@+id/print"
+                android:layout_width="220dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/colorGreen"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="Print Slip"
+                android:textColor="@color/white"
+                app:textStyle="medium"
+                tools:ignore="HardcodedText" />
+
+
+        </LinearLayout>
 
     </com.arke.sdk.ui.views.ShimmerFrameLayout>
+
+
+
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

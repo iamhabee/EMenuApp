@@ -4,14 +4,18 @@ import java.io.IOException;
 
         import android.app.AlertDialog;
         import android.content.Context;
-        import android.os.RemoteException;
-        import android.util.Log;
+import android.content.SharedPreferences;
+import android.os.RemoteException;
+import android.preference.PreferenceManager;
+import android.util.Log;
         import android.view.View;
         import android.widget.Toast;
 
 import com.arke.sdk.R;
+import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.util.printer.Printer;
-        import com.usdk.apiservice.aidl.printer.ASCScale;
+import com.parse.ParseUser;
+import com.usdk.apiservice.aidl.printer.ASCScale;
         import com.usdk.apiservice.aidl.printer.ASCSize;
         import com.usdk.apiservice.aidl.printer.AlignMode;
         import com.usdk.apiservice.aidl.printer.HZScale;
@@ -21,7 +25,9 @@ import com.arke.sdk.util.printer.Printer;
         import java.io.File;
         import java.io.FileInputStream;
         import java.io.IOException;
-        import java.util.ArrayList;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderPrint {
 
@@ -32,7 +38,9 @@ public class OrderPrint {
     private static final int FONT_SIZE_LARGE = 2;
     private static final String DIR = "/storage/emulated/0/RukkabetAgent/assets/screenshots/";
     private static final String divider = "===========================================";
+    private static final String single_divider = "***********************************";
 
+    SharedPreferences preferences;
     /**
      * Alert dialog.
      */
@@ -44,35 +52,16 @@ public class OrderPrint {
     public OrderPrint(Context context, AlertDialog dialog) {
         this.context = context;
         this.dialog = dialog;
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
 
-    public void validateSlipThenPrint(String slipCode){
-//        Contact server to get all bets placed
-
-
-        //  save betting slip details
-        CustomerOrder slipInfo = new CustomerOrder();
-        slipInfo.stakeDetails("RUKBET-773883-38849", "9987690", "23/06/2019 15:08", "2,000.00", "5.00", "0.00", "10,000.00");
-
-        //      create array list to store betting stakes
-        ArrayList<CustomerOrder> stakes = new ArrayList<>();
-
-        //      static stakes for testing
-        CustomerOrder stake1 = new CustomerOrder();
-        stake1.NewStake(1, "ENGLISH PREMIERSHIP", "MAN. UTD", "REAL MAR", "Over 1.2");
-
-        CustomerOrder stake2 = new CustomerOrder();
-        stake2.NewStake(1, "LA LIGA", "BARCA. F.C", "JUVENTUS", "Under 2.5");
-
-        // add stakes to the array list
-        stakes.add(stake1);
-        stakes.add(stake2);
-
-        printSlip(slipInfo, stakes);
+    public void validateSlipThenPrint(List<EMenuItem> orders){
+        // generate some other information
+        printSlip(orders);
     }
 
-    private void printSlip(CustomerOrder slipInfo, ArrayList<CustomerOrder> stakes) {
+    private void printSlip(List<EMenuItem> orders) {
 
         // Show dialog
         showDialog(R.string.waiting_for_printing, false);
@@ -83,72 +72,129 @@ public class OrderPrint {
             // Set gray
             Printer.getInstance().setPrnGray(5);
 
-            // Add logo
-            Printer.getInstance().addImage(AlignMode.CENTER, readAssetsFileStorage(DIR+"rukka_bet_logo.png"));
-//                    stake details
-            Printer.getInstance().addText(0, formatAlignedJustified("SLIP ID", slipInfo.slipId));
-            Printer.getInstance().addText(0, formatAlignedJustified("USER ID", slipInfo.userId));
-            Printer.getInstance().addText(0, formatAlignedJustified("DATE", slipInfo.dateTime));
-
             // Loop through stakes array list and add items
-            for (CustomerOrder stake: stakes) {
+
+            if (orders != null && !orders.isEmpty()) {
+                int count = 1, itemQty = 0;
+                double total = 0, unitPrice = 0, sumTotal = 0;
 
                 setFontSpec(FONT_SIZE_NORMAL);
-                Printer.getInstance().addText(AlignMode.CENTER, divider);
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
                 setFontSpec(FONT_SIZE_LARGE);
-                Printer.getInstance().addText(AlignMode.LEFT, stake.sportCategory);
-
+                Printer.getInstance().addText(AlignMode.CENTER, "ORDER ITEMS");
                 setFontSpec(FONT_SIZE_NORMAL);
-                Printer.getInstance().addText(AlignMode.LEFT, stake.team1+" VS "+ stake.team2);
-                Printer.getInstance().addText(AlignMode.LEFT, stake.stake);
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+
+
+                for (EMenuItem eMenuItem : orders) {
+                    unitPrice = Double.parseDouble(eMenuItem.getMenuItemPrice());
+                    itemQty = eMenuItem.getOrderedQuantity();
+                    total = unitPrice * itemQty;
+                    sumTotal = sumTotal + total;
+
+                    if (count == 1) {
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("CUSTOMER TAG", "" + eMenuItem.getCustomerTag()));
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG", "" + eMenuItem.getTableTag()));
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG", "" + ParseUser.getCurrentUser().getUsername()));
+                    }
+
+                    setFontSpec(FONT_SIZE_NORMAL);
+                    Printer.getInstance().addText(AlignMode.CENTER, divider);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM", "" + eMenuItem.getMenuItemName()));
+
+                    setFontSpec(FONT_SIZE_NORMAL);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY", "" + eMenuItem.getOrderedQuantity()));
+
+
+                    setFontSpec(FONT_SIZE_NORMAL);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE", formatAmount(unitPrice, true)));
+
+                    setFontSpec(FONT_SIZE_NORMAL);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL", formatAmount(total, true)));
+                    count = count + 1;
+                }
+
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, "SUMMARY");
+                setFontSpec(FONT_SIZE_LARGE);
+                Printer.getInstance().addText(AlignMode.CENTER, formatAmount(sumTotal, true));
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+
+
+                // Add company details
+                setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, "E-MENU");
+                Printer.getInstance().addText(AlignMode.CENTER, "VERSION 1.0");
+                Printer.getInstance().addText(AlignMode.CENTER, "Powered By:");
+                Printer.getInstance().addText(AlignMode.CENTER, "Efull Technologies Nigeria");
+
+
+
+                // Add whitespace
+                Printer.getInstance().feedLine(6);
+                // Start printing
+                Printer.getInstance().start(new OnPrintListener.Stub() {
+
+                    @Override
+                    public void onFinish() throws RemoteException {
+                        Log.d("Print", "----- onFinish -----");
+
+                        hideDialog();
+                        Toast.makeText(context.getApplicationContext(), R.string.succeed, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onError(int error) throws RemoteException {
+                        Log.d("Print", "----- onError ----");
+
+                        hideDialog();
+                        Toast.makeText(context.getApplicationContext(), Printer.getErrorId(error), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }else{
+                // notify user abt empty order
             }
-            // Add stake summary
-            setFontSpec(FONT_SIZE_NORMAL);
-            Printer.getInstance().addText(AlignMode.CENTER, divider);
-            Printer.getInstance().addText(AlignMode.CENTER, "SUMMARY");
-            Printer.getInstance().addText(AlignMode.CENTER, divider);
-            Printer.getInstance().addText(0, formatAlignedJustified("TOTAL STAKE", "NGN"+slipInfo.totalStake));
-            Printer.getInstance().addText(0, formatAlignedJustified("TOTAL ODDS", slipInfo.totalOdds));
-            Printer.getInstance().addText(0, formatAlignedJustified("BONUS", "NGN"+slipInfo.bonus));
-            Printer.getInstance().addText(AlignMode.CENTER, "POTENTIAL WINNINGS");
-            setFontSpec(FONT_SIZE_LARGE);
-            Printer.getInstance().addText(AlignMode.CENTER, "NGN"+slipInfo.potentialWinnings);
-
-            // Add QR Code
-            Printer.getInstance().addQrCode(AlignMode.CENTER, 200, 1, slipInfo.slipId);
-            // Add company details
-            setFontSpec(FONT_SIZE_NORMAL);
-            Printer.getInstance().addText(AlignMode.CENTER, "RUKKA BET");
-            Printer.getInstance().addText(AlignMode.CENTER, "Follow us on \nFacebook, Google+, and Twitter");
-            Printer.getInstance().addText(AlignMode.CENTER, "Contact us on \n08162576039 - 08154013511");
-            Printer.getInstance().addText(AlignMode.CENTER, "support@rukkabet.com");
-            Printer.getInstance().addText(AlignMode.CENTER, "www.rukkabet.com");
-
-            // Add whitespace
-            Printer.getInstance().feedLine(6);
-            // Start printing
-            Printer.getInstance().start(new OnPrintListener.Stub() {
-
-                @Override
-                public void onFinish() throws RemoteException {
-                    Log.d("Print", "----- onFinish -----");
-
-                    hideDialog();
-                    Toast.makeText(context.getApplicationContext(), R.string.succeed, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onError(int error) throws RemoteException {
-                    Log.d("Print", "----- onError ----");
-
-                    hideDialog();
-                    Toast.makeText(context.getApplicationContext(), Printer.getErrorId(error), Toast.LENGTH_SHORT).show();
-                }
-            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
+
+
+
+
+
+
+
+    private String formatAmount(double totalAuthAmount, boolean curSym) {
+        String Currency = "NGN";
+        String Separator = ",";
+        Boolean Spacing = false;
+        Boolean Delimiter = false;
+        Boolean Decimals = true;
+        String currencyFormat = "";
+        if (Spacing) {
+            if (Delimiter) {
+                currencyFormat = ". ";
+            } else {
+                currencyFormat = " ";
+            }
+        } else if (Delimiter) {
+            currencyFormat = ".";
+        } else {
+            currencyFormat = "";
+        }
+        if(curSym){
+            currencyFormat = Currency+currencyFormat;
+        }
+        String tformatted = NumberFormat.getCurrencyInstance().format(totalAuthAmount / 1.0D).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
+        return tformatted;
+    }
+
 
 
     /**

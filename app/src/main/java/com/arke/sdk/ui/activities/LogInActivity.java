@@ -3,8 +3,10 @@ package com.arke.sdk.ui.activities;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Patterns;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,10 +55,24 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
     private LottieAlertDialog accountCreationProgressDialog;
     private LottieAlertDialog accountCreationSuccessDialog;
 
+
+
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_auth_form);
+
+
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
+
+
+
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
@@ -105,11 +121,19 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         }
     }
 
+
+
     private void setupForm() {
         AuthFormStep restaurantEmailAddressStep = new AuthFormStep("Restaurant Email Address", "Enter Restaurant Email Address", Globals.AuthFormStepType.STEP_TYPE_EMAIL, accountLogInView);
         AuthFormStep restaurantPassword = new AuthFormStep("Restaurant Password", "Provide Restaurant/Bar Password", Globals.AuthFormStepType.STEP_TYPE_PASSWORD, accountLogInView);
         accountLogInView.setup(this, restaurantEmailAddressStep, restaurantPassword).init();
+
+
+//        editor.putString(getString(""));
+//        editor.putString(getString(restaurantEmailAddressStep,restaurantEmailAddressStep));
+        editor.commit();
     }
+
 
     private void enableNextButton() {
         if (accountLogInView != null) {
@@ -241,10 +265,19 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         deviceUserDialogBuilder.create().show();
     }
 
+
+
+
+
+
+
+
+
+
+
     @Override
     public void onCompletedForm() {
         UiUtils.dismissKeyboard(accountLogInView);
-        showOperationsDialog("Logging You In", "Please wait...");
         DataStoreClient.logInAccount((result, e) -> {
             if (result != null) {
                 if (result instanceof RestaurantOrBarInfo) {
@@ -252,7 +285,11 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
                     showSuccessMessage("Account login successful!", "You have successfully logged into " + restaurantOrBarInfo.getRestaurantOrBarName() + " EMenu services.");
                     new Handler().postDelayed(() -> {
                         dismissSuccessDialog();
-                        configureDeviceUser();
+                        AppPrefs.setUp(true);
+//                        configureDeviceUser();
+                        Intent userLoginIntent = new Intent(LogInActivity.this, UserLoginActivity.class);
+                        startActivity(userLoginIntent);
+                        finish();
                     }, 2000);
                 }
             } else {

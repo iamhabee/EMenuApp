@@ -4,10 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +18,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -50,6 +53,7 @@ import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAda
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -107,7 +111,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     EditText customerTag;
 
     @BindView(R.id.waiter_tag)
-    EditText waiterTag;
+    TextView waiterTag;
 
     @BindView(R.id.waiter_tag_container)
     View waiterTagContainer;
@@ -166,10 +170,19 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private List<EMenuItem> searchList = new ArrayList<>();
     private EMenuItemAutoCompleteSearchAdapter searchAdapter;
 
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+    Context mContext;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.emenu_item_preview_layout);
+        waiterTag = findViewById(R.id.waiter_tag);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
+        waiterTag.setText(""+ParseUser.getCurrentUser().getString("username"));
+
         ButterKnife.bind(this);
         Bundle intentExtras = getIntent().getExtras();
         if (intentExtras != null) {
@@ -450,25 +463,26 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
             }
         });
-        waiterTag.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String waiterTagVal = charSequence.toString().trim();
-                if (StringUtils.isNotEmpty(waiterTagVal)) {
-                    drinksAdapter.setWaiterTag(waiterTagVal);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
+//        waiterTag.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+//                String waiterTagVal = charSequence.toString().trim();
+//                if (StringUtils.isNotEmpty(waiterTagVal)) {
+//                    drinksAdapter.setWaiterTag(waiterTagVal);
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//
+//            }
+//        });
         drinksEndSearchIcon.setOnClickListener(view -> UiUtils.forceShowKeyboard(drinksSearchBox));
         endSearchIconView.setOnClickListener(view -> UiUtils.forceShowKeyboard(searchBox));
     }
@@ -682,14 +696,14 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
-        String indieTagValue = customerTag.getText().toString().trim();
-        String waiterTagValue = waiterTag.getText().toString().trim();
+        String customerTagValue = customerTag.getText().toString().trim();
+        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
         boolean isTakeAway = takeAway.isChecked();
         if (!isTakeAway && StringUtils.isEmpty(tableTagValue)) {
             tableTag.setError("Please provide a table tag to associate with this Item.");
             return;
         }
-        if (StringUtils.isEmpty(indieTagValue)) {
+        if (StringUtils.isEmpty(customerTagValue)) {
             customerTag.setError("Please add a customer on table " + tableTagValue + " to this order.");
             return;
         }
@@ -700,30 +714,38 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         if (deviceId == null) {
             pickDeviceId(granted -> {
                 if (granted) {
-                    prepareItemForAdditionToCart(tableTagValue, indieTagValue, waiterTagValue, deviceId);
+                    prepareItemForAdditionToCart(tableTagValue, customerTagValue, waiterTagValue, deviceId);
                 }
             });
             return;
         }
-        prepareItemForAdditionToCart(tableTagValue, indieTagValue, waiterTagValue, deviceId);
+        prepareItemForAdditionToCart(tableTagValue, customerTagValue, waiterTagValue, deviceId);
     }
 
-    private void prepareItemForAdditionToCart(String tableTagValue, String indieTagValue, String waiterTagValue, String deviceId) {
+    private void prepareItemForAdditionToCart(String tableTagValue, String customerTagValue, String waiterTagValue, String deviceId) {
         tableTag.setError(null);
         customerTag.setError(null);
         waiterTag.setError(null);
         processSelections(eMenuItem, EMenuGenUtils.getDecimalFormattedString(eMenuItem.getMenuItemPrice()));
-        addItemToCustomerOrders(tableTagValue, indieTagValue, waiterTagValue, deviceId, Integer.parseInt(quantityBox.getText().toString().trim()), eMenuItem);
-        DataStoreClient.addWaiterIfNotExisting(waiterTagValue);
+        addItemToCustomerOrders(tableTagValue, customerTagValue, waiterTagValue, deviceId, Integer.parseInt(quantityBox.getText().toString().trim()), eMenuItem);
+//        DataStoreClient.addWaiterIfNotExisting(waiterTagValue);
         AppPrefs.persistWaiterTag(waiterTagValue);
     }
+
+
 
     public void addItemToCustomerOrders(String tableTagValue, String customerTagValue, String waiterTagValue, String deviceId, int quantityCount, EMenuItem item) {
         if (takeAway.isChecked()) {
             tableTagValue = Globals.TAKE_AWAY_TABLE_TAG;
         }
+
+        item.setTableTag(tableTagValue);
+        item.setCustomerTag(customerTagValue);
+        item.setWaiterTag(waiterTagValue);
+
         showOperationsDialog("Adding " + WordUtils.capitalize(eMenuItem.getMenuItemName()) + " Customer " + customerTagValue + " Orders", "Please wait...");
-        DataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTagValue, customerTagValue, waiterTagValue, quantityCount, item, (eMenuOrder, eMenuItem, e) -> {
+        DataStoreClient dataStoreClient = new DataStoreClient(this);
+        dataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTagValue, customerTagValue, waiterTagValue, quantityCount, item, (eMenuOrder, eMenuItem, e) -> {
             dismissProgressDialog();
             if (e == null) {
                 UiUtils.showSafeToast(WordUtils.capitalize(eMenuItem.getMenuItemName()) + " was successfully added to Customer " + eMenuOrder.getCustomerTag() + " orders ");

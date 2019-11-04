@@ -135,7 +135,8 @@ public class EMenuItemView extends MaterialCardView {
             incrementItem.setOnClickListener(view -> {
                 UiUtils.blinkView(view);
                 assert eMenuOrder != null;
-                DataStoreClient.addEMenuItemToCustomerCart(AppPrefs.getDeviceId(), eMenuOrder.getTableTag(), eMenuOrder.getCustomerTag(), eMenuOrder.getWaiterTag(), 1, eMenuItem, (eMenuOrder1, eMenuItem1, e) -> {
+               DataStoreClient dataStoreClient = new DataStoreClient(context);
+               dataStoreClient.addEMenuItemToCustomerCart(AppPrefs.getDeviceId(), eMenuOrder.getTableTag(), eMenuOrder.getCustomerTag(), eMenuOrder.getWaiterTag(), 1, eMenuItem, (eMenuOrder1, eMenuItem1, e) -> {
                     if (e == null) {
                         EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem1));
                     }

@@ -67,20 +67,20 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.content_flipper)
     ViewFlipper mainViewContentFlipper;
 
-    @BindView(R.id.admin_password_view)
-    View adminPasswordView;
+//    @BindView(R.id.admin_password_view)
+//    View adminPasswordView;
 
-    @BindView(R.id.close_password_view)
-    ImageView closePasswordView;
+//    @BindView(R.id.close_password_view)
+//    ImageView closePasswordView;
 
-    @BindView(R.id.password_error_indicator)
-    TextView passwordErrorView;
-
-    @BindView(R.id.password_confirmation_button)
-    Button confirmPasswordBtn;
-
-    @BindView(R.id.admin_password_box)
-    EditText passwordBox;
+//    @BindView(R.id.password_error_indicator)
+//    TextView passwordErrorView;
+//
+//    @BindView(R.id.password_confirmation_button)
+//    Button confirmPasswordBtn;
+//
+//    @BindView(R.id.admin_password_box)
+//    EditText passwordBox;
 
     @BindView(R.id.header_summary)
     TextView headerSummaryView;
@@ -115,11 +115,11 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.root_view_background_view)
     ImageView rootViewBackgroundView;
 
-    @BindView(R.id.password_background_view)
-    ImageView passwordBackgroundView;
+//    @BindView(R.id.password_background_view)
+//    ImageView passwordBackgroundView;
 
-    @BindView(R.id.close_activity)
-    ImageView closeActivityView;
+//    @BindView(R.id.close_activity)
+//    ImageView closeActivityView;
 
     @BindView(R.id.summary_loader)
     ProgressBar summaryLoader;
@@ -133,8 +133,8 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.fetch_data_view)
     TextView fetchDataView;
 
-    @BindView(R.id.forgot_password_view)
-    TextView forgotPasswordView;
+//    @BindView(R.id.forgot_password_view)
+//    TextView forgotPasswordView;
 
     @BindView(R.id.printt)
     Button printtt;
@@ -154,17 +154,21 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private LottieAlertDialog operationsProgressDialog;
     private AlertDialog dialog;
 
+
+
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_view);
+
+
         ButterKnife.bind(this);
         mainViewContentFlipper.setInAnimation(this, R.anim.animation_toggle_in);
         mainViewContentFlipper.setOutAnimation(this, R.anim.animation_toggle_out);
         feedBackView.setClickable(false);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-        paintViews();
+//        paintViews();
         String restaurantOrBarPhotoUrl = AppPrefs.getRestaurantOrBarPhotoUrl();
         initBackgroundPhotos(restaurantOrBarPhotoUrl);
         if (!adminPassword.get()) {
@@ -182,20 +186,20 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
 
 
-
-
-        dialog = new   AlertDialog.Builder(this)
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .create();
-
-        printtt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                OrderPrint orderPrint = new OrderPrint(AdminHomeActivity.this, dialog);
-                orderPrint.validateSlipThenPrint("nvnvnv");
-            }
-        });
+//
+//
+//        dialog = new   AlertDialog.Builder(this)
+//                .setNegativeButton("Cancel", null)
+//                .setCancelable(false)
+//                .create();
+//
+//        printtt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                OrderPrint orderPrint = new OrderPrint(AdminHomeActivity.this, dialog);
+//                orderPrint.validateSlipThenPrint("oya");
+//            }
+//        });
     }
 
 
@@ -321,14 +325,14 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
     @SuppressLint("SetTextI18n")
     private void initEventHandlers() {
-        closeActivityView.setOnClickListener(view -> {
-            UiUtils.blinkView(view);
-            finish();
-        });
-        closePasswordView.setOnClickListener(view -> {
-            UiUtils.blinkView(view);
-            finish();
-        });
+//        closeActivityView.setOnClickListener(view -> {
+//            UiUtils.blinkView(view);
+//            finish();
+//        });
+//        closePasswordView.setOnClickListener(view -> {
+//            UiUtils.blinkView(view);
+//            finish();
+//        });
         feedBackView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             canFetchData.set(true);
@@ -339,44 +343,44 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
             canFetchData.set(true);
             fetchDataBetweenRanges();
         });
-        confirmPasswordBtn.setOnClickListener(view -> {
-            UiUtils.dismissKeyboard(passwordBox);
-            String enteredPassword = passwordBox.getText().toString().trim();
-            if (StringUtils.isEmpty(enteredPassword)) {
-                passwordErrorView.setText("Please enter a valid password");
-            } else {
-                String passwordHash = CryptoUtils.getSha256Digest(enteredPassword);
-                if (passwordHash.equals(AppPrefs.getRestaurantAdminPassword())) {
-                    UiUtils.toggleViewFlipperChild(mainViewContentFlipper, 1);
-                    adminPassword.set(true);
-                    checkThatPasswordHasBeingUpdated();
-                } else {
-                    passwordErrorView.setText("Sorry, you provided an invalid password. Access denied!!!");
-                }
-            }
-        });
-        forgotPasswordView.setOnClickListener(view -> {
-            showOperationsDialog("Initiating Admin Password Recovery", "Please wait...");
-            DataStoreClient.checkIfEmailAddressIsAlreadyRegistered(true, (result, e) -> {
-                dismissProgressDialog();
-                if (e == null) {
-                    RestaurantOrBarInfo restaurantOrBarInfo = (RestaurantOrBarInfo) result;
-                    String restaurantOrBarName = restaurantOrBarInfo.getRestaurantOrBarName();
-                    String restaurantOrBarPassword = restaurantOrBarInfo.getRestaurantOrBarPassword();
-                    String restaurantEmailAddress = restaurantOrBarInfo.getRestaurantOrBarEmailAddress();
-                    EMailClient.sendPasswordRecoveryEmail(true, restaurantEmailAddress, restaurantOrBarName, restaurantOrBarPassword, (done, e1) -> {
-                        dismissProgressDialog();
-                        if (e1 == null) {
-                            showSuccessMessage("Recovery Message Sent!", "A password recovery email was sent to " + AppPrefs.getRestaurantOrBarEmailAddress() + ". If the email is not in your inbox by now, then check the SPAM folder.");
-                        } else {
-                            showErrorMessage("Oops!", e1.getMessage());
-                        }
-                    });
-                } else {
-                    showErrorMessage("Oops!", e.getMessage());
-                }
-            });
-        });
+//        confirmPasswordBtn.setOnClickListener(view -> {
+//            UiUtils.dismissKeyboard(passwordBox);
+//            String enteredPassword = passwordBox.getText().toString().trim();
+//            if (StringUtils.isEmpty(enteredPassword)) {
+//                passwordErrorView.setText("Please enter a valid password");
+//            } else {
+//                String passwordHash = CryptoUtils.getSha256Digest(enteredPassword);
+//                if (passwordHash.equals(AppPrefs.getRestaurantAdminPassword())) {
+//                    UiUtils.toggleViewFlipperChild(mainViewContentFlipper, 1);
+//                    adminPassword.set(true);
+//                    checkThatPasswordHasBeingUpdated();
+//                } else {
+//                    passwordErrorView.setText("Sorry, you provided an invalid password. Access denied!!!");
+//                }
+//            }
+//        });
+//        forgotPasswordView.setOnClickListener(view -> {
+//            showOperationsDialog("Initiating Admin Password Recovery", "Please wait...");
+//            DataStoreClient.checkIfEmailAddressIsAlreadyRegistered(true, (result, e) -> {
+//                dismissProgressDialog();
+//                if (e == null) {
+//                    RestaurantOrBarInfo restaurantOrBarInfo = (RestaurantOrBarInfo) result;
+//                    String restaurantOrBarName = restaurantOrBarInfo.getRestaurantOrBarName();
+//                    String restaurantOrBarPassword = restaurantOrBarInfo.getRestaurantOrBarPassword();
+//                    String restaurantEmailAddress = restaurantOrBarInfo.getRestaurantOrBarEmailAddress();
+//                    EMailClient.sendPasswordRecoveryEmail(true, restaurantEmailAddress, restaurantOrBarName, restaurantOrBarPassword, (done, e1) -> {
+//                        dismissProgressDialog();
+//                        if (e1 == null) {
+//                            showSuccessMessage("Recovery Message Sent!", "A password recovery email was sent to " + AppPrefs.getRestaurantOrBarEmailAddress() + ". If the email is not in your inbox by now, then check the SPAM folder.");
+//                        } else {
+//                            showErrorMessage("Oops!", e1.getMessage());
+//                        }
+//                    });
+//                } else {
+//                    showErrorMessage("Oops!", e.getMessage());
+//                }
+//            });
+//        });
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -417,7 +421,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
     private void initBackgroundPhotos(String restaurantOrBarPhotoUrl) {
         if (StringUtils.isNotEmpty(restaurantOrBarPhotoUrl)) {
-            UiUtils.loadImageIntoView(passwordBackgroundView, restaurantOrBarPhotoUrl);
+//            UiUtils.loadImageIntoView(passwordBackgroundView, restaurantOrBarPhotoUrl);
             UiUtils.loadImageIntoView(rootViewBackgroundView, restaurantOrBarPhotoUrl);
         }
     }
@@ -564,7 +568,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private void paintViews() {
         if (!UiUtils.whitish(primaryColorInt)) {
             parentBackgroundView.setBackgroundColor(Color.parseColor(primaryColorHex));
-            adminPasswordView.setBackgroundColor(Color.parseColor(primaryColorHex));
+//            adminPasswordView.setBackgroundColor(Color.parseColor(primaryColorHex));
         }
     }
 

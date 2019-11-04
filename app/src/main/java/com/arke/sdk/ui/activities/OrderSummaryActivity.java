@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -26,6 +27,7 @@ import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 //import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
@@ -90,6 +92,13 @@ public class OrderSummaryActivity extends BaseActivity {
     private List<EMenuItem> customerOrders = new ArrayList<>();
     private CustomerOrdersRecyclerViewAdapter customerOrdersRecyclerViewAdapter;
     private boolean clickable = false;
+    private android.app.AlertDialog dialog;
+
+    @BindView(R.id.print)
+    TextView printOrders;
+
+    Button print;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +106,9 @@ public class OrderSummaryActivity extends BaseActivity {
         setContentView(R.layout.order_summary_layout);
         ButterKnife.bind(this);
         Bundle intentExtras = getIntent().getExtras();
+
+
+
         if (intentExtras != null) {
             eMenuOrderString = intentExtras.getString(Globals.EMENU_ORDER);
             Type serializableType = new TypeToken<EMenuOrder>() {
@@ -110,7 +122,25 @@ public class OrderSummaryActivity extends BaseActivity {
             }
         }
         initEventHandlers();
+
+
+
+        printOrders.setOnClickListener(view -> {
+
+            dialog = new android.app.AlertDialog.Builder(OrderSummaryActivity.this)
+                    .setNegativeButton("Cancel", null)
+                    .setCancelable(false)
+                    .create();
+
+
+            OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
+            orderPrint.validateSlipThenPrint(customerOrders);
+
+
+        });
+        ;
     }
+
 
     @Override
     public void onEventMainThread(Object event) {
@@ -180,6 +210,9 @@ public class OrderSummaryActivity extends BaseActivity {
         }
         loadItemsIntoAdapter();
     }
+
+
+
 
     private void setupRecyclerView() {
         customerOrdersRecyclerViewAdapter = new CustomerOrdersRecyclerViewAdapter(this, OrderSummaryActivity.class.getSimpleName(), eMenuOrder);
@@ -343,7 +376,7 @@ public class OrderSummaryActivity extends BaseActivity {
     }
 
     private String getProgressMessage(String preMessage) {
-        return preMessage + " on this order.";
+        return preMessage;
     }
 
 }

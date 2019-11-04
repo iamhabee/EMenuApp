@@ -68,6 +68,25 @@ public class EMenuItem extends BaseModel implements Serializable {
     @Expose
     public int quantityAvailableInStock;
 
+
+
+    @Column
+    @Expose
+    public String tableTag;
+
+
+
+
+    @Column
+    @Expose
+    public String  customerTag;
+
+
+
+    @Column
+    @Expose
+    public String waiterTag;
+
     @Column
     @Expose
     public String menuItemPrice;
@@ -103,6 +122,30 @@ public class EMenuItem extends BaseModel implements Serializable {
     @Column
     @Expose
     public String extrasData;
+
+    public String getTableTag() {
+        return tableTag;
+    }
+
+    public void setTableTag(String tableTag) {
+        this.tableTag = tableTag;
+    }
+
+    public String getCustomerTag() {
+        return customerTag;
+    }
+
+    public void setCustomerTag(String customerTag) {
+        this.customerTag = customerTag;
+    }
+
+    public String getWaiterTag() {
+        return waiterTag;
+    }
+
+    public void setWaiterTag(String waiterTag) {
+        this.waiterTag = waiterTag;
+    }
 
     public void setMetaData(String metaData) {
         this.metaData = metaData;

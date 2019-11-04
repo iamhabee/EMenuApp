@@ -51,12 +51,12 @@
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/close_activity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    app:srcCompat="@drawable/close_icon" />
+                <!--<androidx.appcompat.widget.AppCompatImageView-->
+                    <!--android:id="@+id/close_activity"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_margin="16dp"-->
+                    <!--app:srcCompat="@drawable/close_icon" />-->
 
             </LinearLayout>
 
@@ -322,6 +322,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="printttttt"
+        android:visibility="gone"
         android:id="@+id/printt"/>
 
 </FrameLayout>
