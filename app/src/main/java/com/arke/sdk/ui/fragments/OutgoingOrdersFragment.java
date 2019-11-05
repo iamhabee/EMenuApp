@@ -7,6 +7,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -60,8 +61,6 @@ public class OutgoingOrdersFragment extends BaseFragment {
     @BindView(R.id.empty_view_message)
     TextView emptyViewMessageView;
 
-    @BindView(R.id.refresh_button)
-    TextView refreshButton;
 
     @BindView(R.id.network_error_msg)
     TextView networkErrorMsgView;
@@ -168,16 +167,8 @@ public class OutgoingOrdersFragment extends BaseFragment {
                         UiUtils.showSafeToast(getString(R.string.unresolvable_error_msg));
                     }
                 }
-                refreshButton.setVisibility(View.VISIBLE);
-                refreshButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });
             } else {
                 loadDataInToAdapter(skip == 0, results);
-                refreshButton.setVisibility(View.GONE);
             }
         });
     }

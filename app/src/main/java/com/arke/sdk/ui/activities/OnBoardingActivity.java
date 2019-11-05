@@ -107,7 +107,7 @@ public class OnBoardingActivity extends BaseActivity {
     private void initSignIn() {
         String resId = AppPrefs.getRestaurantOrBarId();
         boolean isAppSetup = AppPrefs.isAppSetup();
-        Toast.makeText(this, "resid = "+resId + "isAppsetup" +isAppSetup, Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "resid = "+resId + "isAppsetup" +isAppSetup, Toast.LENGTH_LONG).show();
 
         if (resId != null && isAppSetup){
             // Navigate to user login page
