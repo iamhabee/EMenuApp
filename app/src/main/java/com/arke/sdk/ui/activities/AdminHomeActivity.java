@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.Nullable;
@@ -251,14 +252,22 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                 } else if (indexOfSelection == 2) {
                     SectionedEMenuItemRecyclerViewAdapter sectionedEMenuItemRecyclerViewAdapter = new SectionedEMenuItemRecyclerViewAdapter(this, totalDrinksServed, AdminHomeActivity.class.getSimpleName());
                     displayMoreInfo(totalDrinksServed.size() + " Drinks Served", sectionedEMenuItemRecyclerViewAdapter);
-                } else if (indexOfSelection == 3) {
+                }else if (indexOfSelection == 3) {
                     Intent restaurantInfo = new Intent(AdminHomeActivity.this, RestaurantOrBarProfileInformationActivity.class);
                     startActivity(restaurantInfo);
                 } else if (indexOfSelection == 4) {
                     Intent settingsIntent = new Intent(AdminHomeActivity.this, SettingsActivity.class);
                     settingsIntent.putExtra(Globals.DISPLAY_ADMIN_SETTINGS, true);
                     startActivity(settingsIntent);
+
                 } else if (indexOfSelection == 5) {
+                    Intent settingsIntent = new Intent(AdminHomeActivity.this, InitialAccountSetupActivity.class);
+//                    Toast.makeText(AdminHomeActivity.this, AppPrefs.getRestaurantOrBarId(), Toast.LENGTH_LONG).show();
+
+                    startActivity(settingsIntent);
+
+
+                } else if (indexOfSelection == 6) {
                     androidx.appcompat.app.AlertDialog.Builder switchOptionsBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
                     switchOptionsBuilder.setTitle("Switch to");
                     switchOptionsBuilder.setSingleChoiceItems(new CharSequence[]{"Waiter View", "Kitchen View", "Bar View"}, -1, (dialogInterface, i) -> {
@@ -271,7 +280,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                         }
                     });
                     switchOptionsBuilder.create().show();
-                } else if (indexOfSelection == 6) {
+                } else if (indexOfSelection == 7) {
                     //Load all the waiters in this restaurant/bar
                     UiUtils.showSafeToast("Please Wait...");
                     DataStoreClient.fetchWaiters((e, waiters) -> {
@@ -614,8 +623,9 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         adminSummaryItems.add(new AdminSummaryItem(2, "0", "Drinks Served", R.drawable.bar_view));
         adminSummaryItems.add(new AdminSummaryItem(3, "Info", null, R.drawable.admin_view));
         adminSummaryItems.add(new AdminSummaryItem(4, "Configs", null, R.drawable.settings));
-        adminSummaryItems.add(new AdminSummaryItem(5, "Switch", null, R.drawable.admin_view_switcher));
-        adminSummaryItems.add(new AdminSummaryItem(6, "Waiters", "Waiters' Sales", R.drawable.waiter_view));
+        adminSummaryItems.add(new AdminSummaryItem(5, "Add User", null, R.drawable.add));
+        adminSummaryItems.add(new AdminSummaryItem(6, "Switch", null, R.drawable.admin_view_switcher));
+        adminSummaryItems.add(new AdminSummaryItem(7, "Waiters", "Waiters' Sales", R.drawable.waiter_view));
     }
 
     private void setupRecyclerView() {
