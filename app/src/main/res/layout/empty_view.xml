@@ -14,13 +14,14 @@
             android:orientation="vertical"
             android:textAlignment="center">
 
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/preloader"
                 android:layout_width="@dimen/lottie_view_width"
                 android:layout_height="@dimen/lottie_view_height"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginLeft="80dp"
+                android:layout_marginRight="80dp"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="629-empty-box.json"
                 app:lottie_loop="false" />
@@ -37,18 +38,6 @@
                 android:text="@string/nothing_in_menu"
                 android:textAlignment="center" />
 
-            <Button
-                android:id="@+id/refresh_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/empty_view_message"
-                android:layout_alignStart="@+id/empty_view_message"
-                android:layout_alignEnd="@+id/empty_view_message"
-                android:layout_alignParentBottom="true"
-                android:backgroundTint="@color/custom_orange"
-                android:text="@string/refresh"
-                android:textAllCaps="false"
-                android:textColor="@color/border_gray_color" />
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>
