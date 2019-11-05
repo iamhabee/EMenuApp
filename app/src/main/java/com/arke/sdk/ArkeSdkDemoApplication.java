@@ -392,17 +392,17 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
 
                 @Override
                 public void onLiveQueryClientDisconnected(ParseLiveQueryClient client, boolean userInitiated) {
-                    attemptLiveQueryReconnection();
+//                    attemptLiveQueryReconnection();
                 }
 
                 @Override
                 public void onLiveQueryError(ParseLiveQueryClient client, LiveQueryException reason) {
-                    attemptLiveQueryReconnection();
+//                    attemptLiveQueryReconnection();
                 }
 
                 @Override
                 public void onSocketError(ParseLiveQueryClient client, Throwable reason) {
-                    attemptLiveQueryReconnection();
+//                    attemptLiveQueryReconnection();
                 }
             });
         } catch (URISyntaxException e) {
@@ -411,18 +411,18 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         }
     }
 
-    private static void attemptLiveQueryReconnection() {
-        if (parseLiveQueryClient != null) {
-            new Thread(() -> {
-                try {
-                    if (isConnected()) {
-                        parseLiveQueryClient.reconnect();
-                    }
-                } catch (NullPointerException ignored) {
-                }
-            }).start();
-        }
-    }
+//    private static void attemptLiveQueryReconnection() {
+//        if (parseLiveQueryClient != null) {
+//            new Thread(() -> {
+//                try {
+//                    if (isConnected()) {
+//                        parseLiveQueryClient.reconnect();
+//                    }
+//                } catch (NullPointerException ignored) {
+//                }
+//            }).start();
+//        }
+//    }
 
     public static ParseLiveQueryClient getParseLiveQueryClient() {
         return parseLiveQueryClient;

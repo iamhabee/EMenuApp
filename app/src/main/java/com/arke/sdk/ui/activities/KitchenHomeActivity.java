@@ -106,10 +106,10 @@ public class KitchenHomeActivity extends BaseActivity {
         initUI();
         initEventHandlers();
 
-        mWorkManager = WorkManager.getInstance();
+//        mWorkManager = WorkManager.getInstance();
 
         // start work manager
-        RefreshScheduler.refreshPeriodicWork();
+//        RefreshScheduler.refreshPeriodicWork();
 
     }
 
