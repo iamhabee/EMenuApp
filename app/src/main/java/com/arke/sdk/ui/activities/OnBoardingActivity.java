@@ -7,6 +7,7 @@ import android.util.SparseIntArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -33,6 +34,7 @@ public class OnBoardingActivity extends BaseActivity {
 
     private DisplayMetrics displayMetrics;
     private CurvedBottomSheet curvedBottomSheet;
+    private Boolean overrideAppSetup;
 
     @BindView(R.id.button_log_in)
     Button logInButton;
@@ -50,6 +52,9 @@ public class OnBoardingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_on_boarding);
         ButterKnife.bind(this);
+        //get intent extras
+        Intent intent = getIntent();
+        overrideAppSetup = intent.getBooleanExtra("overrideAppSetup", false);
         ArkeSdkDemoApplication.silenceIncomingNotifications();
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         displayMetrics = new DisplayMetrics();
@@ -79,8 +84,11 @@ public class OnBoardingActivity extends BaseActivity {
     }
 
     private void checkAndFinish() {
-        if (AppPrefs.isAppSetup()) {
+        if (AppPrefs.isAppSetup() && !overrideAppSetup) {
             finish();
+        }else{
+            initAuthenticationScreen();
+            skipOnBoarding.setVisibility(View.GONE);
         }
     }
 
@@ -97,8 +105,19 @@ public class OnBoardingActivity extends BaseActivity {
     }
 
     private void initSignIn() {
+        String resId = AppPrefs.getRestaurantOrBarId();
+        boolean isAppSetup = AppPrefs.isAppSetup();
+        Toast.makeText(this, "resid = "+resId + "isAppsetup" +isAppSetup, Toast.LENGTH_LONG).show();
+
+        if (resId != null && isAppSetup){
+            // Navigate to user login page
+         Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+         startActivity(userLoginIntent);
+  }else {
         Intent accountCreationIntent = new Intent(this, LogInActivity.class);
         startActivity(accountCreationIntent);
+
+        }
     }
 
     private void initAccountCreation() {

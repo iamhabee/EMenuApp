@@ -57,10 +57,21 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
 
 
 
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_auth_form);
+
+
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = preferences.edit();
+
+
 
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
@@ -118,6 +129,9 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         accountLogInView.setup(this, restaurantEmailAddressStep, restaurantPassword).init();
 
 
+//        editor.putString(getString(""));
+//        editor.putString(getString(restaurantEmailAddressStep,restaurantEmailAddressStep));
+        editor.commit();
     }
 
 
@@ -264,7 +278,6 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
     @Override
     public void onCompletedForm() {
         UiUtils.dismissKeyboard(accountLogInView);
-        showOperationsDialog("Logging You In", "Please wait...");
         DataStoreClient.logInAccount((result, e) -> {
             if (result != null) {
                 if (result instanceof RestaurantOrBarInfo) {
@@ -272,7 +285,11 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
                     showSuccessMessage("Account login successful!", "You have successfully logged into " + restaurantOrBarInfo.getRestaurantOrBarName() + " EMenu services.");
                     new Handler().postDelayed(() -> {
                         dismissSuccessDialog();
-                        configureDeviceUser();
+                        AppPrefs.setUp(true);
+//                        configureDeviceUser();
+                        Intent userLoginIntent = new Intent(LogInActivity.this, UserLoginActivity.class);
+                        startActivity(userLoginIntent);
+                        finish();
                     }, 2000);
                 }
             } else {

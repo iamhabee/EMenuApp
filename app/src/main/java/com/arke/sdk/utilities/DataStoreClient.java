@@ -41,6 +41,8 @@ import com.google.gson.reflect.TypeToken;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -227,12 +229,39 @@ public class DataStoreClient {
         newRestaurantOrBar.saveInBackground(e -> {
             if (e == null) {
                 RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(newRestaurantOrBar);
+                // create a default admin account using the provided details
+                createNewAdminAccount(result, newRestaurantOrBar);
                 baseModelOperationDoneCallback.done(result, null);
             } else {
                 if (e.getCode() == ParseException.CONNECTION_FAILED) {
                     baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
                 } else {
                     baseModelOperationDoneCallback.done(null, getException("Error creating new Restaurant/Bar. Please try again"));
+                }
+            }
+        });
+    }
+
+    private static void createNewAdminAccount(RestaurantOrBarInfo restaurantOrBarInfo, ParseObject restaurant){
+        String passCode = restaurant.getString(Globals.RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED);
+
+        ParseUser user = new ParseUser();
+        // Set the user's username and password, which can be obtained by a forms
+        user.setUsername(restaurantOrBarInfo.getRestaurantOrBarEmailAddress());
+        user.setEmail(restaurantOrBarInfo.getRestaurantOrBarEmailAddress());
+        user.setPassword(Globals.DEFAULT_PWD);
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    try {
+                        user.put("res_id", restaurantOrBarInfo.getRestaurantOrBarId()); // restaurant ID
+                        user.put("account_type", "Admin");
+                        user.put("user_type", Globals.ADMIN_TAG_ID);
+                        user.save();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -726,10 +755,16 @@ public class DataStoreClient {
                                                  String restaurantPasswordRevealed,
                                                  RestaurantUpdateDoneCallback restaurantUpdateDoneCallback) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+
+//        this means selecting all from the table EmenuRestaurantAndBars
         ParseQuery<ParseObject> restaurantOrBarQuery = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
+
+//        object holds the response while e means error
         restaurantOrBarQuery.getInBackground(restaurantOrBarId, (object, e) -> {
             if (e == null && object != null) {
                 if (StringUtils.isNotEmpty(newRestaurantName)) {
+
+//                    this means that the field in the database has been updated using the newRestaurantName variable
                     object.put(Globals.RESTAURANT_OR_BAR_NAME, newRestaurantName);
                 }
                 if (StringUtils.isNotEmpty(newRestaurantEmail)) {
@@ -1334,15 +1369,16 @@ public class DataStoreClient {
         String deviceId = AppPrefs.getDeviceId();
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getObjectId()); // get orders WRT logged in user
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);
         }
         //Ideally, we should only fetch orders taken on the current terminal
-        if (deviceId != null) {
-            eMenuOrdersQuery.whereEqualTo(Globals.WAITER_DEVICE_ID, deviceId);
-        }
+//        if (deviceId != null) {
+//            eMenuOrdersQuery.whereEqualTo(Globals.WAITER_DEVICE_ID, deviceId);
+//        }
         eMenuOrdersQuery.findInBackground((objects, e) -> {
             if (e == null) {
                 List<EMenuOrder> retrievedOrders = new ArrayList<>();

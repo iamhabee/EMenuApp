@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/admin_password_view" />
+    <!--<include layout="@layout/admin_password_view" />-->
 
     <include layout="@layout/admin_view_root" />
 

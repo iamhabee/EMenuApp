@@ -12,13 +12,16 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:name=".ArkeSdkDemoApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.activities.InitialAccountSetupActivity"></activity>
+        <activity android:name=".ui.activities.UserLoginActivity"
+            android:label="SIGN IN"/>
+        <activity android:name=".demo.UserLoginActivity" />
 
         <uses-library
             android:name="android.epay.dataacq"
@@ -40,87 +43,71 @@
             android:theme="@style/AppTheme.WelcomeTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.activities.WelcomeActivity"
             android:theme="@style/AppTheme.WelcomeTheme" />
-
         <activity
             android:name=".ui.activities.OnBoardingActivity"
             android:theme="@style/AppTheme.WelcomeTheme" />
-
         <activity
             android:name=".ui.activities.WaiterHomeActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenLayout|screenSize"
             android:theme="@style/AppTheme.DarkTheme"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.KitchenHomeActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.SignUpActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.LogInActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.CreateNewOrEditEMenuItemActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.activities.RestaurantOrBarProfileInformationActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.EMenuItemPreviewActivity"
             android:theme="@style/AppTheme.DarkTheme"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.UnProcessedOrdersActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".ui.activities.OrderSummaryActivity"
             android:theme="@style/AppTheme.DarkTheme"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.BarHomeActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden" />
-
         <activity
             android:name=".ui.activities.SettingsActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".ui.activities.AdminHomeActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".ui.activities.PasswordUpdateActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden|adjustPan" />
-
         <activity
             android:name=".ui.activities.HelpActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".ui.activities.WaiterSalesActivity"
             android:theme="@style/AppTheme" />
@@ -134,8 +121,6 @@
                     tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>
-
-
     </application>
 
 </manifest>

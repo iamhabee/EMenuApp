@@ -67,7 +67,10 @@ public class WelcomeActivity extends BaseActivity {
         welcomeView.setAnimationListener(hTextView -> {
             boolean setup = AppPrefs.isAppSetup();
             if (setup) {
-                transitionWithPreferences(AppPrefs.getUseType());
+                Intent adminHomeIntent = new Intent(this, UserLoginActivity.class);
+                startActivity(adminHomeIntent);
+                finish();
+//                transitionWithPreferences(AppPrefs.getUseType());
             }
         });
     }
