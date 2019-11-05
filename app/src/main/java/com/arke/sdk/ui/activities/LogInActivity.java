@@ -265,16 +265,6 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         deviceUserDialogBuilder.create().show();
     }
 
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onCompletedForm() {
         UiUtils.dismissKeyboard(accountLogInView);

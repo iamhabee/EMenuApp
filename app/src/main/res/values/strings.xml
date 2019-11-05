@@ -502,5 +502,6 @@
     <string name="user_login_button">Login</string>
     <string name="info_text">Kindly fill the form below to set up a user account</string>
     <string name="refresh">Refresh</string>
+    <string name="open_notify">View Order</string>
 
 </resources>
