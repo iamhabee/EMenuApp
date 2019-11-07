@@ -90,7 +90,9 @@ public class Globals {
     public static final String KITCHEN_ATTENDANT_TAG = "kitchen_attendant_tag";
     public static final String BAR_ATTENDANT_TAG = "bar_attendant_tag";
     public static final String KITCHEN_ATTENDANT_DEVICE_ID = "kitchen_attendant_device_id";
+    public static final String KITCHEN_ATTENDANT_ID = "kitchen_attendant_id";
     public static final String BAR_ATTENDANT_DEVICE_ID = "bar_attendant_device_id";
+    public static final String BAR_ATTENDANT_ID = "bar_attendant_id";
     public static final String ORDER_PROGRESS_STATUS = "order_progress_status";
     public static final String ORDER_PAYMENT_STATUS = "order_payment_status";
     public static final String ORDERED_ITEMS = "ordered_items";
