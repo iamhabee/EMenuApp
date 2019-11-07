@@ -109,9 +109,9 @@ public class KitchenHomeActivity extends BaseActivity {
         initUI();
         initEventHandlers();
 
-
+        /* trigger work manager every 30sec */
         PeriodicWorkRequest periodicWorkRequest =
-                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 5, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 30, TimeUnit.SECONDS)
                 .addTag("periodic_work")
                 .build();
 
@@ -205,7 +205,7 @@ public class KitchenHomeActivity extends BaseActivity {
 
             }
         });
-        ArkeSdkDemoApplication.listenToIncomingNotifications();
+//        ArkeSdkDemoApplication.listenToIncomingNotifications();
     }
 
     @Override

@@ -31,6 +31,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
@@ -58,6 +60,8 @@ import com.arke.sdk.ui.fragments.EMenuCategoriesFragment;
 import com.arke.sdk.ui.fragments.OutgoingOrdersFragment;
 import com.arke.sdk.ui.fragments.WaiterHomeFragment;
 import com.arke.sdk.ui.views.MarginDecoration;
+import com.arke.sdk.workmanager.KitchenAlertWorker;
+import com.arke.sdk.workmanager.WaiterAlertWorker;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -76,6 +80,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -146,7 +151,16 @@ public class WaiterHomeActivity extends BaseActivity {
         initializeTabsAndFragments();
         initUI();
         checkForUnProcessedOrders();
-        ArkeSdkDemoApplication.listenToIncomingNotifications();
+//        ArkeSdkDemoApplication.listenToIncomingNotifications();
+
+        /* trigger work manager every 30sec */
+        PeriodicWorkRequest periodicWorkRequest =
+                new PeriodicWorkRequest.Builder(WaiterAlertWorker.class, 30, TimeUnit.SECONDS)
+                        .addTag("periodic_work")
+                        .build();
+
+        assert WorkManager.getInstance() != null;
+        WorkManager.getInstance().enqueue(periodicWorkRequest);
     }
 
     @Override

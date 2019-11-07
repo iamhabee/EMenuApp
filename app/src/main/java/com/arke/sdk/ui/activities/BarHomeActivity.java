@@ -24,6 +24,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
@@ -36,6 +38,8 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.adapters.PagerAdapter;
 import com.arke.sdk.ui.fragments.BarMenuFragment;
 import com.arke.sdk.ui.fragments.BarOrdersFragment;
+import com.arke.sdk.workmanager.KitchenAlertWorker;
+import com.arke.sdk.workmanager.WaiterAlertWorker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -47,6 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,6 +111,15 @@ public class BarHomeActivity extends BaseActivity {
         initializeTabsAndFragments();
         initUI();
         initEventHandlers();
+
+        /* trigger work manager every 30sec */
+//        PeriodicWorkRequest periodicWorkRequest =
+//                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 30, TimeUnit.SECONDS)
+//                        .addTag("periodic_work")
+//                        .build();
+//
+//        assert WorkManager.getInstance() != null;
+//        WorkManager.getInstance().enqueue(periodicWorkRequest);
     }
 
     @Override
@@ -194,7 +208,7 @@ public class BarHomeActivity extends BaseActivity {
             }
 
         });
-        ArkeSdkDemoApplication.listenToIncomingNotifications();
+//        ArkeSdkDemoApplication.listenToIncomingNotifications();
     }
 
     @Override

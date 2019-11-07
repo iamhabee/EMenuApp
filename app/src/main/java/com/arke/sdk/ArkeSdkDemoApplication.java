@@ -83,15 +83,8 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
     @SuppressLint("StaticFieldLeak")
     private static Context _INSTANCE;
     private static ParseLiveQueryClient parseLiveQueryClient;
-    private static ParseQuery<ParseObject> notificationsQuery;
+//    private static ParseQuery<ParseObject> notificationsQuery;
 
-    public static final String CHANNEL_ORDER_COMPLETED_ID = "orderCompleted";
-    public static final String CHANNEL_ORDER_RECEIVED_ID = "orderReceived";
-    public static final String CHANNEL_PAYMENT_SUCCESSFUL_ID = "paymentSuccessful";
-    public static final String CHANNEL_PAYMENT_FAILED_ID = "paymentFailed";
-    public static final String CHANNEL_PURCHASE_COMPLETED_ID = "purchaseCompleted";
-    public static final String CHANNEL_PURCHASE_FAILED_ID = "purchaseFailed";
-    public static String EMENU_NOTIFICATION = "emenu.notification";
 
     /**
      * Create.
@@ -121,15 +114,8 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         MultiDex.install(getBaseContext());
         setupDatabase();
         initParse();
-        listenToIncomingNotifications();
-        //create notification with channel id
-        createNotificationChannels();
+//        listenToIncomingNotifications();
 
-//        KitchenReceiver receiver = new KitchenReceiver();
-//
-//        IntentFilter filter = new IntentFilter(EMENU_NOTIFICATION);
-//
-//        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
     @Override
@@ -230,36 +216,16 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         }
     }
 
-    public static void listenToIncomingNotifications() {
-        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
-        if (StringUtils.isNotEmpty(restaurantOrBarId)) {
-            listenToNewIncomingNotifications(restaurantOrBarId);
-        }
-    }
 
-    public static void silenceIncomingNotifications() {
-        if (parseLiveQueryClient == null) {
-            return;
-        }
-        if (notificationsQuery != null) {
-            parseLiveQueryClient.unsubscribe(notificationsQuery);
-        }
-    }
+//    public static void silenceIncomingNotifications() {
+//        if (parseLiveQueryClient == null) {
+//            return;
+//        }
+//        if (notificationsQuery != null) {
+//            parseLiveQueryClient.unsubscribe(notificationsQuery);
+//        }
+//    }
 
-    private static void listenToNewIncomingNotifications(String restaurantOrBarId) {
-        if (getParseLiveQueryClient() == null) {
-            return;
-        }
-        notificationsQuery = ParseQuery.getQuery(Globals.NOTIFICATIONS);
-        notificationsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        SubscriptionHandling<ParseObject> subscriptionHandling = getParseLiveQueryClient()
-                .subscribe(notificationsQuery);
-        subscriptionHandling.handleEvents((query, event, object) -> {
-            if (event == SubscriptionHandling.Event.CREATE || event == SubscriptionHandling.Event.UPDATE) {
-                notifyListenersOfNewNotification(object);
-            }
-        });
-    }
 
     public static boolean isAllDrinks(List<EMenuItem> items) {
         boolean allDrinks = true;
@@ -288,69 +254,6 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         return new Pair<>(containsDrinks, containsOnlyDrinks);
     }
 
-    @SuppressWarnings({"UnnecessaryUnboxing", "ConstantConditions"})
-    private static void notifyListenersOfNewNotification(ParseObject notificationObject) {
-        String notificationType = notificationObject.getString(Globals.NOTIFICATION_TYPE);
-        String updateType = notificationObject.getString(Globals.UPDATE_TYPE);
-        boolean deleted = updateType.equals(Globals.DELETED);
-        if (notificationType.equals(Globals.EMENU_ORDER_NOTIFICATION)) {
-            String orderGSON = notificationObject.getString(Globals.NOTIFICATION_DATA);
-            Type objectTpe = new TypeToken<EMenuOrder>() {
-            }.getType();
-            EMenuOrder eMenuOrder = new Gson().fromJson(orderGSON, objectTpe);
-            if (eMenuOrder != null) {
-                Pair<Boolean, Boolean> drinkContainment = containsDrinks(eMenuOrder);
-                int useType = AppPrefs.getUseType();
-                if (useType != Globals.UseType.USE_TYPE_NONE.ordinal()) {
-                    if (useType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
-                        //If it's not all drinks, send a notification
-                        if (!drinkContainment.second.booleanValue()) {
-                            if (updateType.equals(Globals.UPDATE_TYPE_NEW_INSERTION) || updateType.equals(Globals.UPDATE_TYPE_UPDATE)) {
-                                if (!KitchenHomeActivity.ACTIVE) {
-                                    EMenuLogger.d("NotifLogger", "Sending a new none delete notification for kitchen orders");
-                                    AppNotifier.getInstance().sendSingleNotification();
-                                } else {
-                                    EventBus.getDefault().post(new RefreshEMenuOrder(eMenuOrder).setDeleted(deleted));
-                                }
-                            } else {
-                                EventBus.getDefault().post(new RefreshEMenuOrder(eMenuOrder).setDeleted(deleted));
-                            }
-                        }
-                    } else if (useType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
-                        if (!drinkContainment.first.booleanValue()) {
-                            if (updateType.equals(Globals.UPDATE_TYPE_NEW_INSERTION) || updateType.equals(Globals.UPDATE_TYPE_UPDATE)) {
-                                if (!BarHomeActivity.ACTIVE) {
-                                    EMenuLogger.d("NotifLogger", "Sending a new none delete notification for kitchen orders");
-                                    AppNotifier.getInstance().sendSingleNotification();
-                                } else {
-                                    EventBus.getDefault().post(new RefreshEMenuOrder(eMenuOrder).setDeleted(deleted));
-                                }
-                            } else {
-                                EventBus.getDefault().post(new RefreshEMenuOrder(eMenuOrder).setDeleted(deleted));
-                            }
-                        }
-                    } else {
-                        EventBus.getDefault().post(new RefreshEMenuOrder(eMenuOrder).setDeleted(deleted));
-                    }
-                }
-            }
-        } else if (notificationType.equals(Globals.EMENU_ITEM_NOTIFICATION)) {
-            String notificationData = notificationObject.getString(Globals.NOTIFICATION_DATA);
-            if (notificationData != null) {
-                EMenuItem eMenuItem = new Gson().fromJson(notificationData, new TypeToken<EMenuItem>() {
-                }.getType());
-                if (deleted) {
-                    EventBus.getDefault().post(new EMenuItemDeletedEvent(eMenuItem));
-                } else {
-                    if (updateType.equals(Globals.UPDATE_TYPE_UPDATE)) {
-                        EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
-                    } else {
-                        EventBus.getDefault().post(new EMenuItemCreatedEvent(eMenuItem));
-                    }
-                }
-            }
-        }
-    }
 
     public static Context getInstance() {
         return _INSTANCE;
@@ -421,86 +324,13 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         }
     }
 
-//    private static void attemptLiveQueryReconnection() {
-//        if (parseLiveQueryClient != null) {
-//            new Thread(() -> {
-//                try {
-//                    if (isConnected()) {
-//                        parseLiveQueryClient.reconnect();
-//                    }
-//                } catch (NullPointerException ignored) {
-//                }
-//            }).start();
-//        }
-//    }
+
 
     public static ParseLiveQueryClient getParseLiveQueryClient() {
         return parseLiveQueryClient;
     }
 
-    private void createNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            /* Order completed notification id */
-            NotificationChannel orderCompleted = new NotificationChannel(
-                    CHANNEL_ORDER_COMPLETED_ID,
-                    "Channel 1",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            orderCompleted.setDescription("This is Channel 1");
-
-            /* Order received notification id */
-            NotificationChannel orderReceived = new NotificationChannel(
-                    CHANNEL_ORDER_RECEIVED_ID,
-                    "Channel 2",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            orderReceived.setDescription("This is Channel 2");
-
-            /* Payment successful notification id */
-            NotificationChannel paymentSuccessful = new NotificationChannel(
-                    CHANNEL_PAYMENT_SUCCESSFUL_ID,
-                    "Channel 3",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            paymentSuccessful.setDescription("This is Channel 3");
-
-            /* Payment failed notification id */
-            NotificationChannel paymentFailed = new NotificationChannel(
-                    CHANNEL_PAYMENT_FAILED_ID,
-                    "Channel 4",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            paymentFailed.setDescription("This is Channel 4");
-
-
-            /* Purchase completed notification id */
-            NotificationChannel purchaseCompleted = new NotificationChannel(
-                    CHANNEL_PURCHASE_COMPLETED_ID,
-                    "Channel 5",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            purchaseCompleted.setDescription("This is Channel 5");
-
-            /* Purchase failed notification id */
-            NotificationChannel purchaseFailed = new NotificationChannel(
-                    CHANNEL_PURCHASE_FAILED_ID,
-                    "Channel 6",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            purchaseFailed.setDescription("This is Channel 6");
-
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            Objects.requireNonNull(manager).createNotificationChannel(orderCompleted);
-            manager.createNotificationChannel(orderReceived);
-            manager.createNotificationChannel(paymentSuccessful);
-            manager.createNotificationChannel(paymentFailed);
-            manager.createNotificationChannel(purchaseCompleted);
-            manager.createNotificationChannel(purchaseFailed);
-
-        }
-    }
 
 
 

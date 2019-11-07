@@ -27,7 +27,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
 
     private void reInitParse() {
         EventBus.getDefault().post(new DeviceConnectedToInternetEvent(true));
-        ArkeSdkDemoApplication.listenToIncomingNotifications();
+//        ArkeSdkDemoApplication.listenToIncomingNotifications();
     }
 
 }

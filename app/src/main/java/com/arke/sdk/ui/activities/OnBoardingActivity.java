@@ -55,7 +55,7 @@ public class OnBoardingActivity extends BaseActivity {
         //get intent extras
         Intent intent = getIntent();
         overrideAppSetup = intent.getBooleanExtra("overrideAppSetup", false);
-        ArkeSdkDemoApplication.silenceIncomingNotifications();
+//        ArkeSdkDemoApplication.silenceIncomingNotifications();
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         displayMetrics = new DisplayMetrics();
         if (windowManager != null) {
