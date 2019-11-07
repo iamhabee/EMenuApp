@@ -1430,6 +1430,7 @@ public class DataStoreClient {
                                 retrievedOrders.add(eMenuOrder);
                             }
                         } else {
+                            // fetching orders WRT kitchen device id
                             if (kitchenAttendantDeviceId.equals(deviceId)) {
                                 if (!retrievedOrders.contains(eMenuOrder)) {
                                     retrievedOrders.add(eMenuOrder);
@@ -1587,9 +1588,10 @@ public class DataStoreClient {
                     orderUpdateDoneCallback.done(null, getException(errorMessage));
                 } else {
                     if (deviceId != null) {
+                        //
                         object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
-                                        ? Globals.KITCHEN_ATTENDANT_DEVICE_ID
-                                        : Globals.BAR_ATTENDANT_DEVICE_ID,
+                                        ? Globals.KITCHEN_ATTENDANT_ID
+                                        : Globals.BAR_ATTENDANT_ID,
                                 deviceId);
                         String orderProgressString = serializeOrderProgress(Globals.OrderProgressStatus.PROCESSING);
                         object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);

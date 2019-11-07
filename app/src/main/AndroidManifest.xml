@@ -19,9 +19,13 @@
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".ui.activities.InitialAccountSetupActivity"/>
+        <activity android:name=".ui.activities.InitialAccountSetupActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:label="Add User"></activity>
+
         <activity android:name=".ui.activities.UserLoginActivity"
             android:label="SIGN IN"/>
+
         <activity android:name=".demo.UserLoginActivity" />
 
         <uses-library
@@ -51,6 +55,7 @@
         <activity
             android:name=".ui.activities.WelcomeActivity"
             android:theme="@style/AppTheme.WelcomeTheme" />
+
         <activity
             android:name=".ui.activities.OnBoardingActivity"
             android:theme="@style/AppTheme.WelcomeTheme" />
@@ -71,6 +76,8 @@
             android:name=".ui.activities.LogInActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
+
+
         <activity
             android:name=".ui.activities.CreateNewOrEditEMenuItemActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"

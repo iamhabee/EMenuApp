@@ -14,6 +14,9 @@ public class Globals {
     public static final String USE_TYPE = "emenu_use_type";
     public static final String ADMIN_TAG = "admin";
     public static final int ADMIN_TAG_ID = 263389;
+    public static final int WAITER = 0;
+    public static final int BAR = 1;
+    public static final int KITCHEN = 2;
     public static final String DEFAULT_PWD = "12345";
     public static final String RESTAURANT_OR_BAR_NAME = "emenu_restaurant_or_bar_name";
     public static final String IS_APP_SETUP = "is_app_setup";
@@ -90,7 +93,9 @@ public class Globals {
     public static final String KITCHEN_ATTENDANT_TAG = "kitchen_attendant_tag";
     public static final String BAR_ATTENDANT_TAG = "bar_attendant_tag";
     public static final String KITCHEN_ATTENDANT_DEVICE_ID = "kitchen_attendant_device_id";
+    public static final String KITCHEN_ATTENDANT_ID = "kitchen_attendant_id";
     public static final String BAR_ATTENDANT_DEVICE_ID = "bar_attendant_device_id";
+    public static final String BAR_ATTENDANT_ID = "bar_attendant_id";
     public static final String ORDER_PROGRESS_STATUS = "order_progress_status";
     public static final String ORDER_PAYMENT_STATUS = "order_payment_status";
     public static final String ORDERED_ITEMS = "ordered_items";
