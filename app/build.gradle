@@ -132,7 +132,11 @@ dependencies {
     implementation 'com.filestack:filestack-java:0.9.0'
 
     // work manager
-    implementation "android.arch.work:work-runtime:1.0.1"
+//    implementation "android.arch.work:work-runtime:1.0.1"
+    implementation "android.arch.work:work-runtime:1.0.0-alpha04"
+
+    // Job dispatcher
+    implementation 'com.firebase:firebase-jobdispatcher:0.8.6'
 
 
 }

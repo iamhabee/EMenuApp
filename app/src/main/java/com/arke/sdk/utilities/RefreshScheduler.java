@@ -6,7 +6,7 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.arke.sdk.workmanager.NotificationWorker;
+import com.arke.sdk.workmanager.KitchenAlertWorker;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,11 +28,13 @@ public class RefreshScheduler {
                 .build();
 
         PeriodicWorkRequest refreshCpnWork =
-                new PeriodicWorkRequest.Builder(NotificationWorker.class, 16, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 16, TimeUnit.SECONDS)
                         .setConstraints(myConstraints)
                         .setInputData(source)
                         .build();
 
         WorkManager.getInstance().enqueue(refreshCpnWork);
     }
+
+
 }

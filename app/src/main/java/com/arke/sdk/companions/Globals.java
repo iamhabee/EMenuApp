@@ -109,6 +109,11 @@ public class Globals {
     public static EMenuItem updatedEMenuItem = null;
     public static boolean unProcessedOrdersPushed = false;
 
+//    public static final String DONE = "updatedAt";
+//    public static final String ALMOST_DONE = "admin_device_id";
+//    public static final String PENDING = "Take Away";
+//    public static final String IS_TAKE_AWAY = "is_take_away";
+
     public enum StatusPage {
         LOADING_VIEW,
         EMPTY_VIEW,

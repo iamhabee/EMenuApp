@@ -23,13 +23,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
-import com.arke.sdk.utilities.RefreshScheduler;
 import com.arke.sdk.utilities.UiUtils;
 //import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
@@ -37,6 +37,8 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.adapters.PagerAdapter;
 import com.arke.sdk.ui.fragments.KitchenMenuFragment;
 import com.arke.sdk.ui.fragments.KitchenOrdersFragment;
+
+import com.arke.sdk.workmanager.KitchenAlertWorker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -48,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,7 +97,7 @@ public class KitchenHomeActivity extends BaseActivity {
     private ArrayList<Fragment> fragments;
 
     private LottieAlertDialog logOutOperationProgressDialog;
-    private WorkManager mWorkManager;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -106,12 +109,17 @@ public class KitchenHomeActivity extends BaseActivity {
         initUI();
         initEventHandlers();
 
-//        mWorkManager = WorkManager.getInstance();
 
-        // start work manager
-//        RefreshScheduler.refreshPeriodicWork();
+        PeriodicWorkRequest periodicWorkRequest =
+                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 5, TimeUnit.SECONDS)
+                .addTag("periodic_work")
+                .build();
+
+        assert WorkManager.getInstance() != null;
+        WorkManager.getInstance().enqueue(periodicWorkRequest);
 
     }
+
 
     @Override
     protected void onRestart() {

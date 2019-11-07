@@ -122,6 +122,18 @@
                     tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>
+
+<!--        <receiver android:name=".receivers.KitchenReceiver"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter >-->
+<!--                <action android:name="emenu.notification"/>-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
+        <service android:name=".workmanager.JobDispatcherService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
     </application>
 
 </manifest>

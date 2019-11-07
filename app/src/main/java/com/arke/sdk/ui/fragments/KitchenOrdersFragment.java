@@ -205,6 +205,7 @@ public class KitchenOrdersFragment extends BaseFragment {
         emptyViewMessageView.setText(getString(R.string.no_recent_order_available));
         networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
         setupRecyclerView();
+
         if (eMenuOrders.isEmpty()) {
             fetchIncomingOrders(0);
         }
@@ -216,7 +217,7 @@ public class KitchenOrdersFragment extends BaseFragment {
         fetchIncomingOrders(0);
     }
 
-    private void fetchIncomingOrders(int skip) {
+    public void fetchIncomingOrders(int skip) {
         DataStoreClient.fetchIncomingKitchenOrders(skip, (results, e) -> {
             swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
@@ -254,6 +255,7 @@ public class KitchenOrdersFragment extends BaseFragment {
             } else {
                 loadDataInToAdapter(skip == 0, results);
                 //TODO: Add notification
+
             }
             UiUtils.toggleViewVisibility(footerView, false);
         });

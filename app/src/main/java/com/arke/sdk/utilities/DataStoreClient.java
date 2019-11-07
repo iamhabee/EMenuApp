@@ -1074,6 +1074,8 @@ public class DataStoreClient {
         newOrderObject.put(Globals.WAITER_TAG, eMenuOrder.getWaiterTag());
         newOrderObject.put(Globals.TABLE_TAG, eMenuOrder.getTableTag());
         newOrderObject.put(Globals.ORDER_ID, eMenuOrder.getOrderId());
+        newOrderObject.put("kitchen_or_bar_received_notif", false);
+        newOrderObject.put("waiter_received_notif", false);
         String waiterDeviceId = eMenuOrder.getWaiterDeviceId();
         if (waiterDeviceId != null) {
             newOrderObject.put(Globals.WAITER_DEVICE_ID, waiterDeviceId);

@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -15,6 +16,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.core.util.Pair;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
@@ -29,6 +31,7 @@ import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.preferences.AppPrefs;
+import com.arke.sdk.receivers.KitchenReceiver;
 import com.arke.sdk.ui.activities.BarHomeActivity;
 import com.arke.sdk.ui.activities.KitchenHomeActivity;
 import com.arke.sdk.util.printer.Printer;
@@ -88,6 +91,7 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
     public static final String CHANNEL_PAYMENT_FAILED_ID = "paymentFailed";
     public static final String CHANNEL_PURCHASE_COMPLETED_ID = "purchaseCompleted";
     public static final String CHANNEL_PURCHASE_FAILED_ID = "purchaseFailed";
+    public static String EMENU_NOTIFICATION = "emenu.notification";
 
     /**
      * Create.
@@ -120,6 +124,12 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         listenToIncomingNotifications();
         //create notification with channel id
         createNotificationChannels();
+
+//        KitchenReceiver receiver = new KitchenReceiver();
+//
+//        IntentFilter filter = new IntentFilter(EMENU_NOTIFICATION);
+//
+//        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
     @Override
@@ -491,5 +501,7 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
 
         }
     }
+
+
 
 }
