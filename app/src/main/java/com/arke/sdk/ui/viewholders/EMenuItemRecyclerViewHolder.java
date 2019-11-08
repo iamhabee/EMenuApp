@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.arke.sdk.R;
 import com.arke.sdk.models.EMenuItem;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.ui.views.EMenuItemView;
 

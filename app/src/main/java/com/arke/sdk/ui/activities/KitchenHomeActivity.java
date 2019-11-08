@@ -26,12 +26,10 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.adapters.PagerAdapter;
@@ -205,7 +203,7 @@ public class KitchenHomeActivity extends BaseActivity {
 
             }
         });
-//        ArkeSdkDemoApplication.listenToIncomingNotifications();
+
     }
 
     @Override

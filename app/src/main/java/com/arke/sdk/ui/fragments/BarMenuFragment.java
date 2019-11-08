@@ -32,7 +32,6 @@ import com.arke.sdk.ui.activities.CreateNewOrEditEMenuItemActivity;
 import com.arke.sdk.utilities.CollectionsCache;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.ui.adapters.EMenuItemRecyclerViewAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;

@@ -13,7 +13,6 @@ import com.arke.sdk.R;
 import com.arke.sdk.utilities.CryptoUtils;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 

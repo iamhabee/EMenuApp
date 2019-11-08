@@ -1,22 +1,17 @@
 package com.arke.sdk;
 
 import android.annotation.SuppressLint;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.core.util.Pair;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.multidex.MultiDex;
 import androidx.multidex.MultiDexApplication;
 
@@ -24,29 +19,16 @@ import com.arke.sdk.api.DeviceService;
 import com.arke.sdk.companions.Credentials;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.database.EMenuDb;
-import com.arke.sdk.eventbuses.EMenuItemCreatedEvent;
-import com.arke.sdk.eventbuses.EMenuItemDeletedEvent;
-import com.arke.sdk.eventbuses.EMenuItemUpdatedEvent;
-import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
-import com.arke.sdk.preferences.AppPrefs;
-import com.arke.sdk.receivers.KitchenReceiver;
-import com.arke.sdk.ui.activities.BarHomeActivity;
-import com.arke.sdk.ui.activities.KitchenHomeActivity;
+
 import com.arke.sdk.util.printer.Printer;
-import com.arke.sdk.utilities.AppNotifier;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuLogger;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.parse.Parse;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.livequery.LiveQueryException;
 import com.parse.livequery.ParseLiveQueryClient;
 import com.parse.livequery.ParseLiveQueryClientCallbacks;
-import com.parse.livequery.SubscriptionHandling;
 import com.raizlabs.android.dbflow.config.DatabaseConfig;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -54,13 +36,10 @@ import com.raizlabs.android.dbflow.runtime.DirectModelNotifier;
 import com.usdk.apiservice.aidl.UDeviceService;
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
 
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
@@ -83,7 +62,7 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
     @SuppressLint("StaticFieldLeak")
     private static Context _INSTANCE;
     private static ParseLiveQueryClient parseLiveQueryClient;
-//    private static ParseQuery<ParseObject> notificationsQuery;
+
 
 
     /**
@@ -114,7 +93,6 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         MultiDex.install(getBaseContext());
         setupDatabase();
         initParse();
-//        listenToIncomingNotifications();
 
     }
 
@@ -217,16 +195,6 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
     }
 
 
-//    public static void silenceIncomingNotifications() {
-//        if (parseLiveQueryClient == null) {
-//            return;
-//        }
-//        if (notificationsQuery != null) {
-//            parseLiveQueryClient.unsubscribe(notificationsQuery);
-//        }
-//    }
-
-
     public static boolean isAllDrinks(List<EMenuItem> items) {
         boolean allDrinks = true;
         for (EMenuItem eMenuItem : items) {
@@ -305,17 +273,17 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
 
                 @Override
                 public void onLiveQueryClientDisconnected(ParseLiveQueryClient client, boolean userInitiated) {
-//                    attemptLiveQueryReconnection();
+
                 }
 
                 @Override
                 public void onLiveQueryError(ParseLiveQueryClient client, LiveQueryException reason) {
-//                    attemptLiveQueryReconnection();
+
                 }
 
                 @Override
                 public void onSocketError(ParseLiveQueryClient client, Throwable reason) {
-//                    attemptLiveQueryReconnection();
+
                 }
             });
         } catch (URISyntaxException e) {

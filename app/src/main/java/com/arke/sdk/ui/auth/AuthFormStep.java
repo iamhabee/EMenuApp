@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.R;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.views.EMenuEditText;

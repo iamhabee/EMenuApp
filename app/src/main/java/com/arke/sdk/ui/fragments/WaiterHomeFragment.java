@@ -30,7 +30,6 @@ import com.arke.sdk.ui.activities.WaiterHomeActivity;
 import com.arke.sdk.utilities.CollectionsCache;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.ui.adapters.EMenuItemRecyclerViewAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
@@ -206,7 +205,7 @@ public class WaiterHomeFragment extends BaseFragment {
         loaderProgressMessageView.setText(getString(R.string.fetching_menu));
         emptyViewMessageView.setText(getString(R.string.nothing_in_menu));
         networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
-        // TODO(3): fix crash when there is no internet and fragment is been switched
+
         initEventHandlers();
         setupRecyclerView();
         if (eMenuItems.isEmpty()) {

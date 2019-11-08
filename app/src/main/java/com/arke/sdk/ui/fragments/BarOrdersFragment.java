@@ -27,7 +27,6 @@ import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.arke.sdk.utilities.AppNotifier;
@@ -224,7 +223,6 @@ public class BarOrdersFragment extends BaseFragment {
                     if (errorMessage.contains(ref)) {
                         if (eMenuOrders.isEmpty()) {
                             UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.NETWORK_ERROR_VIEW.ordinal());
-                            // TODO(1): fix crash when there is no internet and fragment is been switched
                             networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
                         } else {
                             UiUtils.snackMessage("A Network error occurred.Please review your data connection and try again", contentRecyclerView, false, null, null);

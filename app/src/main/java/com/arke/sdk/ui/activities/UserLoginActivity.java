@@ -1,9 +1,8 @@
 package com.arke.sdk.ui.activities;
 
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,16 +16,12 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.parse.LogInCallback;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.arke.sdk.R;
-import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
+
 
 public class UserLoginActivity extends AppCompatActivity {
 
@@ -164,11 +159,5 @@ public class UserLoginActivity extends AppCompatActivity {
 
 
     }
-
-
-
-
-
-
 
 }

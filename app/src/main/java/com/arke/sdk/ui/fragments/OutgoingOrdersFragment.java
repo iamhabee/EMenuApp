@@ -7,7 +7,6 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -29,7 +28,6 @@ import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuLogger;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;

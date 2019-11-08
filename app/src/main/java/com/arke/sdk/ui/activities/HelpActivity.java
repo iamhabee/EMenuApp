@@ -11,8 +11,6 @@ import androidx.annotation.Nullable;
 
 import com.arke.sdk.R;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

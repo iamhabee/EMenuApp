@@ -26,7 +26,7 @@ import com.arke.sdk.models.EMenuItemCategory;
 import com.arke.sdk.utilities.CollectionsCache;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
+
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.ui.views.AutofitRecyclerView;
 import com.arke.sdk.ui.views.MarginDecoration;

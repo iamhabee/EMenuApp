@@ -34,7 +34,6 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
-import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
 import com.arke.sdk.contracts.EndlessRecyclerOnScrollListener;
 import com.arke.sdk.contracts.TargetDismissedCallback;
@@ -50,7 +49,6 @@ import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuLogger;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.beans.CurrentCardPaymentProcessor;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
@@ -60,7 +58,6 @@ import com.arke.sdk.ui.fragments.EMenuCategoriesFragment;
 import com.arke.sdk.ui.fragments.OutgoingOrdersFragment;
 import com.arke.sdk.ui.fragments.WaiterHomeFragment;
 import com.arke.sdk.ui.views.MarginDecoration;
-import com.arke.sdk.workmanager.KitchenAlertWorker;
 import com.arke.sdk.workmanager.WaiterAlertWorker;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
@@ -151,7 +148,6 @@ public class WaiterHomeActivity extends BaseActivity {
         initializeTabsAndFragments();
         initUI();
         checkForUnProcessedOrders();
-//        ArkeSdkDemoApplication.listenToIncomingNotifications();
 
         /* trigger work manager every 30sec */
         PeriodicWorkRequest periodicWorkRequest =

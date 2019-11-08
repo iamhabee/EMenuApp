@@ -15,7 +15,6 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.PasswordUpdateActivity;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.jaredrummler.android.colorpicker.ColorPreferenceCompat;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;

@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.arke.sdk.R;
 import com.arke.sdk.utilities.EMenuLogger;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.preferences.AppPrefs;
 
 import org.greenrobot.eventbus.EventBus;

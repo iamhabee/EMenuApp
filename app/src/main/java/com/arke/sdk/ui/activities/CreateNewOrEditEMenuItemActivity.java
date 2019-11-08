@@ -33,7 +33,6 @@ import com.arke.sdk.utilities.EMenuGenUtils;
 import com.arke.sdk.utilities.EMenuLogger;
 import com.arke.sdk.utilities.FileUploadUtils;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.esafirm.imagepicker.features.ImagePicker;
@@ -68,9 +67,6 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
 
     @BindView(R.id.create_item)
     Button upsertItemButton;
-
-//    @BindView(R.id.add_photo_button)
-//    ImageView addPhotoButton;
 
     @BindView(R.id.selected_photo_preview)
     ImageView emenuItemPreviewImageView;

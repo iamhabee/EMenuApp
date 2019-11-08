@@ -7,16 +7,13 @@ import android.util.SparseIntArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.views.EMenuTextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -55,7 +52,7 @@ public class OnBoardingActivity extends BaseActivity {
         //get intent extras
         Intent intent = getIntent();
         overrideAppSetup = intent.getBooleanExtra("overrideAppSetup", false);
-//        ArkeSdkDemoApplication.silenceIncomingNotifications();
+
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         displayMetrics = new DisplayMetrics();
         if (windowManager != null) {

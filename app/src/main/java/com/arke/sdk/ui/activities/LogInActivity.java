@@ -20,7 +20,6 @@ import com.arke.sdk.models.RestaurantOrBarInfo;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMailClient;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.auth.AuthFormStep;

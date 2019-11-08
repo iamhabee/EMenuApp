@@ -17,7 +17,6 @@ import androidx.core.content.ContextCompat;
 import com.arke.sdk.R;
 import com.arke.sdk.contracts.RuntimePermissionsGrantedCallBack;
 import com.arke.sdk.utilities.UiUtils;
-//import com.elitepath.android.emenu.R;
 import com.arke.sdk.preferences.AppPrefs;
 import com.nabinbhandari.android.permissions.PermissionHandler;
 import com.nabinbhandari.android.permissions.Permissions;
