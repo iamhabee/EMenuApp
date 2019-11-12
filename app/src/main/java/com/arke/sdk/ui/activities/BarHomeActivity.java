@@ -36,6 +36,7 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.adapters.PagerAdapter;
 import com.arke.sdk.ui.fragments.BarMenuFragment;
 import com.arke.sdk.ui.fragments.BarOrdersFragment;
+import com.arke.sdk.workmanager.BarAlertWorker;
 import com.arke.sdk.workmanager.KitchenAlertWorker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -110,13 +111,13 @@ public class BarHomeActivity extends BaseActivity {
         initEventHandlers();
 
         /* trigger work manager every 30sec */
-//        PeriodicWorkRequest periodicWorkRequest =
-//                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 30, TimeUnit.SECONDS)
-//                        .addTag("periodic_work")
-//                        .build();
-//
-//        assert WorkManager.getInstance() != null;
-//        WorkManager.getInstance().enqueue(periodicWorkRequest);
+        PeriodicWorkRequest periodicWorkRequest =
+                new PeriodicWorkRequest.Builder(BarAlertWorker.class, 30, TimeUnit.SECONDS)
+                        .addTag("periodic_work")
+                        .build();
+
+        assert WorkManager.getInstance() != null;
+        WorkManager.getInstance().enqueue(periodicWorkRequest);
     }
 
     @Override

@@ -803,8 +803,4 @@ public class WaiterHomeActivity extends BaseActivity {
         logOutDialogBuilder.build().show();
     }
 
-
-
-
-
 }

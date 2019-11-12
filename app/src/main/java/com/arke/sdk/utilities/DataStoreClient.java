@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -55,6 +55,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("ConstantConditions")
 public class DataStoreClient {
@@ -368,6 +369,7 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        eMenuItemsQuery.whereContains(Globals.ORDERED_ITEMS, "drinks");
         eMenuItemsQuery.setLimit(100);
         eMenuItemsQuery.whereContains(Globals.EMENU_ITEM_PARENT_CATEGORY, Globals.DRINKS);
         if (skip != 0) {
@@ -612,7 +614,6 @@ public class DataStoreClient {
     }
 
     private static EMenuItem loadParseObjectIntoEMenuItem(ParseObject parseObject) {
-        EMenuItem eMenuItem = new EMenuItem();
         String restaurantOrBarName = parseObject.getString(Globals.RESTAURANT_OR_BAR_NAME);
         String emenuItemPhotoUrl = parseObject.getString(Globals.EMENU_ITEM_PHOTO_URL);
         String emenuItemName = parseObject.getString(Globals.EMENU_ITEM_NAME);
@@ -628,6 +629,8 @@ public class DataStoreClient {
         boolean available = parseObject.getBoolean(Globals.IN_STOCK);
         String emenuItemCreatorTag = parseObject.getString(Globals.EMENU_ITEM_CREATOR_TAG);
         String restaurantOrBarId = parseObject.getString(Globals.RESTAURANT_OR_BAR_ID);
+
+        EMenuItem eMenuItem = new EMenuItem();
         eMenuItem.setRestaurantOrBarId(restaurantOrBarId);
         eMenuItem.setQuantityAvailableInStock(quantityAvailableInStock);
         eMenuItem.setRestaurantOrBarName(restaurantOrBarName);
@@ -716,6 +719,8 @@ public class DataStoreClient {
 
     public static void createNewMenuItem(String itemName, String itemDescription, String
             itemPrice, String itemParentCategory, String itemPhotoUrl, EMenuItemUpdateDoneCallback upsertionDoneCallBack) {
+
+
         ParseObject newMenuItem = new ParseObject(Globals.EMenuItems);
         newMenuItem.put(Globals.EMENU_ITEM_NAME, itemName.toLowerCase());
         newMenuItem.put(Globals.EMENU_ITEM_DESCRIPTION, itemDescription);
@@ -724,6 +729,8 @@ public class DataStoreClient {
         newMenuItem.put(Globals.EMENU_ITEM_PRICE, itemPrice);
         newMenuItem.put(Globals.IN_STOCK, true);
         newMenuItem.put(Globals.QTY_IN_STOCK, 1);
+
+
         if (itemPhotoUrl != null) {
             newMenuItem.put(Globals.EMENU_ITEM_PHOTO_URL, itemPhotoUrl);
         }
@@ -1064,6 +1071,17 @@ public class DataStoreClient {
     }
 
     private static ParseObject createParseObjectFromOrder(ParseObject existingObject, EMenuOrder eMenuOrder) {
+        boolean has_drink = false, has_food = false;
+        // loop through the list of eMenuItems
+        List<EMenuItem> eMenuItems = eMenuOrder.getItems();
+        for(EMenuItem eMenuItem: eMenuItems){
+            if (eMenuItem.parentCategory.equals("drinks")) {
+                has_drink = true;
+            }else{
+                has_food = true;
+            }
+        }
+
         ParseObject newOrderObject;
         if (existingObject != null) {
             newOrderObject = existingObject;
@@ -1074,8 +1092,15 @@ public class DataStoreClient {
         newOrderObject.put(Globals.WAITER_TAG, eMenuOrder.getWaiterTag());
         newOrderObject.put(Globals.TABLE_TAG, eMenuOrder.getTableTag());
         newOrderObject.put(Globals.ORDER_ID, eMenuOrder.getOrderId());
-        newOrderObject.put("kitchen_or_bar_received_notif", false);
-        newOrderObject.put("waiter_received_notif", false);
+        newOrderObject.put("kitchen_received_notify", false);
+        newOrderObject.put("waiter_received_notify", false);
+        newOrderObject.put("waiter_received_notify_drink", false);
+        newOrderObject.put("bar_received_notify", false);
+
+        newOrderObject.put(Globals.HAS_DRINK, has_drink);
+        newOrderObject.put(Globals.HAS_FOOD, has_food);
+        newOrderObject.put(Globals.FOOD_READY, false);
+        newOrderObject.put(Globals.DRINK_READY, false);
         String waiterDeviceId = eMenuOrder.getWaiterDeviceId();
         if (waiterDeviceId != null) {
             newOrderObject.put(Globals.WAITER_DEVICE_ID, waiterDeviceId);
@@ -1235,6 +1260,7 @@ public class DataStoreClient {
             if (e == null) {
                 String orderProgressString = serializeOrderProgress(orderProgressStatus);
                 object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
+
                 object.saveInBackground(e1 -> {
                     if (e1 == null) {
                         EMenuOrder updatedOrder = loadParseObjectIntoEMenuOrder(object);
@@ -1324,6 +1350,7 @@ public class DataStoreClient {
         ParseQuery<ParseObject> drinkOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         drinkOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         drinkOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
+        drinkOrdersQuery.whereEqualTo(Globals.HAS_DRINK, true);
         drinkOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             drinkOrdersQuery.setSkip(skip);
@@ -1414,6 +1441,7 @@ public class DataStoreClient {
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
+        eMenuOrdersQuery.whereEqualTo(Globals.HAS_FOOD, true);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);

@@ -99,6 +99,10 @@ public class Globals {
     public static final String ORDER_PROGRESS_STATUS = "order_progress_status";
     public static final String ORDER_PAYMENT_STATUS = "order_payment_status";
     public static final String ORDERED_ITEMS = "ordered_items";
+    public static final String HAS_DRINK = "has_drink";
+    public static final String HAS_FOOD = "has_food";
+    public static final String FOOD_READY = "food_ready";
+    public static final String DRINK_READY = "drink_ready";
     public static final String WAITER_DEVICE_ID = "waiter_device_id";
     public static final String TABLE_TAG = "table_tag";
     public static final String CREATED_AT = "createdAt";

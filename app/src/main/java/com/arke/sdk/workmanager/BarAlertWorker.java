@@ -12,11 +12,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
-import com.arke.sdk.R;
 
+import com.arke.sdk.R;
 import com.arke.sdk.companions.Globals;
-import com.arke.sdk.ui.activities.KitchenHomeActivity;
-import com.arke.sdk.ui.fragments.KitchenOrdersFragment;
+import com.arke.sdk.ui.activities.BarHomeActivity;
 import com.arke.sdk.utilities.Constants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -26,10 +25,7 @@ import com.parse.ParseQuery;
 import java.util.List;
 import java.util.Objects;
 
-
-
-public class KitchenAlertWorker extends Worker {
-
+public class BarAlertWorker extends Worker {
 
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_TEXT = "text";
@@ -48,8 +44,8 @@ public class KitchenAlertWorker extends Worker {
     public void queryPendingOrders() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
         query.whereEqualTo("order_progress_status", '"'+"PENDING"+'"');
-        query.whereEqualTo("kitchen_received_notify", false);
-        query.whereEqualTo(Globals.HAS_FOOD, true);
+        query.whereEqualTo("bar_received_notify", false);
+        query.whereEqualTo(Globals.HAS_DRINK, true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -57,7 +53,7 @@ public class KitchenAlertWorker extends Worker {
                     //we found messages
                     mMessages = objects;
                     String username = String.valueOf(mMessages.size());
-                    Log.d("Kitchen", String.valueOf(mMessages.size()));
+                    Log.d("Bar", String.valueOf(mMessages.size()));
 
                     // check if response contains objects
                     if(mMessages.size() > 0) {
@@ -71,16 +67,16 @@ public class KitchenAlertWorker extends Worker {
                         sendNotification(title, text, id);
 
                         for (ParseObject message : mMessages) {
-                            message.put("kitchen_received_notify", true);
+                            message.put("bar_received_notify", true);
                             message.saveEventually();
-                            Log.d("Kitchen", String.valueOf(username));
+                            Log.d("Bar", String.valueOf(username));
                         }
 
                     }
 
                 }else{
                     // error occurred
-                    Log.d("Kitchen", e.getMessage());
+                    Log.d("Bar", e.getMessage());
 
                 }
             }
@@ -90,9 +86,9 @@ public class KitchenAlertWorker extends Worker {
 
 
     private void sendNotification(String title, String text, int id) {
-        Intent intent = new Intent(getApplicationContext(), KitchenHomeActivity.class);
+        Intent intent = new Intent(getApplicationContext(), BarHomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra(Constants.KITCHEN_ID, id);
+        intent.putExtra(Constants.BAR_ID, id);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
 

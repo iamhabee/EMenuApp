@@ -97,6 +97,8 @@ public class EMenuOrder extends BaseModel implements Serializable {
     @Expose
     public long updatedAt;
 
+
+
     /**
      * If this order contains food items, this holds the unique device id of the kitchen attendant
      * who is processing this order
@@ -165,6 +167,7 @@ public class EMenuOrder extends BaseModel implements Serializable {
     public String getBarAttendantTag() {
         return barAttendantTag;
     }
+
 
     public boolean isDirty() {
         return dirty;
