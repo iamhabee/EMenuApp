@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.R;
@@ -39,6 +40,7 @@ import ernestoyaquello.com.verticalstepperform.listener.StepperFormListener;
 @SuppressWarnings({"SameParameterValue"})
 public class LogInActivity extends BaseActivity implements StepperFormListener {
 
+    private AppCompatActivity activity = LogInActivity.this;
     @BindView(R.id.auth_action_header)
     EMenuTextView authActionHeaderView;
 
@@ -106,11 +108,13 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
                         showOperationsDialog("Initiating Password Reset", "Please wait...");
                         EMailClient.sendPasswordRecoveryEmail(false,restaurantEmailAddress, restaurantOrBarName, restaurantOrBarPassword, (done, e1) -> {
                             dismissProgressDialog();
-                            if (e1 == null) {
-                                showSuccessMessage("Recovery Message Sent!", "A password recovery email was sent to the email provided. If the email is not in your inbox by now, then check the SPAM folder.");
-                            } else {
-                                showErrorMessage("Oops!", e1.getMessage());
-                            }
+                            activity.runOnUiThread(() -> {
+                                if (e1 == null) {
+                                    showMessage("Recovery Message Sent!", "A password recovery email was sent to the email provided. If the email is not in your inbox by now, then check the SPAM folder.");
+                                } else {
+                                    showErrorMessage("Oops!", e1.getMessage());
+                                }
+                            });
                         });
                     } else {
                         showErrorMessage("Oops!", e.getMessage());
@@ -133,6 +137,18 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         editor.commit();
     }
 
+    private void showMessage(String title, String description) {
+        enableNextButton();
+        LottieAlertDialog lottieAlertDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        if (!lottieAlertDialog.isShowing()) {
+            lottieAlertDialog.setCancelable(true);
+            lottieAlertDialog.show();
+        }
+    }
 
     private void enableNextButton() {
         if (accountLogInView != null) {
