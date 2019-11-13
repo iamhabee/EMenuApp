@@ -689,8 +689,8 @@ public class WaiterHomeActivity extends BaseActivity {
     }
 
     private void setupDrawer() {
-        String restaurantOrBarName = AppPrefs.getRestaurantOrBarName();
-        String restaurantOrBarEmailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
+        String restaurantOrBarName = ParseUser.getCurrentUser().getUsername();
+        String restaurantOrBarEmailAddress = ParseUser.getCurrentUser().getString("account_type");
         String restaurantOrBarPhotoUrl = AppPrefs.getRestaurantOrBarPhotoUrl();
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawer(GravityCompat.START, true);
@@ -727,6 +727,7 @@ public class WaiterHomeActivity extends BaseActivity {
         TextView restaurantOrBarNameView = navHeaderView.findViewById(R.id.restaurant_or_bar_name);
         TextView restaurantOrBarEmailView = navHeaderView.findViewById(R.id.restaurant_or_bar_email_address);
         ImageView restaurantOrBarCoverPhotoView = navHeaderView.findViewById(R.id.restaurant_or_bar_cover_photo_view);
+
         if (StringUtils.isNotEmpty(restaurantOrBarName)) {
             restaurantOrBarNameView.setText(restaurantOrBarName);
         }
@@ -750,16 +751,6 @@ public class WaiterHomeActivity extends BaseActivity {
             kitchenItem.setVisible(false);
             barItem.setVisible(false);
         }
-
-//        if (currentUseType == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
-//            waiterMenuItem.setVisible(false);
-//        }
-//        if (currentUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
-//            kitchenItem.setVisible(false);
-//        }
-//        if (currentUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
-//            barItem.setVisible(false);
-//        }
         supportInvalidateOptionsMenu();
         navHeaderView.invalidate();
     }
