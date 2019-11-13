@@ -1,6 +1,7 @@
 package com.arke.sdk.utilities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
@@ -1258,9 +1259,56 @@ public class DataStoreClient {
         emenuOrdersQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         emenuOrdersQuery.getFirstInBackground((object, e) -> {
             if (e == null) {
-                String orderProgressString = serializeOrderProgress(orderProgressStatus);
-                object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
+                ParseUser currentUser = ParseUser.getCurrentUser();
+                if (currentUser != null) {
+                    String orderProgressString = serializeOrderProgress(orderProgressStatus);
 
+                    //iterate through and check if has food/drink or food and drink
+                    Boolean hasFood = (Boolean) object.get(Globals.HAS_FOOD);
+                    Boolean hasDrink = (Boolean) object.get(Globals.HAS_DRINK);
+                    Boolean foodReady = (Boolean) object.get(Globals.FOOD_READY);
+                    Boolean drinkReady = (Boolean) object.get(Globals.DRINK_READY);
+
+                    if (hasDrink && hasFood){
+                        // check if the user is a bar or kitchen attendant
+                        if(currentUser.getInt("user_type") == 3 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID){
+                            // bar attendant or admin
+                            if(foodReady){
+                                // set status to done
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"DONE"+'"');
+                            }else{
+                                // set status to almost done
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"ALMOST DONE"+'"');
+                            }
+                            object.put(Globals.DRINK_READY, true);
+                        }
+                        if(currentUser.getInt("user_type") == 2 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID){
+                            // kitchen attendant or admin
+                            if(drinkReady){
+                                // set status to done
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"DONE"+'"');
+                            }else{
+                                // set status to almost done
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"ALMOST DONE"+'"');
+                            }
+                            object.put(Globals.FOOD_READY, true);
+                        }
+                    }
+                     else if (hasDrink){
+                         if(orderProgressString.equals('"'+"DONE"+'"')){
+                             object.put(Globals.DRINK_READY, true);
+                         }
+                        object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
+                    }
+                    else if (hasFood){
+                        if(orderProgressString.equals('"'+"DONE"+'"') ) {
+                            object.put(Globals.FOOD_READY, true);
+                        }
+                        object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
+                    }
+                } else {
+                    // show the signup or login screen
+                }
                 object.saveInBackground(e1 -> {
                     if (e1 == null) {
                         EMenuOrder updatedOrder = loadParseObjectIntoEMenuOrder(object);

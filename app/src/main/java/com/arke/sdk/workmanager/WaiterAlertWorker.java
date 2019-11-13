@@ -47,7 +47,7 @@ public class WaiterAlertWorker extends Worker {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify", false);
-//        query.whereEqualTo(Globals.FOOD_READY, true);
+        query.whereEqualTo(Globals.FOOD_READY, true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -61,7 +61,7 @@ public class WaiterAlertWorker extends Worker {
                     if(mMessages.size() > 0) {
                         // loop through the response to update
                         // their notification_received_status
-                        String title = getInputData().getString(EXTRA_TITLE, "Order updated for food");
+                        String title = getInputData().getString(EXTRA_TITLE, "Order for food is ready");
                         String text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
 
                         int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);
@@ -89,7 +89,7 @@ public class WaiterAlertWorker extends Worker {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify_drink", false);
-//        query.whereEqualTo(Globals.DRINK_READY, true);
+        query.whereEqualTo(Globals.DRINK_READY, true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -103,7 +103,7 @@ public class WaiterAlertWorker extends Worker {
                     if(mMessages.size() > 0) {
                         // loop through the response to update
                         // their notification_received_status
-                        String title = getInputData().getString(EXTRA_TITLE, "Order updated for drink");
+                        String title = getInputData().getString(EXTRA_TITLE, "Order for drink is ready");
                         String text = getInputData().getString(EXTRA_TEXT, "Click to view drink order");
 
                         int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);

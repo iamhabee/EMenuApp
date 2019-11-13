@@ -137,7 +137,6 @@ public class OrderSummaryActivity extends BaseActivity {
 
 
         });
-        ;
     }
 
 
@@ -264,6 +263,7 @@ public class OrderSummaryActivity extends BaseActivity {
                         dialogInterface.cancel();
                         Globals.OrderProgressStatus orderProgressStatus = i == 0 ? Globals.OrderProgressStatus.ALMOST_DONE : Globals.OrderProgressStatus.DONE;
                         DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus);
+
                     });
             progressOptionsBuilder.create().show();
         });
@@ -351,6 +351,7 @@ public class OrderSummaryActivity extends BaseActivity {
             String progressMessage = customerOrderProgressStatus.name().replace("_", " ").toLowerCase();
             if (progressMessage.equals("done")) {
                 progressMessage = "Fully Served!";
+                //TODO: disable increment and decrement
             }
             progressUpdateView.setText(WordUtils.capitalize(progressMessage));
             if (orderPaymentStatus != null) {
