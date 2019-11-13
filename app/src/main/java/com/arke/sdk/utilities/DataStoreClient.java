@@ -370,9 +370,9 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        eMenuItemsQuery.whereContains(Globals.ORDERED_ITEMS, "drinks");
+        eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         eMenuItemsQuery.setLimit(100);
-        eMenuItemsQuery.whereContains(Globals.EMENU_ITEM_PARENT_CATEGORY, Globals.DRINKS);
+
         if (skip != 0) {
             eMenuItemsQuery.setSkip(skip);
         }
@@ -543,6 +543,7 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         eMenuItemsQuery.setLimit(100);
         if (skip != 0) {
             eMenuItemsQuery.setSkip(skip);
@@ -730,6 +731,7 @@ public class DataStoreClient {
         newMenuItem.put(Globals.EMENU_ITEM_PRICE, itemPrice);
         newMenuItem.put(Globals.IN_STOCK, true);
         newMenuItem.put(Globals.QTY_IN_STOCK, 1);
+        newMenuItem.put(Globals.DESTINATION_ID, AppPrefs.getUseType());
 
 
         if (itemPhotoUrl != null) {
