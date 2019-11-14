@@ -112,7 +112,8 @@ public class BarMenuFragment extends BaseFragment {
     private void handleIncomingEvent(Object event) {
         if (event instanceof ItemSearchEvent) {
             processIncomingSearch((ItemSearchEvent) event);
-        } else if (event instanceof EMenuItemDeletedEvent) {
+        }
+        else if (event instanceof EMenuItemDeletedEvent) {
             EMenuItem deletedItem = ((EMenuItemDeletedEvent) event).getDeletedEMenuItem();
             int indexOfItem = eMenuItems.indexOf(deletedItem);
             if (eMenuItems.contains(deletedItem)) {
