@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -63,7 +64,7 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     EditText itemDescriptionView;
 
     @BindView(R.id.stock_number)
-    EditText stockNumberView;
+    EditText numberInStock;
 
     @BindView(R.id.item_price)
     EditText itemPriceView;
@@ -129,8 +130,12 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             if (host != null) {
                 if (host.equals(BarHomeActivity.class.getSimpleName())) {
                     itemCategoryView.setText("Drinks");
+                }else {
+                    itemCategoryView.setText("Food");
                 }
             }
+        }else {
+            itemCategoryView.setText("Food");
         }
         initCategoryViewAdapter();
         initEventHandlers();
@@ -144,6 +149,8 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             editableEMenuItem = new Gson().fromJson(editableEMenuItemString, EMenuItem.class);
             String emenuItemName = editableEMenuItem.getMenuItemName();
             itemNameView.setText(WordUtils.capitalize(emenuItemName));
+            String stockNumber = String.valueOf(editableEMenuItem.getQuantityAvailableInStock());
+            numberInStock.setText(stockNumber);
             String itemDescription = editableEMenuItem.getMenuItemDescription();
             itemDescriptionView.setText(itemDescription);
             String itemPrice = editableEMenuItem.getMenuItemPrice();
@@ -226,7 +233,7 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     private void processFormAndCreateNewEMenuItem() {
         String itemName = itemNameView.getText().toString().trim().toLowerCase();
         String itemDescription = itemDescriptionView.getText().toString().trim();
-        int stockNumber = Integer.parseInt(stockNumberView.getText().toString().trim());
+        int stockNumber = Integer.parseInt(itemDescriptionView.getText().toString().trim());
         String itemPrice = itemPriceView.getText().toString().trim();
         itemPrice = trimCommaOfString(itemPrice);
 
@@ -251,10 +258,6 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             itemCategoryView.setError("Please specify a category for this menu item");
             return;
         }
-        if (stockNumber == 0) {
-            itemCategoryView.setError("Please add the stock quantity");
-            return;
-        }
         showOperationsDialog(editableEMenuItem != null ? "Updating EMenu Item" : "Creating New EMenu Item ", "Please wait...");
         String finalItemPrice = itemPrice;
         if (StringUtils.startsWithIgnoreCase(pickedFilePath, "https")
@@ -276,14 +279,14 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
 
     private void upsertItem(String itemName, String itemDescription, int stockNumber, String itemParentCategory, String finalItemPrice, String fileUrl) {
         if (editableEMenuItem != null) {
-            updateEMenuItem(fileUrl, editableEMenuItem.getMenuItemId(), itemName, itemDescription, finalItemPrice, itemParentCategory);
+            updateEMenuItem(fileUrl, editableEMenuItem.getMenuItemId(), itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory);
         } else {
             createNewEMenuItem(fileUrl, itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory);
         }
     }
 
-    private void updateEMenuItem(String fileUrl, String itemId, String itemName, String itemDescription, String finalItemPrice, String itemParentCategory) {
-        DataStoreClient.updateEMenuItem(itemId, itemName, itemDescription, finalItemPrice, itemParentCategory, fileUrl,
+    private void updateEMenuItem(String fileUrl, String itemId, String itemName, String itemDescription, int stockNumber, String finalItemPrice, String itemParentCategory) {
+        DataStoreClient.updateEMenuItem(itemId, itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory, fileUrl,
                 (eMenuItem, e) -> {
                     if (e == null) {
                         showSuccessMessage("Great!!!", "Your Menu Item was successfully updated");

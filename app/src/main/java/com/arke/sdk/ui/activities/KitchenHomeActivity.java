@@ -253,7 +253,7 @@ public class KitchenHomeActivity extends BaseActivity {
         }
         if (!tabTitles.contains("Menu")) {
             tabTitles.add("Menu");
-            fragments.add(new KitchenMenuFragment(this));
+            fragments.add(new KitchenMenuFragment());
         }
     }
 

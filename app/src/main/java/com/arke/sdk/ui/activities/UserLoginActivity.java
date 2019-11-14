@@ -116,21 +116,21 @@ public class UserLoginActivity extends AppCompatActivity {
                         int user_type = parseUser.getInt("user_type");
                         // grant user access WRT permission
                         switch (user_type){
-                            case 2:
+                            case Globals.KITCHEN:
                                 // kitchen
                                 AppPrefs.setUseType(Globals.UseType.USE_TYPE_KITCHEN);
                                 Intent kitchenHomeIntent = new Intent(UserLoginActivity.this, KitchenHomeActivity.class);
                                 startActivity(kitchenHomeIntent);
                                 finish();
                                 break;
-                            case 3:
+                            case Globals.BAR:
                                 // bar
                                 AppPrefs.setUseType(Globals.UseType.USE_TYPE_BAR);
                                 Intent barHomeIntent = new Intent(UserLoginActivity.this, BarHomeActivity.class);
                                 startActivity(barHomeIntent);
                                 finish();
                                 break;
-                            case 263389:
+                            case Globals.ADMIN_TAG_ID:
                                 // admin
                                 AppPrefs.setUseType(Globals.UseType.USE_TYPE_ADMIN);
                                 Intent adminHomeIntent = new Intent(UserLoginActivity.this, AdminHomeActivity.class);

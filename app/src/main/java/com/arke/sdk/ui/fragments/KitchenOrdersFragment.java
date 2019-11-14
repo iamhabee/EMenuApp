@@ -1,6 +1,7 @@
 package com.arke.sdk.ui.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -47,8 +48,8 @@ import butterknife.ButterKnife;
 
 public class KitchenOrdersFragment extends BaseFragment {
 
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipe_refresh_layout)
+//    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.content_recycler_view)
     RecyclerView contentRecyclerView;
@@ -74,6 +75,8 @@ public class KitchenOrdersFragment extends BaseFragment {
 
     private List<EMenuOrder> eMenuOrders = new ArrayList<>();
     private String searchString;
+    private Context mContext;
+    private LottieAlertDialog progressDialog;
 
     @SuppressLint("HandlerLeak")
     private Handler uiHandler = new Handler() {
@@ -83,7 +86,7 @@ public class KitchenOrdersFragment extends BaseFragment {
             handleIncomingEvent(msg.obj);
         }
     };
-    private Context context;
+
 
     @Override
     public void onEvent(Object eventObject) {
@@ -124,15 +127,17 @@ public class KitchenOrdersFragment extends BaseFragment {
         } else if (eventObject instanceof ItemSearchEvent) {
             ItemSearchEvent itemSearchEvent = (ItemSearchEvent) eventObject;
             int searchedPage = itemSearchEvent.getViewPagerIndex();
-            context = itemSearchEvent.getmContext();
+            mContext = itemSearchEvent.getmContext();
             if (searchedPage == 0) {
-                if(context == null) {
+                if(mContext == null) {
                     // perform normal search
                     setSearchString(itemSearchEvent.getSearchString());
                     searchIncomingOrders(itemSearchEvent.getSearchString(), 0);
                 }else{
                     // perform refresh
-
+                    showOperationsDialog("We're fetching incoming orders", "Please Wait");
+                    setSearchString("");
+                    searchIncomingOrders(itemSearchEvent.getSearchString(), 0);
                 }
             }
         } else if (eventObject instanceof OrderUpdatedEvent) {
@@ -196,15 +201,15 @@ public class KitchenOrdersFragment extends BaseFragment {
         initFooterView();
         setupSwipeRefreshLayoutColorScheme();
         attachEndlessScrollListener(linearLayoutManager);
-        swipeRefreshLayout.setOnRefreshListener(() -> fetchIncomingOrders(0));
+//        swipeRefreshLayout.setOnRefreshListener(() -> fetchIncomingOrders(0));
     }
 
     private void setupSwipeRefreshLayoutColorScheme() {
         if (getActivity() != null) {
-            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
-                    ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
-                    ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
-                    ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
+//            swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
+//                    ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
+//                    ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
+//                    ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
         }
     }
 
@@ -229,7 +234,7 @@ public class KitchenOrdersFragment extends BaseFragment {
 
     public void fetchIncomingOrders(int skip) {
         DataStoreClient.fetchIncomingKitchenOrders(skip, (results, e) -> {
-            swipeRefreshLayout.setRefreshing(false);
+//            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
@@ -288,7 +293,7 @@ public class KitchenOrdersFragment extends BaseFragment {
 
     private void searchIncomingOrders(String searchString, int skip) {
         DataStoreClient.searchIncomingOrders(searchString, skip, (results, e) -> {
-            swipeRefreshLayout.setRefreshing(false);
+//            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
@@ -310,6 +315,7 @@ public class KitchenOrdersFragment extends BaseFragment {
             } else {
                 loadDataInToAdapter(skip == 0, results);
             }
+            dismissProgressDialog();
         });
     }
 
@@ -323,7 +329,7 @@ public class KitchenOrdersFragment extends BaseFragment {
 
     private void loadDataInToAdapter(boolean clearPrevious, List<EMenuOrder> newData) {
         UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.NON_EMPTY_VIEW.ordinal());
-        swipeRefreshLayout.setRefreshing(false);
+//        swipeRefreshLayout.setRefreshing(false);
         if (clearPrevious && !newData.isEmpty()) {
             eMenuOrders.clear();
             eMenuOrdersRecyclerAdapter.notifyDataSetChanged();
@@ -338,5 +344,20 @@ public class KitchenOrdersFragment extends BaseFragment {
     }
 
 
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    private void showOperationsDialog(String title, String description) {
+        progressDialog = new LottieAlertDialog
+                .Builder(mContext, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
 
 }

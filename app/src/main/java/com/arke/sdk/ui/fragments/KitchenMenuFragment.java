@@ -85,10 +85,6 @@ public class KitchenMenuFragment extends BaseFragment {
     private LottieAlertDialog progressDialog;
 
 
-    public KitchenMenuFragment(Context context){
-        this.mContext = context;
-    }
-
 
     @SuppressLint("HandlerLeak")
     private Handler uiHandler = new Handler() {
@@ -225,7 +221,6 @@ public class KitchenMenuFragment extends BaseFragment {
                 }
             } else {
                 loadDataInToAdapter(skip == 0, results);
-                dismissProgressDialog();
             }
             UiUtils.toggleViewVisibility(footerView, false);
             dismissProgressDialog();
