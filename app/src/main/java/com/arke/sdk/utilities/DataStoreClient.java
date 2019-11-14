@@ -1107,6 +1107,24 @@ public class DataStoreClient {
                     eMenuOrder.setDirty(false);
                     eMenuOrder.update();
                     sendOutNotification(orders.size(), Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(eMenuOrder), exists ? Globals.UPDATE_TYPE_UPDATE : Globals.UPDATE_TYPE_NEW_INSERTION);
+                    decreaseItemInStock(eMenuOrder);
+                }
+            });
+        }
+    }
+// decrease item from e-menu items list
+    private static void decreaseItemInStock(EMenuOrder eMenuOrder) {
+        // get ordered_items from eMenuOrder
+        List<EMenuItem> ordered_items  = eMenuOrder.getItems();
+        // loop through
+        for (EMenuItem item : ordered_items) {
+            int stockNumber = item.getQuantityAvailableInStock();
+            stockNumber = stockNumber - item.getOrderedQuantity();
+            DataStoreClient.setQuantityAvailableInStockForItem(stockNumber, item.getMenuItemId(), (result, e) -> {
+                if (e == null) {
+                    UiUtils.showSafeToast("Success!");
+                } else {
+                    UiUtils.showSafeToast(e.getMessage());
                 }
             });
         }
