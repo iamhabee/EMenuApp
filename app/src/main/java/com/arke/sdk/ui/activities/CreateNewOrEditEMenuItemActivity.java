@@ -62,6 +62,9 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     @BindView(R.id.item_description)
     EditText itemDescriptionView;
 
+    @BindView(R.id.stock_number)
+    EditText stockNumberView;
+
     @BindView(R.id.item_price)
     EditText itemPriceView;
 
@@ -223,8 +226,10 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     private void processFormAndCreateNewEMenuItem() {
         String itemName = itemNameView.getText().toString().trim().toLowerCase();
         String itemDescription = itemDescriptionView.getText().toString().trim();
+        int stockNumber = Integer.parseInt(stockNumberView.getText().toString().trim());
         String itemPrice = itemPriceView.getText().toString().trim();
         itemPrice = trimCommaOfString(itemPrice);
+
         String itemParentCategory = itemCategoryView.getText().toString().trim();
         if (StringUtils.isEmpty(itemName)) {
             itemNameView.setError("Please enter a name for this menu item");
@@ -246,17 +251,21 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             itemCategoryView.setError("Please specify a category for this menu item");
             return;
         }
+        if (stockNumber == 0) {
+            itemCategoryView.setError("Please add the stock quantity");
+            return;
+        }
         showOperationsDialog(editableEMenuItem != null ? "Updating EMenu Item" : "Creating New EMenu Item ", "Please wait...");
         String finalItemPrice = itemPrice;
         if (StringUtils.startsWithIgnoreCase(pickedFilePath, "https")
                 || StringUtils.startsWithIgnoreCase(pickedFilePath, "http")) {
             DataStoreClient.checkAndCreateNewCategory(itemCategoryView.getText().toString(), pickedFilePath);
-            upsertItem(itemName, itemDescription, itemParentCategory, finalItemPrice, pickedFilePath);
+            upsertItem(itemName, itemDescription, stockNumber, itemParentCategory, finalItemPrice, pickedFilePath);
         } else {
             FileUploadUtils.uploadFile(pickedFilePath, (fileUrl, e) -> {
                 if (e == null) {
                     DataStoreClient.checkAndCreateNewCategory(itemCategoryView.getText().toString(), fileUrl);
-                    upsertItem(itemName, itemDescription, itemParentCategory, finalItemPrice, fileUrl);
+                    upsertItem(itemName, itemDescription, stockNumber, itemParentCategory, finalItemPrice, fileUrl);
                 } else {
                     dismissProgressDialog();
                     showErrorMessage("Content Creation Error", e.getMessage());
@@ -265,11 +274,11 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
         }
     }
 
-    private void upsertItem(String itemName, String itemDescription, String itemParentCategory, String finalItemPrice, String fileUrl) {
+    private void upsertItem(String itemName, String itemDescription, int stockNumber, String itemParentCategory, String finalItemPrice, String fileUrl) {
         if (editableEMenuItem != null) {
             updateEMenuItem(fileUrl, editableEMenuItem.getMenuItemId(), itemName, itemDescription, finalItemPrice, itemParentCategory);
         } else {
-            createNewEMenuItem(fileUrl, itemName, itemDescription, finalItemPrice, itemParentCategory);
+            createNewEMenuItem(fileUrl, itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory);
         }
     }
 
@@ -287,8 +296,8 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
                 });
     }
 
-    private void createNewEMenuItem(String filePhotoUrl, String itemName, String itemDescription, String finalItemPrice, String itemParentCategory) {
-        DataStoreClient.createNewMenuItem(itemName, itemDescription, finalItemPrice, itemParentCategory, filePhotoUrl,
+    private void createNewEMenuItem(String filePhotoUrl, String itemName, String itemDescription, int stockNumber, String finalItemPrice, String itemParentCategory) {
+        DataStoreClient.createNewMenuItem(itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory, filePhotoUrl,
                 (eMenuItem, e) -> {
                     if (e == null) {
                         showSuccessMessage("Great!!!", "Your Menu Item was successfully created");

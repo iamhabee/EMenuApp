@@ -53,6 +53,14 @@
                         android:textSize="18sp" />
 
                     <ImageView
+                        android:id="@+id/refresh_view"
+                        android:layout_width="25dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_refresh_orange_24dp"
+                        tools:ignore="ContentDescription" />
+                    <ImageView
                         android:id="@+id/search_view"
                         android:layout_width="25dp"
                         android:layout_height="wrap_content"

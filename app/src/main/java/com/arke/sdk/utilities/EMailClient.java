@@ -1,5 +1,9 @@
 package com.arke.sdk.utilities;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.arke.sdk.contracts.BooleanOperationDoneCallback;
@@ -30,65 +34,70 @@ public class EMailClient {
                                                  String restaurantOrBarName,
                                                  String retrievedPassword,
                                                  BooleanOperationDoneCallback booleanOperationDoneCallback) {
-        try {
-            JSONObject dataObject = new JSONObject();
-            JSONArray personalizations = new JSONArray();
-            JSONObject personalizationsFirstObject = new JSONObject();
-            JSONArray toArr = new JSONArray();
+        Handler mHandler = new Handler(Looper.getMainLooper());
+        Log.d("res# handleMessage", "handleMessage() called");
+        mHandler.postDelayed(() -> {
+            try {
+                JSONObject dataObject = new JSONObject();
+                JSONArray personalizations = new JSONArray();
+                JSONObject personalizationsFirstObject = new JSONObject();
+                JSONArray toArr = new JSONArray();
 
-            JSONObject toData = new JSONObject();
-            toData.put("email", emailAddress);
-            toData.put("name", restaurantOrBarName);
-            toArr.put(toData);
+                JSONObject toData = new JSONObject();
+                toData.put("email", emailAddress);
+                toData.put("name", restaurantOrBarName);
+                toArr.put(toData);
 
-            personalizationsFirstObject.put("to", toArr);
-            personalizationsFirstObject.put("subject", "EMenu Password Recovery");
-            personalizations.put(personalizationsFirstObject);
-            dataObject.put("personalizations", personalizations);
+                personalizationsFirstObject.put("to", toArr);
+                personalizationsFirstObject.put("subject", "EMenu Password Recovery");
+                personalizations.put(personalizationsFirstObject);
+                dataObject.put("personalizations", personalizations);
 
-            JSONArray contentArray = new JSONArray();
-            JSONObject contentArrObject = new JSONObject();
-            contentArrObject.put("type", "text/html");
-            contentArrObject.put("value", getEmailContent(isForAdmin, emailAddress, retrievedPassword));
-            contentArray.put(contentArrObject);
+                JSONArray contentArray = new JSONArray();
+                JSONObject contentArrObject = new JSONObject();
+                contentArrObject.put("type", "text/html");
+                contentArrObject.put("value", getEmailContent(isForAdmin, emailAddress, retrievedPassword));
+                contentArray.put(contentArrObject);
 
-            dataObject.put("content", contentArray);
+                dataObject.put("content", contentArray);
 
-            JSONObject fromObject = new JSONObject();
-            fromObject.put("email", "emenuspprt@gmail.com");
-            fromObject.put("name", "EMenu Support");
+                JSONObject fromObject = new JSONObject();
+                fromObject.put("email", "emenuspprt@gmail.com");
+                fromObject.put("name", "EMenu Support");
 
-            dataObject.put("from", fromObject);
+                dataObject.put("from", fromObject);
 
-            JSONObject replyToObject = new JSONObject();
-            replyToObject.put("email", "emenuspprt@gmail.com");
-            replyToObject.put("name", "EMenu Support");
-            dataObject.put("reply_to", replyToObject);
+                JSONObject replyToObject = new JSONObject();
+                replyToObject.put("email", "emenuspprt@gmail.com");
+                replyToObject.put("name", "EMenu Support");
+                dataObject.put("reply_to", replyToObject);
 
-            OkHttpClient okHttpClient = NetworkClient.getOkHttpClient();
-            HttpUrl.Builder builder = HttpUrl.parse("https://api.sendgrid.com/v3/mail/send").newBuilder();
-            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), dataObject.toString());
-            Request request = NetworkClient.getHeaders().url(builder.build().toString()).post(requestBody).build();
-            okHttpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                    EMenuLogger.d("SendGridData", "Failed to send Email due to " + e.getMessage());
-                    booleanOperationDoneCallback.done(false, e);
-                }
-
-                @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) {
-                    int responseCode = response.code();
-                    if (responseCode != 202) {
-                        booleanOperationDoneCallback.done(false, new Exception("Sorry, failed to initiate a password recovery at this time. Please try again."));
-                    } else {
-                        booleanOperationDoneCallback.done(true, null);
+                OkHttpClient okHttpClient = NetworkClient.getOkHttpClient();
+                HttpUrl.Builder builder = HttpUrl.parse("https://api.sendgrid.com/v3/mail/send").newBuilder();
+                RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), dataObject.toString());
+                Request request = NetworkClient.getHeaders().url(builder.build().toString()).post(requestBody).build();
+                okHttpClient.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        EMenuLogger.d("SendGridData", "Failed to send Email due to " + e.getMessage());
+                        booleanOperationDoneCallback.done(false, e);
                     }
-                }
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) {
+                        Log.d("res# sendGrid", response.toString());
+                        int responseCode = response.code();
+                        if (responseCode != 202) {
+                            booleanOperationDoneCallback.done(false, new Exception("Sorry, failed to initiate a password recovery at this time. Please try again."));
+                        } else {
+                            booleanOperationDoneCallback.done(true, null);
+                        }
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, 0);
     }
 
 }
