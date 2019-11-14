@@ -538,12 +538,17 @@ public class DataStoreClient {
         });
     }
 
+
+
+//    This method fetches all available menu  items for waiter, kitchen and bar
     public static void fetchAvailableEMenuItemsForRestaurant(int skip,
                                                              EMenuItemsFetchDoneCallBack fetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
+        if(AppPrefs.getUseType() != 1) {
+            eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
+        }
         eMenuItemsQuery.setLimit(100);
         if (skip != 0) {
             eMenuItemsQuery.setSkip(skip);
@@ -722,9 +727,12 @@ public class DataStoreClient {
         });
     }
 
-    public static void createNewMenuItem(String itemName, String itemDescription, String
-            itemPrice, String itemParentCategory, String itemPhotoUrl, EMenuItemUpdateDoneCallback upsertionDoneCallBack) {
 
+
+//    create menu item
+
+    public static void createNewMenuItem(String itemName, String itemDescription, int stockNumber, String
+            itemPrice, String itemParentCategory, String itemPhotoUrl, EMenuItemUpdateDoneCallback upsertionDoneCallBack) {
 
         ParseObject newMenuItem = new ParseObject(Globals.EMenuItems);
         newMenuItem.put(Globals.EMENU_ITEM_NAME, itemName.toLowerCase());
@@ -733,7 +741,7 @@ public class DataStoreClient {
         newMenuItem.put(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
         newMenuItem.put(Globals.EMENU_ITEM_PRICE, itemPrice);
         newMenuItem.put(Globals.IN_STOCK, true);
-        newMenuItem.put(Globals.QTY_IN_STOCK, 1);
+        newMenuItem.put(Globals.QTY_IN_STOCK, stockNumber);
         newMenuItem.put(Globals.DESTINATION_ID, AppPrefs.getUseType());
 
 
