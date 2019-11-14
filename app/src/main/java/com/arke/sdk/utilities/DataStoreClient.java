@@ -540,7 +540,7 @@ public class DataStoreClient {
 
 
 
-//    This method fetches all available menu  items for waiter, kitchen and bar
+/* This method fetches all available menu  items for waiter, kitchen and bar */
     public static void fetchAvailableEMenuItemsForRestaurant(int skip,
                                                              EMenuItemsFetchDoneCallBack fetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
@@ -700,6 +700,7 @@ public class DataStoreClient {
         });
     }
 
+    /* search for any drink in the drink frame layout */
     public static void searchDrinks(String searchString, EMenuItemsFetchDoneCallBack eMenuItemsFetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> searchQuery = ParseQuery.getQuery(Globals.EMenuItems);
@@ -727,10 +728,36 @@ public class DataStoreClient {
         });
     }
 
+    /* fetch all drinks in the backend and display in the drink frame layout(drink adapter)*/
+    public static void getDrinks(EMenuItemsFetchDoneCallBack eMenuItemsFetchDoneCallBack) {
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        ParseQuery<ParseObject> searchQuery = ParseQuery.getQuery(Globals.EMenuItems);
+        searchQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        searchQuery.whereContains(Globals.EMENU_ITEM_PARENT_CATEGORY, Globals.DRINKS);
+        searchQuery.findInBackground((objects, e) -> {
+            if (e != null) {
+                if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                    eMenuItemsFetchDoneCallBack.done(null, getException(Globals.EMPTY_PLACEHOLDER_ERROR_MESSAGE));
+                } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
+                    eMenuItemsFetchDoneCallBack.done(null, getException(getNetworkErrorMessage()));
+                } else {
+                    eMenuItemsFetchDoneCallBack.done(null, getException(e.getMessage()));
+                }
+            } else {
+                List<EMenuItem> availableItems = loadParseObjectsIntoEMenuItemObjects(objects);
+                if (!availableItems.isEmpty()) {
+
+                    eMenuItemsFetchDoneCallBack.done(availableItems, null);
+                } else {
+                    eMenuItemsFetchDoneCallBack.done(null, getException(Globals.EMPTY_PLACEHOLDER_ERROR_MESSAGE));
+                }
+            }
+        });
+    }
 
 
-//    create menu item
 
+    /* create menu item */
     public static void createNewMenuItem(String itemName, String itemDescription, int stockNumber, String
             itemPrice, String itemParentCategory, String itemPhotoUrl, EMenuItemUpdateDoneCallback upsertionDoneCallBack) {
 
@@ -777,15 +804,15 @@ public class DataStoreClient {
                                                  RestaurantUpdateDoneCallback restaurantUpdateDoneCallback) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
 
-//        this means selecting all from the table EmenuRestaurantAndBars
+        /* this means selecting all from the table EmenuRestaurantAndBars */
         ParseQuery<ParseObject> restaurantOrBarQuery = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
 
-//        object holds the response while e means error
+        /* object holds the response while e means error */
         restaurantOrBarQuery.getInBackground(restaurantOrBarId, (object, e) -> {
             if (e == null && object != null) {
                 if (StringUtils.isNotEmpty(newRestaurantName)) {
 
-//                    this means that the field in the database has been updated using the newRestaurantName variable
+                    /* this means that the field in the database has been updated using the newRestaurantName variable */
                     object.put(Globals.RESTAURANT_OR_BAR_NAME, newRestaurantName);
                 }
                 if (StringUtils.isNotEmpty(newRestaurantEmail)) {

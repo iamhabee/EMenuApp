@@ -219,9 +219,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             drinksAdapter.setDeviceId(deviceId);
         }
 
-        fetchDrinks();
         initSearchAdapter();
-
+        getAllDrinks();
 
         String previousWaiterOrBarTag = AppPrefs.getCurrentWaiterTag();
         if (StringUtils.isNotEmpty(previousWaiterOrBarTag)) {
@@ -229,6 +228,24 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             waiterTag.setText(waiterId);
         }
     }
+
+    /* this method will get all drinks in the database and populate it into drink adapter before any search is done */
+    private void getAllDrinks() {
+            DataStoreClient.getDrinks( (results, e) -> {
+                if (e == null) {
+                    if (!results.isEmpty()) {
+                        loadDrinksInToAdapter(results);
+                    }
+                } else {
+                    String errorMessage = e.getMessage();
+                    if (errorMessage != null && !errorMessage.contains(Globals.EMPTY_PLACEHOLDER_ERROR_MESSAGE)) {
+                        UiUtils.showSafeToast(errorMessage);
+                    }
+                }
+            });
+        }
+
+
 
     @Override
     public void onEventMainThread(Object event) {
@@ -295,6 +312,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         });
     }
 
+
+
     private void setupDrinksAdapter() {
         drinksAdapter = new DrinksAdapter(this, drinks);
         drinksRecyclerView.addItemDecoration(new MarginDecoration(this, 0));
@@ -303,6 +322,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         drinksRecyclerView.setAdapter(headerAndFooterRecyclerViewAdapter);
         initFooterView();
         attachEndlessScrollListener(drinksRecyclerView.getLayoutManager());
+
         drinksSearchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -480,25 +500,6 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         /* get waiter id and set it to waiter tag in drink adapter */
         drinksAdapter.setWaiterTag(waiterId);
 
-//        waiterTag.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                String waiterTagVal = charSequence.toString().trim();
-//                if (StringUtils.isNotEmpty(waiterTagVal)) {
-//                    drinksAdapter.setWaiterTag(waiterTagVal);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
         drinksEndSearchIcon.setOnClickListener(view -> UiUtils.forceShowKeyboard(drinksSearchBox));
         endSearchIconView.setOnClickListener(view -> UiUtils.forceShowKeyboard(searchBox));
     }
