@@ -1,14 +1,17 @@
 package com.arke.sdk.ui.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
@@ -34,6 +37,8 @@ import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.ui.adapters.EMenuItemRecyclerViewAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 
@@ -67,14 +72,19 @@ public class KitchenMenuFragment extends BaseFragment {
     @BindView(R.id.other_error_msg_view)
     TextView otherErrorMsgView;
 
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipe_refresh_layout)
+//    SwipeRefreshLayout swipeRefreshLayout;
 
     private EMenuItemRecyclerViewAdapter recyclerViewAdapter;
     private List<EMenuItem> eMenuItems = new ArrayList<>();
 
     private View footerView;
     private String searchString;
+    private Context mContext;
+
+    private LottieAlertDialog progressDialog;
+
+
 
     @SuppressLint("HandlerLeak")
     private Handler uiHandler = new Handler() {
@@ -88,6 +98,10 @@ public class KitchenMenuFragment extends BaseFragment {
     private void processIncomingSearch(ItemSearchEvent event) {
         if (event.getViewPagerIndex() == 1) {
             String searchString = event.getSearchString();
+            mContext = event.getmContext();
+            if(mContext != null){
+                showOperationsDialog("We're fetching menu items", "Please Wait");
+            }
             if (StringUtils.isNotEmpty(searchString)) {
                 setSearchString(searchString);
                 recyclerViewAdapter.setSearchString(searchString);
@@ -153,7 +167,7 @@ public class KitchenMenuFragment extends BaseFragment {
             CollectionsCache.getInstance().fetchEMenuFromCache(Globals.AVAILABLE_KITCHEN_CONTENTS_CACHE, (results, e) -> {
                 if (!results.isEmpty()) {
                     loadDataInToAdapter(true, results);
-                    swipeRefreshLayout.setRefreshing(true);
+//                    swipeRefreshLayout.setRefreshing(true);
                     fetchAvailableEMenuItems(0);
                 } else {
                     fetchAvailableEMenuItems(0);
@@ -176,7 +190,7 @@ public class KitchenMenuFragment extends BaseFragment {
     private void fetchAvailableEMenuItems(int skip) {
         DataStoreClient.fetchAvailableEMenuItemsForRestaurant(skip, (results, e) -> {
             if (e != null) {
-                swipeRefreshLayout.setRefreshing(false);
+//                swipeRefreshLayout.setRefreshing(false);
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
                 if (errorMessage != null) {
@@ -209,6 +223,7 @@ public class KitchenMenuFragment extends BaseFragment {
                 loadDataInToAdapter(skip == 0, results);
             }
             UiUtils.toggleViewVisibility(footerView, false);
+            dismissProgressDialog();
         });
     }
 
@@ -238,7 +253,7 @@ public class KitchenMenuFragment extends BaseFragment {
 
     private void loadDataInToAdapter(boolean clearPrevious, List<EMenuItem> newData) {
         UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.NON_EMPTY_VIEW.ordinal());
-        swipeRefreshLayout.setRefreshing(false);
+//        swipeRefreshLayout.setRefreshing(false);
         if (clearPrevious) {
             eMenuItems.clear();
             recyclerViewAdapter.notifyDataSetChanged();
@@ -260,7 +275,7 @@ public class KitchenMenuFragment extends BaseFragment {
     }
 
     private void initEventHandlers() {
-        swipeRefreshLayout.setOnRefreshListener(() -> fetchAvailableEMenuItems(0));
+//        swipeRefreshLayout.setOnRefreshListener(() -> fetchAvailableEMenuItems(0));
     }
 
     private void setupRecyclerView() {
@@ -274,10 +289,10 @@ public class KitchenMenuFragment extends BaseFragment {
         footerView = View.inflate(getActivity(), R.layout.loading_footer, null);
         RecyclerViewUtils.setFooterView(contentRecyclerView, footerView);
         UiUtils.toggleViewVisibility(footerView, false);
-        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
+//        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
         contentRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
@@ -325,6 +340,7 @@ public class KitchenMenuFragment extends BaseFragment {
                 }
             } else {
                 loadDataInToAdapter(true, results);
+                dismissProgressDialog();
             }
             UiUtils.toggleViewVisibility(footerView, false);
         });
@@ -362,5 +378,22 @@ public class KitchenMenuFragment extends BaseFragment {
             Globals.updatedEMenuItem = null;
         }
     }
+
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    private void showOperationsDialog(String title, String description) {
+        progressDialog = new LottieAlertDialog
+                .Builder(mContext, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
 
 }

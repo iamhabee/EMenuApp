@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -79,6 +80,9 @@ public class KitchenHomeActivity extends BaseActivity {
     @BindView(R.id.search_view)
     ImageView searchViewIcon;
 
+    @BindView(R.id.refresh_view)
+    ImageView refreshViewIcon;
+
     @BindView(R.id.search_card_view)
     View searchCardView;
 
@@ -94,7 +98,7 @@ public class KitchenHomeActivity extends BaseActivity {
     private ArrayList<String> tabTitles;
     private ArrayList<Fragment> fragments;
 
-    private LottieAlertDialog logOutOperationProgressDialog;
+    private LottieAlertDialog progressDialog;
 
 
     @Override
@@ -173,6 +177,10 @@ public class KitchenHomeActivity extends BaseActivity {
             openSearch();
             forceShowSoftKeyBoard();
         });
+        refreshViewIcon.setOnClickListener(view -> {
+            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
+
+        });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             String searchString = searchBox.getText().toString().trim();
@@ -205,6 +213,8 @@ public class KitchenHomeActivity extends BaseActivity {
         });
 
     }
+
+
 
     @Override
     public void onEventMainThread(Object event) {
@@ -300,18 +310,18 @@ public class KitchenHomeActivity extends BaseActivity {
 
 
     private void dismissProgressDialog() {
-        if (logOutOperationProgressDialog != null) {
-            logOutOperationProgressDialog.dismiss();
-            logOutOperationProgressDialog = null;
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
         }
     }
 
     private void showOperationsDialog(String title, String description) {
-        logOutOperationProgressDialog = new LottieAlertDialog
+        progressDialog = new LottieAlertDialog
                 .Builder(this, DialogTypes.TYPE_LOADING)
                 .setTitle(title).setDescription(description).build();
-        logOutOperationProgressDialog.setCancelable(false);
-        logOutOperationProgressDialog.show();
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
     private void setupDrawer() {
@@ -457,6 +467,7 @@ public class KitchenHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
             hamBurgerView.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             searchViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            refreshViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             titleView.setTextColor(Color.BLACK);
         } else {
             tabLayout.setBackgroundColor(Color.parseColor(primaryColorHex));
@@ -464,6 +475,7 @@ public class KitchenHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(Color.parseColor(primaryColorHex));
             hamBurgerView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             searchViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            refreshViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             titleView.setTextColor(Color.WHITE);
         }
         tabLayout.setSelectedTabIndicatorHeight(6);

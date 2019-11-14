@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -113,11 +114,15 @@ public class WaiterHomeActivity extends BaseActivity {
     @BindView(R.id.search_view)
     ImageView searchViewIcon;
 
+    @BindView(R.id.waiter_refresh_view)
+    ImageView refreshiewIcon;
+
     @BindView(R.id.search_card_view)
     View searchCardView;
 
     @BindView(R.id.search_box)
     EditText searchBox;
+
 
     @BindView(R.id.close_search)
     ImageView closeSearchView;
@@ -481,6 +486,7 @@ public class WaiterHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
             hamBurgerView.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             searchViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            refreshiewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             unProcessedOrders.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             titleView.setTextColor(Color.BLACK);
         } else {
@@ -489,6 +495,7 @@ public class WaiterHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(Color.parseColor(primaryColorHex));
             hamBurgerView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             searchViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            refreshiewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             unProcessedOrders.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             titleView.setTextColor(Color.WHITE);
         }
@@ -579,6 +586,9 @@ public class WaiterHomeActivity extends BaseActivity {
             UiUtils.blinkView(view);
             openSearch();
             forceShowSoftKeyBoard();
+        });
+        refreshiewIcon.setOnClickListener(view -> {
+            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);

@@ -1,6 +1,7 @@
 package com.arke.sdk.ui.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,6 +34,8 @@ import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.ui.adapters.EMenuItemRecyclerViewAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 
@@ -65,8 +68,8 @@ public class WaiterHomeFragment extends BaseFragment  {
     @BindView(R.id.other_error_msg_view)
     TextView otherErrorMsgView;
 
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipe_refresh_layout)
+//    SwipeRefreshLayout swipeRefreshLayout;
 
     private EMenuItemRecyclerViewAdapter recyclerViewAdapter;
     private List<EMenuItem> eMenuItems = new ArrayList<>();
@@ -74,6 +77,10 @@ public class WaiterHomeFragment extends BaseFragment  {
     private View footerView;
 
     private String searchString;
+
+    private ViewGroup root;
+    private Context mContext;
+    private LottieAlertDialog progressDialog;
 
     @SuppressLint("HandlerLeak")
     private Handler uiHandler = new Handler() {
@@ -142,6 +149,10 @@ public class WaiterHomeFragment extends BaseFragment  {
     private void processIncomingSearch(ItemSearchEvent event) {
         if (event.getViewPagerIndex() == 0) {
             String searchString = event.getSearchString();
+            mContext = event.getmContext();
+            if(mContext != null){
+                showOperationsDialog("We're fetching menu items", "Please Wait");
+            }
             if (StringUtils.isNotEmpty(searchString)) {
                 setSearchString(searchString);
                 recyclerViewAdapter.setSearchString(searchString);
@@ -179,10 +190,10 @@ public class WaiterHomeFragment extends BaseFragment  {
     }
 
     private void setupSwipeRefreshLayoutColorScheme() {
-        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
+//        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
     }
 
     private void attachEndlessScrollListener(LinearLayoutManager linearLayoutManager) {
@@ -233,12 +244,6 @@ public class WaiterHomeFragment extends BaseFragment  {
 //        swipeRefreshLayout.setOnRefreshListener(() -> {
 //            fetchAvailableEMenuItems(0);
 //        });
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                fetchAvailableEMenuItems(0);
-            }
-        });
     }
 
     private void setSearchString(String searchString) {
@@ -252,7 +257,7 @@ public class WaiterHomeFragment extends BaseFragment  {
     private void searchMenuItems(String searchTerm, int skip) {
         DataStoreClient.searchEMenuItems(searchTerm.toLowerCase().trim(), (results, e) -> {
             if (e != null) {
-                swipeRefreshLayout.setRefreshing(false);
+//                swipeRefreshLayout.setRefreshing(false);
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
                 if (errorMessage != null) {
@@ -283,8 +288,6 @@ public class WaiterHomeFragment extends BaseFragment  {
      */
     private void fetchAvailableEMenuItems(int skip) {
         DataStoreClient.fetchAvailableEMenuItemsForRestaurant(skip, (results, e) -> {
-            Log.d("FETCHED", "Something");
-            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
@@ -318,15 +321,17 @@ public class WaiterHomeFragment extends BaseFragment  {
                     }
                 }
             } else {
+//                swipeRefreshLayout.setRefreshing(false);
                 loadDataInToAdapter(skip == 0, results);
             }
             UiUtils.toggleViewVisibility(footerView, false);
+            dismissProgressDialog();
         });
     }
 
     private void loadDataInToAdapter(boolean clearPrevious, List<EMenuItem> newData) {
         UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.NON_EMPTY_VIEW.ordinal());
-        swipeRefreshLayout.setRefreshing(false);
+//        swipeRefreshLayout.setRefreshing(false);
         if (clearPrevious) {
             eMenuItems.clear();
             recyclerViewAdapter.notifyDataSetChanged();
@@ -339,6 +344,23 @@ public class WaiterHomeFragment extends BaseFragment  {
         if (!eMenuItems.isEmpty()) {
             CollectionsCache.getInstance().cacheEMenuItems(Globals.WAITER_HOME_CONTENTS_CACHE, eMenuItems);
         }
+    }
+
+
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    private void showOperationsDialog(String title, String description) {
+        progressDialog = new LottieAlertDialog
+                .Builder(mContext, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        progressDialog.setCancelable(false);
+        progressDialog.show();
     }
 
 }

@@ -1,5 +1,7 @@
 package com.arke.sdk.eventbuses;
 
+import android.content.Context;
+
 import com.arke.sdk.models.EMenuOrder;
 
 public class RefreshEMenuOrder {
@@ -9,6 +11,7 @@ public class RefreshEMenuOrder {
     public RefreshEMenuOrder(EMenuOrder eMenuOrder) {
         this.eMenuOrder = eMenuOrder;
     }
+
 
     public RefreshEMenuOrder setDeleted(boolean deleted) {
         this.deleted = deleted;

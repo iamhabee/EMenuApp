@@ -1,6 +1,8 @@
 package com.arke.sdk.ui.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +32,8 @@ import com.arke.sdk.utilities.EMenuLogger;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 
@@ -44,8 +48,8 @@ import butterknife.ButterKnife;
 @SuppressWarnings({"ConstantConditions", "SameParameterValue"})
 public class OutgoingOrdersFragment extends BaseFragment {
 
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipe_refresh_layout)
+//    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.content_recycler_view)
     RecyclerView contentRecyclerView;
@@ -77,6 +81,9 @@ public class OutgoingOrdersFragment extends BaseFragment {
             handleIncomingEvent(msg.obj);
         }
     };
+    private Context mContext;
+    private LottieAlertDialog progressDialog;
+
 
     @Override
     public void onStop() {
@@ -126,13 +133,13 @@ public class OutgoingOrdersFragment extends BaseFragment {
         setupRecyclerView();
         setupSwipeRefreshLayoutColorScheme();
         fetchOutgoingOrders(0);
-        swipeRefreshLayout.setOnRefreshListener(() -> fetchOutgoingOrders(0));
+//        swipeRefreshLayout.setOnRefreshListener(() -> fetchOutgoingOrders(0));
     }
 
     @SuppressLint("SetTextI18n")
     private void fetchOutgoingOrders(int skip) {
         DataStoreClient.fetchOutgoingOrders(skip, (results, e) -> {
-            swipeRefreshLayout.setRefreshing(false);
+//            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
@@ -172,10 +179,10 @@ public class OutgoingOrdersFragment extends BaseFragment {
     }
 
     private void setupSwipeRefreshLayoutColorScheme() {
-        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
-                ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
+//        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.gplus_color_1),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_2),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_3),
+//                ContextCompat.getColor(getActivity(), R.color.gplus_color_4));
     }
 
     private void loadDataInToAdapter(boolean clearPrevious, List<EMenuOrder> newData) {
@@ -210,12 +217,19 @@ public class OutgoingOrdersFragment extends BaseFragment {
         if (event instanceof ItemSearchEvent) {
             ItemSearchEvent itemSearchEvent = (ItemSearchEvent) event;
             int searchedPage = itemSearchEvent.getViewPagerIndex();
+            mContext = itemSearchEvent.getmContext();
             if (searchedPage == 1) {
-                String searchString = itemSearchEvent.getSearchString();
-                if (StringUtils.isNotEmpty(searchString)) {
-                    searchOutgoingOrders(itemSearchEvent.getSearchString(), 0);
-                } else {
-                    fetchOutgoingOrders(0);
+                if(mContext == null) {
+                    String searchString = itemSearchEvent.getSearchString();
+                    if (StringUtils.isNotEmpty(searchString)) {
+                        searchOutgoingOrders(itemSearchEvent.getSearchString(), 0);
+                    } else {
+                        fetchOutgoingOrders(0);
+                    }
+                }else {
+                    showOperationsDialog("We're fetching incoming orders", "Please Wait");
+                    searchOutgoingOrders("", 0);
+
                 }
             }
         } else if (event instanceof OrderUpdatedEvent) {
@@ -303,7 +317,7 @@ public class OutgoingOrdersFragment extends BaseFragment {
     @SuppressLint("SetTextI18n")
     private void searchOutgoingOrders(String searchString, int skip) {
         DataStoreClient.searchOutgoingOrders(skip, searchString, (results, e) -> {
-            swipeRefreshLayout.setRefreshing(false);
+//            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
@@ -325,7 +339,25 @@ public class OutgoingOrdersFragment extends BaseFragment {
             } else {
                 loadDataInToAdapter(skip == 0, results);
             }
+            dismissProgressDialog();
         });
     }
+
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    private void showOperationsDialog(String title, String description) {
+        progressDialog = new LottieAlertDialog
+                .Builder(mContext, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
 
 }

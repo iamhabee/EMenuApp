@@ -16,7 +16,6 @@ import com.arke.sdk.R;
 
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.ui.activities.KitchenHomeActivity;
-import com.arke.sdk.ui.fragments.KitchenOrdersFragment;
 import com.arke.sdk.utilities.Constants;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -25,7 +24,6 @@ import com.parse.ParseQuery;
 
 import java.util.List;
 import java.util.Objects;
-
 
 
 public class KitchenAlertWorker extends Worker {
