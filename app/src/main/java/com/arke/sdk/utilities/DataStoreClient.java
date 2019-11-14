@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
+import com.arke.sdk.contracts.AcceptedOrder;
 import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
@@ -497,21 +498,12 @@ public class DataStoreClient {
     }
 
     public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder){
-//        ParseQuery<ParseObject> objectParseQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
-//        objectParseQuery.whereEqualTo(Globals.ORDER_ID, orderId);
-//
-//        ParseObject rejectedObject = new ParseObject(Globals.EMENU_ORDERS);
-//        rejectedObject.put(Globals.REJECTED_ORDER, rejected);
-//
-//
-////        EMenuOrder newlyCreatedEMenuItem = loadParseObjectIntoEMenuItem(rejectedObject);
-//        EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(rejectedObject);
-//        rejectedOrder.done(true, null);
-//
 
+    // Connect to the parse server
         ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         String deviceId = AppPrefs.getDeviceId();
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        // Setting query clauses
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         orderQuery.getFirstInBackground((object, e) -> {
@@ -534,7 +526,11 @@ public class DataStoreClient {
                                         : Globals.BAR_ATTENDANT_ID,
                                 deviceId);
                         Boolean orderRejectionState = true;
+                        Boolean orderAcceptedState = false;
+                        Boolean rejectedNotifier = false;
                         object.put(Globals.REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.ACCEPTED_ORDER, orderAcceptedState);
+                        object.put(Globals.REJECTED_NOTIFIER, rejectedNotifier);
                         object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "REJECTED" + '"');
                     }
                     object.saveInBackground(e1 -> {
@@ -546,6 +542,8 @@ public class DataStoreClient {
                     });
                 }
             }
+
+            // Send notification
             EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(object);
             sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(insertToRejected),
                 Globals.REJECTED_ORDER);
@@ -1130,6 +1128,8 @@ public class DataStoreClient {
         for (EMenuOrder eMenuOrder : orders) {
             if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.NOT_YET_SENT) {
                 eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
+            }else if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.REJECTED){
+                eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
             }
             checkAndPushOrder(eMenuOrder, (eMenuOrder1, exists, e) -> {
                 if (e == null) {

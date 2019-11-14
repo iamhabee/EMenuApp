@@ -254,12 +254,11 @@ public class EMenuOrderView extends MaterialCardView implements
             } else {
                 orderProgressTextView.setText(WordUtils.capitalize(orderProgressStatus.name().replace("_", " ")));
             }
-        }else {
-            orderProgressTextView.setText("Rejected");
         }
     }
 
     private void updateOrderProgress(){
+
     }
 
     private void setUpTableName(String searchString, String tableName) {
@@ -372,6 +371,8 @@ public class EMenuOrderView extends MaterialCardView implements
     private void rejectOrder(){
         DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
         Toast.makeText(getContext(), "Order rejected", Toast.LENGTH_SHORT).show();
+//        getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
     }
 
     private void markOrderAsTaken() {
