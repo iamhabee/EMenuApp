@@ -539,8 +539,7 @@ public class DataStoreClient {
     }
 
 
-
-//    This method fetches all available menu  items for waiter, kitchen and bar
+//    This method fetches all available items for waiter, kitchen and bar
     public static void fetchAvailableEMenuItemsForRestaurant(int skip,
                                                              EMenuItemsFetchDoneCallBack fetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
@@ -829,6 +828,7 @@ public class DataStoreClient {
     @SuppressWarnings("ConstantConditions")
     public static void updateEMenuItem(String itemId, String itemName,
                                        String itemDescription,
+                                       int stockNumber,
                                        String itemPrice,
                                        String itemParentCategory,
                                        String itemPhotoUrl,
@@ -838,6 +838,7 @@ public class DataStoreClient {
             if (e == null) {
                 retrievedObject.put(Globals.EMENU_ITEM_NAME, itemName.toLowerCase());
                 retrievedObject.put(Globals.EMENU_ITEM_DESCRIPTION, itemDescription);
+                retrievedObject.put(String.valueOf(Globals.EMENU_ITEM_QUANTITY_IN_STOCK), stockNumber);
                 retrievedObject.put(Globals.EMENU_ITEM_PARENT_CATEGORY, itemParentCategory.trim().toLowerCase());
                 retrievedObject.put(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
                 retrievedObject.put(Globals.EMENU_ITEM_PRICE, itemPrice);

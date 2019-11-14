@@ -30,6 +30,7 @@ public class Globals {
     public static final String EMENU_ITEM_PHOTO_URL = "emenu_item_photo_url";
     public static final String EMENU_ITEM_NAME = "emenu_item_name";
     public static final String EMENU_ITEM_DESCRIPTION = "emenu_item_description";
+    public static final int EMENU_ITEM_QUANTITY_IN_STOCK = 0;
     public static final String EMENU_ITEM_INGREDIENTS_LIST = "emenu_items_ingredients_list";
     public static final String EMENU_ITEM_PARENT_CATEGORY = "emenu_item_parent_category";
     public static final String EMENU_ITEM_SUB_PARENT_CATEGORY = "emenu_item_sub_parent_category";
