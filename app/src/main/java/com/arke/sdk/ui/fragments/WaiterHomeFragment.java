@@ -289,7 +289,6 @@ public class WaiterHomeFragment extends BaseFragment  {
      * Attempts to load the inStock EMenu Items for this restaurant
      */
     private void fetchAvailableEMenuItems(int skip) {
-        Log.d("FETCH CALLED", Integer.toString(skip));
         DataStoreClient.fetchAvailableEMenuItemsForRestaurant(skip, (results, e) -> {
             if (e != null) {
                 String errorMessage = e.getMessage();
@@ -324,7 +323,6 @@ public class WaiterHomeFragment extends BaseFragment  {
                     }
                 }
             } else {
-                Log.d("FETCHED", "Sumtin");
                 swipeRefreshLayout.setRefreshing(false);
                 loadDataInToAdapter(skip == 0, results);
             }

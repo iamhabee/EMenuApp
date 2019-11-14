@@ -81,6 +81,9 @@ public class BarHomeActivity extends BaseActivity {
     @BindView(R.id.search_view)
     ImageView searchViewIcon;
 
+    @BindView(R.id.refresh_view)
+    ImageView refreshViewIcon;
+
     @BindView(R.id.search_card_view)
     View searchCardView;
 
@@ -173,6 +176,10 @@ public class BarHomeActivity extends BaseActivity {
             UiUtils.blinkView(view);
             openSearch();
             forceShowSoftKeyBoard();
+        });
+        refreshViewIcon.setOnClickListener(view -> {
+            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
+
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
@@ -488,6 +495,7 @@ public class BarHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
             hamBurgerView.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             searchViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            refreshViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             titleView.setTextColor(Color.BLACK);
         } else {
             tabLayout.setBackgroundColor(Color.parseColor(primaryColorHex));
@@ -495,6 +503,7 @@ public class BarHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(Color.parseColor(primaryColorHex));
             hamBurgerView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             searchViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            refreshViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             titleView.setTextColor(Color.WHITE);
         }
         tabLayout.setSelectedTabIndicatorHeight(6);
