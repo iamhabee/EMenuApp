@@ -65,7 +65,7 @@ public class WaiterHomeFragment extends BaseFragment  {
     @BindView(R.id.other_error_msg_view)
     TextView otherErrorMsgView;
 
-    @BindView(R.id.swipe_refresh_layout)
+//    @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
     private EMenuItemRecyclerViewAdapter recyclerViewAdapter;
@@ -74,6 +74,8 @@ public class WaiterHomeFragment extends BaseFragment  {
     private View footerView;
 
     private String searchString;
+
+    private ViewGroup root;
 
     @SuppressLint("HandlerLeak")
     private Handler uiHandler = new Handler() {
@@ -87,9 +89,12 @@ public class WaiterHomeFragment extends BaseFragment  {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View waiterHomeView = inflater.inflate(R.layout.fragment_waiter_home, container, false);
-        ButterKnife.bind(this, waiterHomeView);
-        return waiterHomeView;
+//        View waiterHomeView = inflater.inflate(R.layout.fragment_waiter_home, container, false);
+//        ButterKnife.bind(this, waiterHomeView);
+//        return waiterHomeView;
+        root = (ViewGroup) inflater.inflate(R.layout.fragment_waiter_home, container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override
@@ -233,6 +238,8 @@ public class WaiterHomeFragment extends BaseFragment  {
 //        swipeRefreshLayout.setOnRefreshListener(() -> {
 //            fetchAvailableEMenuItems(0);
 //        });
+        swipeRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setEnabled(true);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -282,9 +289,8 @@ public class WaiterHomeFragment extends BaseFragment  {
      * Attempts to load the inStock EMenu Items for this restaurant
      */
     private void fetchAvailableEMenuItems(int skip) {
+        Log.d("FETCH CALLED", Integer.toString(skip));
         DataStoreClient.fetchAvailableEMenuItemsForRestaurant(skip, (results, e) -> {
-            Log.d("FETCHED", "Sumtin");
-            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
@@ -318,6 +324,8 @@ public class WaiterHomeFragment extends BaseFragment  {
                     }
                 }
             } else {
+                Log.d("FETCHED", "Sumtin");
+                swipeRefreshLayout.setRefreshing(false);
                 loadDataInToAdapter(skip == 0, results);
             }
             UiUtils.toggleViewVisibility(footerView, false);
