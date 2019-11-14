@@ -670,7 +670,10 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> searchQuery = ParseQuery.getQuery(Globals.EMenuItems);
         searchQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        searchQuery.whereContains(Globals.EMENU_ITEM_NAME, searchString.toLowerCase());
+        if(searchString.length() > 0) {
+            searchQuery.whereContains(Globals.EMENU_ITEM_NAME, searchString.toLowerCase());
+        }
+        searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         searchQuery.findInBackground((objects, e) -> {
             if (e != null) {
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {

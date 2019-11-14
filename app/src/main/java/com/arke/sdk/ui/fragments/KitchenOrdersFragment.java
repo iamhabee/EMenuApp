@@ -1,9 +1,11 @@
 package com.arke.sdk.ui.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,8 @@ import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.arke.sdk.utilities.AppNotifier;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 
@@ -79,6 +83,7 @@ public class KitchenOrdersFragment extends BaseFragment {
             handleIncomingEvent(msg.obj);
         }
     };
+    private Context context;
 
     @Override
     public void onEvent(Object eventObject) {
@@ -119,9 +124,16 @@ public class KitchenOrdersFragment extends BaseFragment {
         } else if (eventObject instanceof ItemSearchEvent) {
             ItemSearchEvent itemSearchEvent = (ItemSearchEvent) eventObject;
             int searchedPage = itemSearchEvent.getViewPagerIndex();
+            context = itemSearchEvent.getmContext();
             if (searchedPage == 0) {
-                setSearchString(itemSearchEvent.getSearchString());
-                searchIncomingOrders(itemSearchEvent.getSearchString(), 0);
+                if(context == null) {
+                    // perform normal search
+                    setSearchString(itemSearchEvent.getSearchString());
+                    searchIncomingOrders(itemSearchEvent.getSearchString(), 0);
+                }else{
+                    // perform refresh
+
+                }
             }
         } else if (eventObject instanceof OrderUpdatedEvent) {
             OrderUpdatedEvent orderUpdatedEvent = (OrderUpdatedEvent) eventObject;
@@ -324,5 +336,7 @@ public class KitchenOrdersFragment extends BaseFragment {
         }
 
     }
+
+
 
 }

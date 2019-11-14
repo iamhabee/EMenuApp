@@ -100,7 +100,7 @@ public class UserLoginActivity extends AppCompatActivity {
         editUsername = username.getText().toString();
 
 
-        showOperationsDialog("Logging You In " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
+        showOperationsDialog("Logging you in to " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
 
 
         ParseUser.logInInBackground(editUsername, editPassword, new LogInCallback() {
