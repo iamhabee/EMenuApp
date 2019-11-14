@@ -283,7 +283,7 @@ public class WaiterHomeFragment extends BaseFragment  {
      */
     private void fetchAvailableEMenuItems(int skip) {
         DataStoreClient.fetchAvailableEMenuItemsForRestaurant(skip, (results, e) -> {
-            Log.d("FETCHED", "Sumtin");
+            Log.d("FETCHED", "Something");
             swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();

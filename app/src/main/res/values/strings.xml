@@ -503,5 +503,6 @@
     <string name="info_text">Kindly fill the form below to set up a user account</string>
     <string name="refresh">Refresh</string>
     <string name="open_notify">View Order</string>
+    <string name="stock_number">Stock Number</string>
 
 </resources>
