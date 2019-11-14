@@ -371,9 +371,9 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        eMenuItemsQuery.whereContains(Globals.ORDERED_ITEMS, "drinks");
+        eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         eMenuItemsQuery.setLimit(100);
-        eMenuItemsQuery.whereContains(Globals.EMENU_ITEM_PARENT_CATEGORY, Globals.DRINKS);
+
         if (skip != 0) {
             eMenuItemsQuery.setSkip(skip);
         }
@@ -497,17 +497,59 @@ public class DataStoreClient {
     }
 
     public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder){
-        ParseQuery<ParseObject> objectParseQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
-        objectParseQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+//        ParseQuery<ParseObject> objectParseQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+//        objectParseQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+//
+//        ParseObject rejectedObject = new ParseObject(Globals.EMENU_ORDERS);
+//        rejectedObject.put(Globals.REJECTED_ORDER, rejected);
+//
+//
+////        EMenuOrder newlyCreatedEMenuItem = loadParseObjectIntoEMenuItem(rejectedObject);
+//        EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(rejectedObject);
+//        rejectedOrder.done(true, null);
+//
 
-        ParseObject rejectedObject = new ParseObject(Globals.EMenuItems);
-        rejectedObject.put(Globals.REJECTED_ORDER, rejected);
-
-
-        EMenuItem newlyCreatedEMenuItem = loadParseObjectIntoEMenuItem(rejectedObject);
-        rejectedOrder.done(true, null);
-        sendOutNotification(1, Globals.EMENU_ITEM_NOTIFICATION, stringifyEMenuItem(newlyCreatedEMenuItem),
-                Globals.UPDATE_TYPE_NEW_INSERTION);
+        ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        String deviceId = AppPrefs.getDeviceId();
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+        orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        orderQuery.getFirstInBackground((object, e) -> {
+            if (object != null) {
+                int appUseType = AppPrefs.getUseType();
+                String rejectionStatus = null;
+                if (appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
+                    rejectionStatus = object.getString(Globals.KITCHEN_ATTENDANT_DEVICE_ID);
+                } else if (appUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
+                    rejectionStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
+                }
+                if (deviceId != null && rejectionStatus != null) {
+                    String errorMessage = " Order was rejected";
+                    rejectedOrder.done(true, getException(errorMessage));
+                } else {
+                    if (deviceId != null) {
+                        //
+                        object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
+                                        ? Globals.KITCHEN_ATTENDANT_ID
+                                        : Globals.BAR_ATTENDANT_ID,
+                                deviceId);
+                        Boolean orderRejectionState = true;
+                        object.put(Globals.REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "REJECTED" + '"');
+                    }
+                    object.saveInBackground(e1 -> {
+                        if (e1 == null) {
+                            rejectedOrder.done(true, null);
+                        } else {
+                            rejectedOrder.done(true, e1);
+                        }
+                    });
+                }
+            }
+            EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(object);
+            sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(insertToRejected),
+                Globals.REJECTED_ORDER);
+        });
     }
 
     public static void deleteEMenuOrderRemotely(String orderId, BooleanOperationDoneCallback deleteDoneCallBack) {
@@ -558,6 +600,7 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         eMenuItemsQuery.setLimit(100);
         if (skip != 0) {
             eMenuItemsQuery.setSkip(skip);
@@ -745,6 +788,7 @@ public class DataStoreClient {
         newMenuItem.put(Globals.EMENU_ITEM_PRICE, itemPrice);
         newMenuItem.put(Globals.IN_STOCK, true);
         newMenuItem.put(Globals.QTY_IN_STOCK, 1);
+        newMenuItem.put(Globals.DESTINATION_ID, AppPrefs.getUseType());
 
 
         if (itemPhotoUrl != null) {

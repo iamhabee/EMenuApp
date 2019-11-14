@@ -25,6 +25,7 @@ public class Globals {
     public static final String RESTAURANT_OR_BAR_REVEALED_PASSWORD = "emenu_restaurant_or_bar_password_revealed";
     public static final String RESTAURANTS_AND_BARS = "EMenuRestaurantsAndBars";
     public static final String EMenuItems = "EMenuItems";
+    public static final String DESTINATION_ID = "destination_id";
     public static final String PREVIOUS_PASSWORD = "previous_password";
     public static final String EMENU_ITEM_PHOTO_URL = "emenu_item_photo_url";
     public static final String EMENU_ITEM_NAME = "emenu_item_name";

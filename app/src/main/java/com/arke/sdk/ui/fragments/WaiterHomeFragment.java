@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @SuppressWarnings({"ConstantConditions", "unused"})
-public class WaiterHomeFragment extends BaseFragment {
+public class WaiterHomeFragment extends BaseFragment  {
 
     @BindView(R.id.content_recycler_view)
     RecyclerView contentRecyclerView;
@@ -229,7 +230,15 @@ public class WaiterHomeFragment extends BaseFragment {
     }
 
     private void initEventHandlers() {
-        swipeRefreshLayout.setOnRefreshListener(() -> fetchAvailableEMenuItems(0));
+//        swipeRefreshLayout.setOnRefreshListener(() -> {
+//            fetchAvailableEMenuItems(0);
+//        });
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchAvailableEMenuItems(0);
+            }
+        });
     }
 
     private void setSearchString(String searchString) {
@@ -274,6 +283,7 @@ public class WaiterHomeFragment extends BaseFragment {
      */
     private void fetchAvailableEMenuItems(int skip) {
         DataStoreClient.fetchAvailableEMenuItemsForRestaurant(skip, (results, e) -> {
+            Log.d("FETCHED", "Sumtin");
             swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();

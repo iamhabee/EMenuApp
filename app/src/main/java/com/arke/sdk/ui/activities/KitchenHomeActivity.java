@@ -315,8 +315,8 @@ public class KitchenHomeActivity extends BaseActivity {
     }
 
     private void setupDrawer() {
-        String restaurantOrBarName = AppPrefs.getRestaurantOrBarName();
-        String restaurantOrBarEmailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
+        String restaurantOrBarName = ParseUser.getCurrentUser().getUsername();
+        String restaurantOrBarEmailAddress = ParseUser.getCurrentUser().getString("account_type");
         String restaurantOrBarPhotoUrl = AppPrefs.getRestaurantOrBarPhotoUrl();
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawer(GravityCompat.START, true);
@@ -367,7 +367,7 @@ public class KitchenHomeActivity extends BaseActivity {
         MenuItem kitchenItem = navigationView.getMenu().findItem(R.id.kitchen_view);
         MenuItem barItem = navigationView.getMenu().findItem(R.id.bar_view);
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.admin_view);
-        if (currentUseType != Globals.UseType.USE_TYPE_ADMIN.ordinal()) {
+        if (ParseUser.getCurrentUser().getInt("user_type") != Globals.ADMIN_TAG_ID) {
             adminItem.setVisible(false);
             waiterMenuItem.setVisible(false);
             kitchenItem.setVisible(false);
