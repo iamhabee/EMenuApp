@@ -39,7 +39,7 @@ public class EMenuOrdersRecyclerAdapter extends RecyclerView.Adapter<RecyclerVie
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = layoutInflater.inflate(R.layout.emenu_order_view, parent, false);
+        View itemView = layoutInflater.inflate(R.layout.emenu_order_view, parent,false);
         return new EMenuOrdersRecyclerViewHolder(itemView);
     }
 

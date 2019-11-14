@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
+import com.arke.sdk.contracts.AcceptedOrder;
+import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
@@ -492,6 +494,59 @@ public class DataStoreClient {
             } else {
                 eMenuItemUpdateDoneCallback.done(null, e);
             }
+        });
+    }
+
+    public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder){
+
+    // Connect to the parse server
+        ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        String deviceId = AppPrefs.getDeviceId();
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        // Setting query clauses
+        orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+        orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        orderQuery.getFirstInBackground((object, e) -> {
+            if (object != null) {
+                int appUseType = AppPrefs.getUseType();
+                String rejectionStatus = null;
+                if (appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
+                    rejectionStatus = object.getString(Globals.KITCHEN_ATTENDANT_DEVICE_ID);
+                } else if (appUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
+                    rejectionStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
+                }
+                if (deviceId != null && rejectionStatus != null) {
+                    String errorMessage = " Order was rejected";
+                    rejectedOrder.done(true, getException(errorMessage));
+                } else {
+                    if (deviceId != null) {
+                        //
+                        object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
+                                        ? Globals.KITCHEN_ATTENDANT_ID
+                                        : Globals.BAR_ATTENDANT_ID,
+                                deviceId);
+                        Boolean orderRejectionState = true;
+                        Boolean orderAcceptedState = false;
+                        Boolean rejectedNotifier = false;
+                        object.put(Globals.REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.ACCEPTED_ORDER, orderAcceptedState);
+                        object.put(Globals.REJECTED_NOTIFIER, rejectedNotifier);
+                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "REJECTED" + '"');
+                    }
+                    object.saveInBackground(e1 -> {
+                        if (e1 == null) {
+                            rejectedOrder.done(true, null);
+                        } else {
+                            rejectedOrder.done(true, e1);
+                        }
+                    });
+                }
+            }
+
+            // Send notification
+            EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(object);
+            sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(insertToRejected),
+                Globals.REJECTED_ORDER);
         });
     }
 
@@ -1101,6 +1156,8 @@ public class DataStoreClient {
         for (EMenuOrder eMenuOrder : orders) {
             if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.NOT_YET_SENT) {
                 eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
+            }else if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.REJECTED){
+                eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
             }
             checkAndPushOrder(eMenuOrder, (eMenuOrder1, exists, e) -> {
                 if (e == null) {

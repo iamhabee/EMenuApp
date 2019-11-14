@@ -119,6 +119,9 @@ public class Globals {
     public static boolean emenuItemUpdated = false;
     public static EMenuItem updatedEMenuItem = null;
     public static boolean unProcessedOrdersPushed = false;
+    public static final String REJECTED_ORDER = "order_rejected";
+    public static final String ACCEPTED_ORDER = "order_accepted";
+    public static final String REJECTED_NOTIFIER = "rejected_notifier";
 
 
     public enum StatusPage {
@@ -185,7 +188,8 @@ public class Globals {
         PENDING,
         PROCESSING,
         ALMOST_DONE,
-        DONE
+        DONE,
+        REJECTED
     }
 
 }
