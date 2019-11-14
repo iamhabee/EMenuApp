@@ -546,7 +546,7 @@ public class DataStoreClient {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        if(AppPrefs.getUseType() != 1) {
+        if(AppPrefs.getUseType() != Globals.WAITER) {
             eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         }
         eMenuItemsQuery.setLimit(100);

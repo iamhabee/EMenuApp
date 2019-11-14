@@ -14,7 +14,7 @@ public class Globals {
     public static final String USE_TYPE = "emenu_use_type";
     public static final String ADMIN_TAG = "admin";
     public static final int ADMIN_TAG_ID = 263389;
-    public static final int WAITER = 0;
+    public static final int WAITER = 1;
     public static final int BAR = 3;
     public static final int KITCHEN = 2;
     public static final String DEFAULT_PWD = "12345";
