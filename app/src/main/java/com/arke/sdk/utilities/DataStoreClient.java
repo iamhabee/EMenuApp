@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
+import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
@@ -493,6 +494,20 @@ public class DataStoreClient {
                 eMenuItemUpdateDoneCallback.done(null, e);
             }
         });
+    }
+
+    public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder){
+        ParseQuery<ParseObject> objectParseQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        objectParseQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+
+        ParseObject rejectedObject = new ParseObject(Globals.EMenuItems);
+        rejectedObject.put(Globals.REJECTED_ORDER, rejected);
+
+
+        EMenuItem newlyCreatedEMenuItem = loadParseObjectIntoEMenuItem(rejectedObject);
+        rejectedOrder.done(true, null);
+        sendOutNotification(1, Globals.EMENU_ITEM_NOTIFICATION, stringifyEMenuItem(newlyCreatedEMenuItem),
+                Globals.UPDATE_TYPE_NEW_INSERTION);
     }
 
     public static void deleteEMenuOrderRemotely(String orderId, BooleanOperationDoneCallback deleteDoneCallBack) {

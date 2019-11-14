@@ -359,6 +359,10 @@ public class EMenuOrderView extends MaterialCardView implements
         errorCreationErrorDialog.show();
     }
 
+    private void rejectOrder(){
+        DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
+    }
+
     private void markOrderAsTaken() {
         UiUtils.showSafeToast("Please wait...");
         DataStoreClient.markItemAsTaken(eMenuOrder.getEMenuOrderId(), (result, e) -> {

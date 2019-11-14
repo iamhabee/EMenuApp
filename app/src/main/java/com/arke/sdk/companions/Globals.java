@@ -117,6 +117,7 @@ public class Globals {
     public static boolean emenuItemUpdated = false;
     public static EMenuItem updatedEMenuItem = null;
     public static boolean unProcessedOrdersPushed = false;
+    public static final String REJECTED_ORDER = "order_rejected";
 
 
     public enum StatusPage {
