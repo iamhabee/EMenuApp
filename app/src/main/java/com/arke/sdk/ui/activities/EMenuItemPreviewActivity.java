@@ -18,7 +18,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -160,7 +159,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
     private TelephonyManager mTelephonyManager;
 
-    private String deviceId;
+    String deviceId, waiterId;
 
     private List<EMenuItem> drinks = new ArrayList<>();
     private DrinksAdapter drinksAdapter;
@@ -180,7 +179,12 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         waiterTag = findViewById(R.id.waiter_tag);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
-        waiterTag.setText(""+ParseUser.getCurrentUser().getString("username"));
+//        waiterTag.setText(""+ParseUser.getCurrentUser().getString("username"));
+
+        /* get the waiter's username from backend and save to string waiter id*/
+        waiterId = ParseUser.getCurrentUser().getString("username");
+        waiterTag.setText(waiterId);
+
 
         ButterKnife.bind(this);
         Bundle intentExtras = getIntent().getExtras();
@@ -202,20 +206,27 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             bottomView.setBackgroundColor(Color.parseColor(primaryColorHex));
             tintToolbarAndTabLayout(Color.parseColor(primaryColorHex));
         }
+
         setupDrinksAdapter();
         initEventHandlers();
+
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         deviceId = AppPrefs.getDeviceId();
+
         if (deviceId == null) {
             pickDeviceId(null);
         } else {
             drinksAdapter.setDeviceId(deviceId);
         }
+
         fetchDrinks();
         initSearchAdapter();
+
+
         String previousWaiterOrBarTag = AppPrefs.getCurrentWaiterTag();
         if (StringUtils.isNotEmpty(previousWaiterOrBarTag)) {
-            waiterTag.setText(previousWaiterOrBarTag);
+//            waiterTag.setText(previousWaiterOrBarTag);
+            waiterTag.setText(waiterId);
         }
     }
 
@@ -420,6 +431,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         });
         closeActivityView.setOnClickListener(this);
         addToTableView.setOnClickListener(this);
+
+        /* get table tag and set it in drink adapter */
         tableTag.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -443,6 +456,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
         });
 
+        /* get customer tag and set it in drink adapter */
         customerTag.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -462,6 +476,9 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
             }
         });
+
+        /* get waiter id and set it to waiter tag in drink adapter */
+        drinksAdapter.setWaiterTag(waiterId);
 
 //        waiterTag.addTextChangedListener(new TextWatcher() {
 //            @Override
@@ -517,7 +534,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             addToTableView.setText("Edit Item");
             drinksIconView.setImageResource(R.drawable.ic_more_vert_black_24dp);
             UiUtils.toggleViewVisibility(drinksLabelView, false);
-            slideMenuLayout.setAllowTogging(false);
+
+//            slideMenuLayout.setAllowTogging(false);
             openDrinksOrModifyItemView.setOnClickListener(view -> {
                 UiUtils.blinkView(view);
                 AlertDialog.Builder itemMoreOptions = new AlertDialog.Builder(EMenuItemPreviewActivity.this);
@@ -545,8 +563,10 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                     slideMenuLayout.openRightSlide();
                 }
             });
-            slideMenuLayout.addOnSlideChangedListener((slideMenu, isLeftSlideOpen, isRightSlideOpen) -> UiUtils.toggleViewVisibility(openDrinksOrModifyItemView, !isRightSlideOpen));
+//            slideMenuLayout.addOnSlideChangedListener((slideMenu, isLeftSlideOpen, isRightSlideOpen) ->
+//                    UiUtils.toggleViewVisibility(openDrinksOrModifyItemView, !isRightSlideOpen));
         }
+
         quantityBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -634,7 +654,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     @Override
     public void onBackPressed() {
         if (slideMenuLayout.isRightSlideOpen()) {
-            slideMenuLayout.closeRightSlide();
+            slideMenuLayout.toggleRightSlide();
+//            slideMenuLayout.toggleLeftSlide();
         } else {
             clearTableTag();
             super.onBackPressed();
@@ -657,18 +678,39 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.close_activity) {
-            UiUtils.blinkView(view);
-            finish();
-        } else if (view.getId() == R.id.add_to_table) {
-            UiUtils.blinkView(bottomView);
-            String viewContent = addToTableView.getText().toString();
-            if (StringUtils.containsIgnoreCase(viewContent, "Edit")) {
-                initiateEMenuItemEdit();
-            } else {
-                addToTable();
-            }
+        switch (view.getId()) {
+
+            case R.id.close_activity:
+                UiUtils.blinkView(view);
+                finish();
+                break;
+
+//            case R.id.open_drinks_or_modify_item_view:
+//                slideMenuLayout.toggleRightSlide();
+//                break;
+
+            case R.id.add_to_table:
+                UiUtils.blinkView(bottomView);
+                String viewContent = addToTableView.getText().toString();
+                if (StringUtils.containsIgnoreCase(viewContent, "Edit")) {
+                    initiateEMenuItemEdit();
+                } else {
+                    addToTable();
+                }
+                break;
         }
+//        if (view.getId() == R.id.close_activity) {
+//            UiUtils.blinkView(view);
+//            finish();
+//        } else if (view.getId() == R.id.add_to_table) {
+//            UiUtils.blinkView(bottomView);
+//            String viewContent = addToTableView.getText().toString();
+//            if (StringUtils.containsIgnoreCase(viewContent, "Edit")) {
+//                initiateEMenuItemEdit();
+//            } else {
+//                addToTable();
+//            }
+//        }
     }
 
     private void initiateEMenuItemEdit() {
@@ -696,7 +738,9 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
         String customerTagValue = customerTag.getText().toString().trim();
-        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
+//        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
+        String waiterTagValue = waiterId;
+
         boolean isTakeAway = takeAway.isChecked();
         if (!isTakeAway && StringUtils.isEmpty(tableTagValue)) {
             tableTag.setError("Please provide a table tag to associate with this Item.");
