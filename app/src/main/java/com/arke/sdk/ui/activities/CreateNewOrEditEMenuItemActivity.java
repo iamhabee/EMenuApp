@@ -233,7 +233,7 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     private void processFormAndCreateNewEMenuItem() {
         String itemName = itemNameView.getText().toString().trim().toLowerCase();
         String itemDescription = itemDescriptionView.getText().toString().trim();
-        int stockNumber = Integer.parseInt(itemDescriptionView.getText().toString().trim());
+        int stockNumber = Integer.parseInt(numberInStock.getText().toString().trim());
         String itemPrice = itemPriceView.getText().toString().trim();
         itemPrice = trimCommaOfString(itemPrice);
 

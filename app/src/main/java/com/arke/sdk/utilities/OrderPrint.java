@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.arke.sdk.R;
 import com.arke.sdk.models.EMenuItem;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.util.printer.Printer;
 import com.parse.ParseUser;
 import com.usdk.apiservice.aidl.printer.ASCScale;
@@ -56,10 +57,57 @@ public class OrderPrint {
     }
 
 
-    public void validateSlipThenPrint(List<EMenuItem> orders){
+    public void validateSlipThenPrint(List<EMenuItem> orders) {
         // generate some other information
         printSlip(orders);
     }
+
+    public void printQRCode(String generateRandString) {
+        // Show dialog
+        showDialog(R.string.waiting_for_printing, false);
+        try {
+            // Get status
+            Printer.getInstance().getStatus();
+
+            // Set gray
+            Printer.getInstance().setPrnGray(5);
+//            setFontSpec(FONT_SIZE_NORMAL);
+//            Printer.getInstance().addText(AlignMode.CENTER, divider);
+//            Printer.getInstance().addText(AlignMode.CENTER, AppPrefs.getRestaurantOrBarName());
+//            Printer.getInstance().addText(AlignMode.CENTER, "TAG");
+//            Printer.getInstance().addText(AlignMode.CENTER, divider);
+
+
+            Printer.getInstance().addQrCode(AlignMode.CENTER, 300, 1,generateRandString );
+            setFontSpec(FONT_SIZE_LARGE);
+            Printer.getInstance().addText(AlignMode.CENTER, generateRandString);
+            setFontSpec(FONT_SIZE_NORMAL);
+            // Add whitespace
+            Printer.getInstance().feedLine(5);
+            // Start printing
+            Printer.getInstance().start(new OnPrintListener.Stub() {
+
+                @Override
+                public void onFinish() throws RemoteException {
+                    Log.d("Print", "----- onFinish -----");
+
+                    hideDialog();
+                    Toast.makeText(context.getApplicationContext(), generateRandString, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(int error) throws RemoteException {
+                    Log.d("Print", "----- onError ----");
+
+                    hideDialog();
+                    Toast.makeText(context.getApplicationContext(), Printer.getErrorId(error), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void printSlip(List<EMenuItem> orders) {
 

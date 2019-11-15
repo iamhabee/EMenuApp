@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_print_cus_ticket"
+            android:icon="@drawable/ic_receipt_orange_24dp"
+            android:title="@string/create_customer_ticket" />
+        <item
             android:id="@+id/nav_restaurant_prof_info"
             android:icon="@drawable/restaurant_or_bar_info"
             android:title="@string/restaurant_prof_info" />

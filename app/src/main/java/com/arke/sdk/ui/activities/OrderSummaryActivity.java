@@ -131,7 +131,6 @@ public class OrderSummaryActivity extends BaseActivity {
                     .setCancelable(false)
                     .create();
 
-
             OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
             orderPrint.validateSlipThenPrint(customerOrders);
 

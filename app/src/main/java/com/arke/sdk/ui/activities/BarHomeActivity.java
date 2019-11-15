@@ -30,6 +30,7 @@ import androidx.work.WorkManager;
 import com.arke.sdk.R;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
@@ -49,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -101,6 +103,7 @@ public class BarHomeActivity extends BaseActivity {
 
     private LottieAlertDialog logOutOperationProgressDialog;
     private AlertDialog adminPasswordDialog;
+    private android.app.AlertDialog dialog;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -334,6 +337,9 @@ public class BarHomeActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawer(GravityCompat.START, true);
             switch (menuItem.getItemId()) {
+                case R.id.nav_print_cus_ticket:
+                    printQRCodeTag();
+                    break;
                 case R.id.nav_restaurant_prof_info:
                     transitionToRestaurantProfile();
                     break;
@@ -511,6 +517,34 @@ public class BarHomeActivity extends BaseActivity {
         if (mainViewPager.getAdapter() != null) {
             setupTabs((PagerAdapter) mainViewPager.getAdapter());
         }
+    }
+
+
+    private void printQRCodeTag(){
+        dialog = new android.app.AlertDialog.Builder(BarHomeActivity.this)
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .create();
+
+        OrderPrint orderPrint = new OrderPrint(BarHomeActivity.this, dialog);
+        orderPrint.printQRCode(generateRandString(10));
+
+    }
+
+
+    private static String generateRandString(int targetStringLength) {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+
+        return generatedString;
     }
 
     @Override
