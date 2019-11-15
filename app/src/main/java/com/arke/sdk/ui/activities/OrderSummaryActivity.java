@@ -26,6 +26,7 @@ import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
@@ -107,7 +108,6 @@ public class OrderSummaryActivity extends BaseActivity {
         Bundle intentExtras = getIntent().getExtras();
 
 
-
         if (intentExtras != null) {
             eMenuOrderString = intentExtras.getString(Globals.EMENU_ORDER);
             Type serializableType = new TypeToken<EMenuOrder>() {
@@ -123,14 +123,12 @@ public class OrderSummaryActivity extends BaseActivity {
         initEventHandlers();
 
 
-
         printOrders.setOnClickListener(view -> {
 
             dialog = new android.app.AlertDialog.Builder(OrderSummaryActivity.this)
                     .setNegativeButton("Cancel", null)
                     .setCancelable(false)
                     .create();
-
 
             OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
             orderPrint.validateSlipThenPrint(customerOrders);
@@ -351,7 +349,7 @@ public class OrderSummaryActivity extends BaseActivity {
             String progressMessage = customerOrderProgressStatus.name().replace("_", " ").toLowerCase();
             if (progressMessage.equals("done")) {
                 progressMessage = "Fully Served!";
-                //TODO: disable increment and decrement
+
             }
             progressUpdateView.setText(WordUtils.capitalize(progressMessage));
             if (orderPaymentStatus != null) {
@@ -364,6 +362,7 @@ public class OrderSummaryActivity extends BaseActivity {
             progressUpdateView.setBackgroundColor(reusableBackgroundColor);
         }
     }
+
 
     private void toggleProgressUpdateClickability() {
         if (orderHost.equals(UnProcessedOrdersActivity.class.getSimpleName())

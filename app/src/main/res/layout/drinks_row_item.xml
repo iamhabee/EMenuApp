@@ -1,3 +1,8 @@
+<androidx.cardview.widget.CardView android:layout_width="match_parent"
+    android:layout_height="250dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
 <com.arke.sdk.ui.views.DrinksOnlyView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_view"
@@ -9,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
+
 
     <View
         android:layout_width="match_parent"
@@ -123,3 +129,5 @@
     </FrameLayout>
 
 </com.arke.sdk.ui.views.DrinksOnlyView>
+
+</androidx.cardview.widget.CardView>

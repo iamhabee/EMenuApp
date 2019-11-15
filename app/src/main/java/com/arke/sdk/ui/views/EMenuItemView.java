@@ -132,6 +132,7 @@ public class EMenuItemView extends MaterialCardView {
             UiUtils.toggleViewVisibility(quantityView, true);
             itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
             eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
+
             incrementItem.setOnClickListener(view -> {
                 UiUtils.blinkView(view);
                 assert eMenuOrder != null;
@@ -142,6 +143,7 @@ public class EMenuItemView extends MaterialCardView {
                     }
                 });
             });
+
             decrementItem.setOnClickListener(view -> {
                 UiUtils.blinkView(view);
                 assert eMenuOrder != null;

@@ -1,6 +1,7 @@
 package com.arke.sdk.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -30,6 +31,7 @@ import androidx.work.WorkManager;
 import com.arke.sdk.R;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
@@ -49,6 +51,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -99,6 +102,7 @@ public class KitchenHomeActivity extends BaseActivity {
     private ArrayList<Fragment> fragments;
 
     private LottieAlertDialog progressDialog;
+    private AlertDialog dialog;
 
 
     @Override
@@ -331,6 +335,9 @@ public class KitchenHomeActivity extends BaseActivity {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawer(GravityCompat.START, true);
             switch (menuItem.getItemId()) {
+                case R.id.nav_print_cus_ticket:
+                    printQRCodeTag();
+                    break;
                 case R.id.nav_restaurant_prof_info:
                     transitionToRestaurantProfile();
                     break;
@@ -526,6 +533,34 @@ public class KitchenHomeActivity extends BaseActivity {
 
             }
         });
+    }
+
+
+    private void printQRCodeTag(){
+        dialog = new android.app.AlertDialog.Builder(KitchenHomeActivity.this)
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .create();
+
+        OrderPrint orderPrint = new OrderPrint(KitchenHomeActivity.this, dialog);
+        orderPrint.printQRCode(generateRandString(10));
+
+    }
+
+
+    private static String generateRandString(int targetStringLength) {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+
+        return generatedString;
     }
 
     @Override

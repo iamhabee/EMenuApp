@@ -90,7 +90,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="ExtraText">
 
             <com.arke.sdk.ui.views.LoadingImageView
                 android:id="@+id/item_preview"
@@ -98,6 +99,17 @@
                 android:layout_height="250dp"
                 android:scaleType="centerCrop"
                 tools:ignore="ContentDescription" />
+
+
+            /* Item name, price and stock */
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -152,10 +164,18 @@
                 android:padding="5dp"
                 android:text="2 in Stock" />
 
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            /* Description */
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#f7f7f7"
                 android:orientation="vertical">
 
                 <com.arke.sdk.ui.views.EMenuTextView
@@ -181,6 +201,17 @@
                     app:textStyle="regular" />
 
             </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            /* Take away, quantity, table tag, customer tag and waiter */
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/take_a_way_switch_container"
@@ -224,7 +255,7 @@
                     android:textSize="19sp"
                     app:textStyle="medium" />
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/quantity_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -242,7 +273,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:orientation="horizontal">
 
                 <com.arke.sdk.ui.views.EMenuTextView
                     android:layout_width="wrap_content"
@@ -254,21 +286,31 @@
                     android:textSize="19sp"
                     app:textStyle="medium" />
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/table_tag"
-                    android:layout_width="match_parent"
+                    android:layout_width="145dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/fancy_input_background"
-                    android:hint="(E.g  4)"
+                    android:hint="enter text or number"
                     android:inputType="text"
                     android:padding="6dp"
                     android:paddingBottom="5dp"
                     android:textColorHint="@color/ease_gray"
                     android:textSize="16sp"
                     tools:ignore="Autofill" />
+
+                <Button
+                    android:id="@+id/scan_table_tag_btn"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_camera"
+                    android:drawablePadding="10dp"
+                    android:text="Scan"
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -277,33 +319,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:orientation="horizontal">
 
                 <com.arke.sdk.ui.views.EMenuTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Customer Tag:"
+                    android:text="Cust.Tag:"
                     android:textColor="@color/black"
                     android:textSize="19sp"
                     app:textStyle="medium" />
 
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/customer_tag"
-                    android:layout_width="match_parent"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/fancy_input_background"
-                    android:hint="(E.g 1)"
+                    android:hint="enter text or number"
                     android:inputType="text"
                     android:padding="6dp"
                     android:paddingBottom="5dp"
                     android:textColorHint="@color/ease_gray"
                     android:textSize="16sp"
                     tools:ignore="Autofill" />
+
+                <Button
+                    android:id="@+id/scan_cus_tag_btn"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_camera"
+                    android:drawablePadding="10dp"
+                    android:text="Scan"
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -319,27 +372,30 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Waiter"
+                    android:text="Waiter:"
                     android:textColor="@color/black"
                     android:textSize="19sp"
                     app:textStyle="medium" />
 
                 <com.arke.sdk.ui.views.EMenuTextView
-
                     android:id="@+id/waiter_tag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:background="@drawable/fancy_input_background"
+                    app:textStyle="medium"
                     android:padding="6dp"
                     android:paddingBottom="5dp"
                     android:textColorHint="@color/ease_gray"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     tools:ignore="Autofill" />
 
             </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
 

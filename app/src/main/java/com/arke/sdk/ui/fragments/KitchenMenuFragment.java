@@ -85,7 +85,6 @@ public class KitchenMenuFragment extends BaseFragment {
     private LottieAlertDialog progressDialog;
 
 
-
     @SuppressLint("HandlerLeak")
     private Handler uiHandler = new Handler() {
         @Override
@@ -305,6 +304,8 @@ public class KitchenMenuFragment extends BaseFragment {
                 }
             }
         });
+
+        //Hide fab when scrolling
         contentRecyclerView.addOnScrollListener(new HideShowScrollListener() {
             @Override
             public void onHide() {

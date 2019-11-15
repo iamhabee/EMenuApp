@@ -91,7 +91,6 @@ public class InitialAccountSetupActivity extends AppCompatActivity {
 
     private void onSignUp(){
 
-        showOperationsDialog("Registration in Progress " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
 
         String aName = mUsername.getText().toString();
         String aEmail = mEmail.getText().toString();
@@ -100,6 +99,7 @@ public class InitialAccountSetupActivity extends AppCompatActivity {
         if(Validate()){
             // check if passwords match
             if(aPassword.equals(aRetypePassword)){
+                showOperationsDialog("Registration in Progress " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
                 ParseUser user = new ParseUser();
                 // Set the user's username and password, which can be obtained by a forms
                 user.setUsername(aName);

@@ -22,6 +22,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +32,14 @@ public class WaiterAlertWorker extends Worker {
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_TEXT = "text";
     protected List<ParseObject> mMessages;
-
+    private String waiterUsername;
+    private String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
 
     @NonNull
     @Override
     public Result doWork() {
+
+        waiterUsername = ParseUser.getCurrentUser().getString("username");
 
         queryPendingOrdersForDrinks();
 
@@ -48,9 +52,11 @@ public class WaiterAlertWorker extends Worker {
 
     public void queryPendingOrdersForFood() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify", false);
         query.whereEqualTo(Globals.FOOD_READY, true);
+        query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -98,6 +104,8 @@ public class WaiterAlertWorker extends Worker {
             query.whereEqualTo(Globals.KITCHEN_REJECTED_ORDER, true);
         }
         query.whereEqualTo("rejected_notifier", false);
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -144,9 +152,11 @@ public class WaiterAlertWorker extends Worker {
 
     public void queryPendingOrdersForDrinks() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify_drink", false);
         query.whereEqualTo(Globals.DRINK_READY, true);
+        query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
