@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -85,17 +86,24 @@ public class DataStoreClient {
         }
         ParseQuery<ParseObject> restaurantsAndBars = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
         restaurantsAndBars.whereEqualTo(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emailAddress.trim());
+//        restaurantsAndBars.whereEqualTo(Globals.IS_ACCOUNT_ACTIVE, true);
         restaurantsAndBars.getFirstInBackground((object, e) -> {
             if (e != null) {
+                boolean isAccountActive = true;
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
                     baseModelOperationDoneCallback.done(null, getException("Sorry, Your Restaurant/Bar has probably not being setup yet. Consider Creating an account first."));
                 } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
                     baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
-                } else {
+                }else if(object.getBoolean(Globals.IS_ACCOUNT_ACTIVE) != isAccountActive){
+                    baseModelOperationDoneCallback.done(null, getException("Sorry, account has been deactivated"));
+                }else {
                     baseModelOperationDoneCallback.done(null, getException(e.getMessage()));
                 }
             } else {
                 String existingPassCode = object.getString(Globals.RESTAURANT_OR_BAR_PASSWORD);
+                if (!object.getBoolean(Globals.IS_ACCOUNT_ACTIVE)){
+                    baseModelOperationDoneCallback.done(null, getException("Sorry, account may no longer be active"));
+                }else
                 if (CryptoUtils.getSha256Digest(passCode).equals(existingPassCode)) {
                     RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(object);
                     baseModelOperationDoneCallback.done(result, null);
@@ -506,6 +514,11 @@ public class DataStoreClient {
         // Setting query clauses
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        if (AppPrefs.getUseType() == Globals.KITCHEN){
+            orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
+        }else if(AppPrefs.getUseType() == Globals.BAR) {
+            orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
+        }
         orderQuery.getFirstInBackground((object, e) -> {
             if (object != null) {
                 int appUseType = AppPrefs.getUseType();
@@ -516,7 +529,7 @@ public class DataStoreClient {
                     rejectionStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
                 }
                 if (deviceId != null && rejectionStatus != null) {
-                    String errorMessage = " Order was rejected";
+                    String errorMessage = " Order was rejected by the bar";
                     rejectedOrder.done(true, getException(errorMessage));
                 } else {
                     if (deviceId != null) {
@@ -528,10 +541,21 @@ public class DataStoreClient {
                         Boolean orderRejectionState = true;
                         Boolean orderAcceptedState = false;
                         Boolean rejectedNotifier = false;
-                        object.put(Globals.REJECTED_ORDER, orderRejectionState);
-                        object.put(Globals.ACCEPTED_ORDER, orderAcceptedState);
+
+                        if (AppPrefs.getUseType() == Globals.BAR){
+                            object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
+                            object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
+                        }else if (AppPrefs.getUseType() == Globals.KITCHEN){
+                            object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
+                            object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
+                        }
+
                         object.put(Globals.REJECTED_NOTIFIER, rejectedNotifier);
-                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "REJECTED" + '"');
+                        if (AppPrefs.getUseType() == Globals.KITCHEN){
+                            object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_REJECTED" + '"');
+                        }else if(AppPrefs.getUseType() == Globals.BAR) {
+                            object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_REJECTED" + '"');
+                        }
                     }
                     object.saveInBackground(e1 -> {
                         if (e1 == null) {
@@ -546,7 +570,7 @@ public class DataStoreClient {
             // Send notification
             EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(object);
             sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(insertToRejected),
-                Globals.REJECTED_ORDER);
+                Globals.BAR_REJECTED_ORDER);
         });
     }
 
@@ -1161,8 +1185,6 @@ public class DataStoreClient {
         for (EMenuOrder eMenuOrder : orders) {
             if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.NOT_YET_SENT) {
                 eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
-            }else if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.REJECTED){
-                eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
             }
             checkAndPushOrder(eMenuOrder, (eMenuOrder1, exists, e) -> {
                 if (e == null) {
@@ -1520,6 +1542,8 @@ public class DataStoreClient {
         drinkOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         drinkOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         drinkOrdersQuery.whereEqualTo(Globals.HAS_DRINK, true);
+        // Remove any order that has been rejected from the bar's table
+        drinkOrdersQuery.whereNotEqualTo(Globals.BAR_ACCEPTED_ORDER, false);
         drinkOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             drinkOrdersQuery.setSkip(skip);
