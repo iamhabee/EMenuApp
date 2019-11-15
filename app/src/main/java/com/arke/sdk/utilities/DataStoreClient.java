@@ -95,7 +95,7 @@ public class DataStoreClient {
                 } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
                     baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
                 }else if(object.getBoolean(Globals.IS_ACCOUNT_ACTIVE) != isAccountActive){
-                    baseModelOperationDoneCallback.done(null, getException("Sorry, account may no longer be active"));
+                    baseModelOperationDoneCallback.done(null, getException("Sorry, account has been deactivated"));
                 }else {
                     baseModelOperationDoneCallback.done(null, getException(e.getMessage()));
                 }
