@@ -85,9 +85,6 @@
     </FrameLayout>
 
 
-
-
-
     <com.arke.sdk.ui.views.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"
         android:layout_width="match_parent"
@@ -116,7 +113,6 @@
                 tools:ignore="HardcodedText" />
 
 
-
             <com.arke.sdk.ui.views.EMenuTextView
                 android:id="@+id/print"
                 android:layout_width="220dp"
@@ -135,10 +131,6 @@
         </LinearLayout>
 
     </com.arke.sdk.ui.views.ShimmerFrameLayout>
-
-
-
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
