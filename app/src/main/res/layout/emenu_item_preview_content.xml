@@ -273,7 +273,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:orientation="horizontal">
 
                 <com.arke.sdk.ui.views.EMenuTextView
                     android:layout_width="wrap_content"
@@ -287,7 +288,7 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/table_tag"
-                    android:layout_width="match_parent"
+                    android:layout_width="145dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
@@ -299,6 +300,17 @@
                     android:textColorHint="@color/ease_gray"
                     android:textSize="16sp"
                     tools:ignore="Autofill" />
+
+                <Button
+                    android:id="@+id/scan_table_tag_btn"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_camera"
+                    android:drawablePadding="10dp"
+                    android:text="Scan"
+                    android:textSize="10sp" />
 
             </LinearLayout>
 
@@ -307,21 +319,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:orientation="horizontal">
 
                 <com.arke.sdk.ui.views.EMenuTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Customer Tag:"
+                    android:text="Cust.Tag:"
                     android:textColor="@color/black"
                     android:textSize="19sp"
                     app:textStyle="medium" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/customer_tag"
-                    android:layout_width="match_parent"
+                    android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
@@ -333,6 +346,17 @@
                     android:textColorHint="@color/ease_gray"
                     android:textSize="16sp"
                     tools:ignore="Autofill" />
+
+                <Button
+                    android:id="@+id/scan_cus_tag_btn"
+                    style="@style/Widget.AppCompat.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableStart="@drawable/ic_camera"
+                    android:drawablePadding="10dp"
+                    android:text="Scan"
+                    android:textSize="10sp" />
 
             </LinearLayout>
 

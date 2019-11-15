@@ -111,7 +111,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     TextView fetchDataView;
 
 
-
     @BindView(R.id.printt)
     Button printtt;
 

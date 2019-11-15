@@ -108,7 +108,6 @@ public class OrderSummaryActivity extends BaseActivity {
         Bundle intentExtras = getIntent().getExtras();
 
 
-
         if (intentExtras != null) {
             eMenuOrderString = intentExtras.getString(Globals.EMENU_ORDER);
             Type serializableType = new TypeToken<EMenuOrder>() {
@@ -124,14 +123,12 @@ public class OrderSummaryActivity extends BaseActivity {
         initEventHandlers();
 
 
-
         printOrders.setOnClickListener(view -> {
 
             dialog = new android.app.AlertDialog.Builder(OrderSummaryActivity.this)
                     .setNegativeButton("Cancel", null)
                     .setCancelable(false)
                     .create();
-
 
             OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
             orderPrint.validateSlipThenPrint(customerOrders);
@@ -352,7 +349,7 @@ public class OrderSummaryActivity extends BaseActivity {
             String progressMessage = customerOrderProgressStatus.name().replace("_", " ").toLowerCase();
             if (progressMessage.equals("done")) {
                 progressMessage = "Fully Served!";
-                //TODO: disable increment and decrement
+
             }
             progressUpdateView.setText(WordUtils.capitalize(progressMessage));
             if (orderPaymentStatus != null) {
@@ -365,6 +362,7 @@ public class OrderSummaryActivity extends BaseActivity {
             progressUpdateView.setBackgroundColor(reusableBackgroundColor);
         }
     }
+
 
     private void toggleProgressUpdateClickability() {
         if (orderHost.equals(UnProcessedOrdersActivity.class.getSimpleName())

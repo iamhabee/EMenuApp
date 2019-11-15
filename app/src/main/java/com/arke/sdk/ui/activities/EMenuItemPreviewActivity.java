@@ -2,6 +2,7 @@ package com.arke.sdk.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,9 +16,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -89,6 +92,13 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
     @BindView(R.id.customer_tag_container)
     View customerTagContainer;
+
+
+    @BindView(R.id.scan_table_tag_btn)
+    Button scanTableTagBtn;
+
+    @BindView(R.id.scan_cus_tag_btn)
+    Button scanCusTagBtn;
 
     @BindView(R.id.take_a_way_switch_container)
     View takeAwaySwitchContainer;
@@ -171,6 +181,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Context mContext;
+    private int SCAN_TABLE_TAG = 234;
+    private int SCAN_CUS_TAG = 564;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -227,6 +239,20 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 //            waiterTag.setText(previousWaiterOrBarTag);
             waiterTag.setText(waiterId);
         }
+
+        scanTableTagBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(EMenuItemPreviewActivity.this, ScanActivity.class);
+                startActivityForResult(intent, SCAN_TABLE_TAG);
+            }
+        });
+
+        scanCusTagBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(EMenuItemPreviewActivity.this, ScanActivity.class);
+                startActivityForResult(intent, SCAN_CUS_TAG);
+            }
+        });
     }
 
     /* this method will get all drinks in the database and populate it into drink adapter before any search is done */
@@ -245,7 +271,28 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             });
         }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SCAN_TABLE_TAG) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
+                tableTag.setText(result);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+        if (requestCode == SCAN_CUS_TAG) {
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
+                customerTag.setText(result);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
+    }//onActivityResult
 
     @Override
     public void onEventMainThread(Object event) {
