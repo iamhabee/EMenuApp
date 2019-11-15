@@ -15,6 +15,7 @@ import androidx.work.Worker;
 
 import com.arke.sdk.R;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.WaiterHomeActivity;
 import com.arke.sdk.utilities.Constants;
 import com.parse.FindCallback;
@@ -32,7 +33,7 @@ public class WaiterAlertWorker extends Worker {
     public static final String EXTRA_TEXT = "text";
     protected List<ParseObject> mMessages;
     private String waiterUsername;
-
+    private String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
 
     @NonNull
     @Override
@@ -51,6 +52,7 @@ public class WaiterAlertWorker extends Worker {
 
     public void queryPendingOrdersForFood() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify", false);
         query.whereEqualTo(Globals.FOOD_READY, true);
@@ -94,6 +96,7 @@ public class WaiterAlertWorker extends Worker {
 
     public void queryPendingOrdersForRejectedOrder() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"REJECTED"+'"');
         query.whereEqualTo("rejected_notifier", false);
         query.whereEqualTo(Globals.REJECTED_ORDER, true);
@@ -137,6 +140,7 @@ public class WaiterAlertWorker extends Worker {
 
     public void queryPendingOrdersForDrinks() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify_drink", false);
         query.whereEqualTo(Globals.DRINK_READY, true);

@@ -15,6 +15,7 @@ import androidx.work.Worker;
 
 import com.arke.sdk.R;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.BarHomeActivity;
 import com.arke.sdk.utilities.Constants;
 import com.parse.FindCallback;
@@ -30,7 +31,7 @@ public class BarAlertWorker extends Worker {
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_TEXT = "text";
     protected List<ParseObject> mMessages;
-
+    private String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
 
     @NonNull
     @Override
@@ -43,6 +44,7 @@ public class BarAlertWorker extends Worker {
 
     public void queryPendingOrders() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"PENDING"+'"');
         query.whereEqualTo("bar_received_notify", false);
         query.whereEqualTo(Globals.HAS_DRINK, true);
@@ -82,8 +84,6 @@ public class BarAlertWorker extends Worker {
             }
         });
     }
-
-
 
     private void sendNotification(String title, String text, int id) {
         Intent intent = new Intent(getApplicationContext(), BarHomeActivity.class);
