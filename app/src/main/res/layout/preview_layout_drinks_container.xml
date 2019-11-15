@@ -67,11 +67,11 @@
 
     </LinearLayout>
 
-    <com.arke.sdk.ui.views.AutofitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.arke.sdk.ui.views.AutofitRecyclerView
         android:id="@+id/drinks_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
+
         android:columnWidth="@dimen/column_width"
         android:padding="@dimen/item_margin" />
 

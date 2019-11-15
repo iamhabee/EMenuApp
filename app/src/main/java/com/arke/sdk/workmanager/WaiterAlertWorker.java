@@ -21,6 +21,7 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,15 +31,20 @@ public class WaiterAlertWorker extends Worker {
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_TEXT = "text";
     protected List<ParseObject> mMessages;
+    private String waiterUsername;
 
 
     @NonNull
     @Override
     public Result doWork() {
 
+        waiterUsername = ParseUser.getCurrentUser().getString("username");
+
         queryPendingOrdersForDrinks();
 
         queryPendingOrdersForFood();
+
+        queryPendingOrdersForRejectedOrder();
 
         return Result.SUCCESS;
     }
@@ -48,6 +54,7 @@ public class WaiterAlertWorker extends Worker {
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify", false);
         query.whereEqualTo(Globals.FOOD_READY, true);
+        query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -85,11 +92,55 @@ public class WaiterAlertWorker extends Worker {
         });
     }
 
+    public void queryPendingOrdersForRejectedOrder() {
+        ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo("order_progress_status", '"'+"REJECTED"+'"');
+        query.whereEqualTo("rejected_notifier", false);
+        query.whereEqualTo(Globals.REJECTED_ORDER, true);
+        query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null){
+                    //we found messages
+                    mMessages = objects;
+                    String username = String.valueOf(mMessages.size());
+                    Log.d("Waiter", String.valueOf(mMessages.size()));
+
+                    // check if response contains objects
+                    if(mMessages.size() > 0) {
+                        // loop through the response to update
+                        // their notification_received_status
+                        String title = getInputData().getString(EXTRA_TITLE, "Order was rejected");
+                        String text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
+
+                        int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);
+
+                        sendNotificationOnDelete(title, text, id);
+
+                        for (ParseObject message : mMessages) {
+                            message.put("rejected_notifier", true);
+                            message.saveEventually();
+                            Log.d("Waiter", String.valueOf(username));
+                        }
+
+                    }
+
+                }else{
+                    // error occurred
+                    Log.d("Waiter", e.getMessage());
+
+                }
+            }
+        });
+    }
+
     public void queryPendingOrdersForDrinks() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
         query.whereEqualTo("order_progress_status", '"'+"DONE"+'"');
         query.whereEqualTo("waiter_received_notify_drink", false);
         query.whereEqualTo(Globals.DRINK_READY, true);
+        query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -160,6 +211,34 @@ public class WaiterAlertWorker extends Worker {
         Intent intent = new Intent(getApplicationContext(), WaiterHomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(Constants.WAITER_ID_DRINK, id);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
+
+        NotificationManager notificationManager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default", "Default", NotificationManager.IMPORTANCE_DEFAULT);
+            Objects.requireNonNull(notificationManager).createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "default")
+                .setContentTitle(title)
+                .setContentText(text)
+                .setColor(Color.BLUE)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
+//                .setOnlyAlertOnce(true)
+                .setAutoCancel(true);
+
+
+        Objects.requireNonNull(notificationManager).notify(id, notification.build());
+    }
+
+    private void sendNotificationOnDelete(String title, String text, int id) {
+        Intent intent = new Intent(getApplicationContext(), WaiterHomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(Constants.WAITER_ID, id);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
 

@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -61,6 +62,9 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
 
     @BindView(R.id.item_description)
     EditText itemDescriptionView;
+
+    @BindView(R.id.stock_number)
+    EditText numberInStock;
 
     @BindView(R.id.item_price)
     EditText itemPriceView;
@@ -126,8 +130,12 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             if (host != null) {
                 if (host.equals(BarHomeActivity.class.getSimpleName())) {
                     itemCategoryView.setText("Drinks");
+                }else {
+                    itemCategoryView.setText("Food");
                 }
             }
+        }else {
+            itemCategoryView.setText("Food");
         }
         initCategoryViewAdapter();
         initEventHandlers();
@@ -141,6 +149,8 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             editableEMenuItem = new Gson().fromJson(editableEMenuItemString, EMenuItem.class);
             String emenuItemName = editableEMenuItem.getMenuItemName();
             itemNameView.setText(WordUtils.capitalize(emenuItemName));
+            String stockNumber = String.valueOf(editableEMenuItem.getQuantityAvailableInStock());
+            numberInStock.setText(stockNumber);
             String itemDescription = editableEMenuItem.getMenuItemDescription();
             itemDescriptionView.setText(itemDescription);
             String itemPrice = editableEMenuItem.getMenuItemPrice();
@@ -223,8 +233,10 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
     private void processFormAndCreateNewEMenuItem() {
         String itemName = itemNameView.getText().toString().trim().toLowerCase();
         String itemDescription = itemDescriptionView.getText().toString().trim();
+        int stockNumber = Integer.parseInt(numberInStock.getText().toString().trim());
         String itemPrice = itemPriceView.getText().toString().trim();
         itemPrice = trimCommaOfString(itemPrice);
+
         String itemParentCategory = itemCategoryView.getText().toString().trim();
         if (StringUtils.isEmpty(itemName)) {
             itemNameView.setError("Please enter a name for this menu item");
@@ -251,12 +263,12 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
         if (StringUtils.startsWithIgnoreCase(pickedFilePath, "https")
                 || StringUtils.startsWithIgnoreCase(pickedFilePath, "http")) {
             DataStoreClient.checkAndCreateNewCategory(itemCategoryView.getText().toString(), pickedFilePath);
-            upsertItem(itemName, itemDescription, itemParentCategory, finalItemPrice, pickedFilePath);
+            upsertItem(itemName, itemDescription, stockNumber, itemParentCategory, finalItemPrice, pickedFilePath);
         } else {
             FileUploadUtils.uploadFile(pickedFilePath, (fileUrl, e) -> {
                 if (e == null) {
                     DataStoreClient.checkAndCreateNewCategory(itemCategoryView.getText().toString(), fileUrl);
-                    upsertItem(itemName, itemDescription, itemParentCategory, finalItemPrice, fileUrl);
+                    upsertItem(itemName, itemDescription, stockNumber, itemParentCategory, finalItemPrice, fileUrl);
                 } else {
                     dismissProgressDialog();
                     showErrorMessage("Content Creation Error", e.getMessage());
@@ -265,16 +277,16 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
         }
     }
 
-    private void upsertItem(String itemName, String itemDescription, String itemParentCategory, String finalItemPrice, String fileUrl) {
+    private void upsertItem(String itemName, String itemDescription, int stockNumber, String itemParentCategory, String finalItemPrice, String fileUrl) {
         if (editableEMenuItem != null) {
-            updateEMenuItem(fileUrl, editableEMenuItem.getMenuItemId(), itemName, itemDescription, finalItemPrice, itemParentCategory);
+            updateEMenuItem(fileUrl, editableEMenuItem.getMenuItemId(), itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory);
         } else {
-            createNewEMenuItem(fileUrl, itemName, itemDescription, finalItemPrice, itemParentCategory);
+            createNewEMenuItem(fileUrl, itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory);
         }
     }
 
-    private void updateEMenuItem(String fileUrl, String itemId, String itemName, String itemDescription, String finalItemPrice, String itemParentCategory) {
-        DataStoreClient.updateEMenuItem(itemId, itemName, itemDescription, finalItemPrice, itemParentCategory, fileUrl,
+    private void updateEMenuItem(String fileUrl, String itemId, String itemName, String itemDescription, int stockNumber, String finalItemPrice, String itemParentCategory) {
+        DataStoreClient.updateEMenuItem(itemId, itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory, fileUrl,
                 (eMenuItem, e) -> {
                     if (e == null) {
                         showSuccessMessage("Great!!!", "Your Menu Item was successfully updated");
@@ -287,8 +299,8 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
                 });
     }
 
-    private void createNewEMenuItem(String filePhotoUrl, String itemName, String itemDescription, String finalItemPrice, String itemParentCategory) {
-        DataStoreClient.createNewMenuItem(itemName, itemDescription, finalItemPrice, itemParentCategory, filePhotoUrl,
+    private void createNewEMenuItem(String filePhotoUrl, String itemName, String itemDescription, int stockNumber, String finalItemPrice, String itemParentCategory) {
+        DataStoreClient.createNewMenuItem(itemName, itemDescription, stockNumber, finalItemPrice, itemParentCategory, filePhotoUrl,
                 (eMenuItem, e) -> {
                     if (e == null) {
                         showSuccessMessage("Great!!!", "Your Menu Item was successfully created");

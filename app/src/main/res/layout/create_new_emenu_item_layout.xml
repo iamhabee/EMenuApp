@@ -145,13 +145,31 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
 
+
+
             <AutoCompleteTextView
                 android:id="@+id/item_parent_category"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/item_category_e_g_grains"
                 android:imeOptions="actionDone"
                 android:inputType="text"
+                android:padding="10dp"
+                android:enabled="false"
+                tools:ignore="Autofill" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <EditText
+                android:id="@+id/stock_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/stock_number"
+                android:inputType="number"
                 android:padding="10dp"
                 tools:ignore="Autofill" />
 

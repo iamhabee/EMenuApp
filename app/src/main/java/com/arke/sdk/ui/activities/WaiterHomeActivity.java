@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -48,6 +49,7 @@ import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuLogger;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.beans.CurrentCardPaymentProcessor;
 import com.arke.sdk.companions.Globals;
@@ -75,6 +77,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -113,11 +116,15 @@ public class WaiterHomeActivity extends BaseActivity {
     @BindView(R.id.search_view)
     ImageView searchViewIcon;
 
+    @BindView(R.id.waiter_refresh_view)
+    ImageView refreshiewIcon;
+
     @BindView(R.id.search_card_view)
     View searchCardView;
 
     @BindView(R.id.search_box)
     EditText searchBox;
+
 
     @BindView(R.id.close_search)
     ImageView closeSearchView;
@@ -139,6 +146,7 @@ public class WaiterHomeActivity extends BaseActivity {
     private EMenuItemRecyclerViewAdapter bottomSheetRecyclerViewAdapter;
 
     private AlertDialog adminPasswordDialog = null;
+    private android.app.AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -481,6 +489,7 @@ public class WaiterHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
             hamBurgerView.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             searchViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            refreshiewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             unProcessedOrders.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             titleView.setTextColor(Color.BLACK);
         } else {
@@ -489,6 +498,7 @@ public class WaiterHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(Color.parseColor(primaryColorHex));
             hamBurgerView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             searchViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            refreshiewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             unProcessedOrders.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             titleView.setTextColor(Color.WHITE);
         }
@@ -579,6 +589,9 @@ public class WaiterHomeActivity extends BaseActivity {
             UiUtils.blinkView(view);
             openSearch();
             forceShowSoftKeyBoard();
+        });
+        refreshiewIcon.setOnClickListener(view -> {
+            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
@@ -689,12 +702,15 @@ public class WaiterHomeActivity extends BaseActivity {
     }
 
     private void setupDrawer() {
-        String restaurantOrBarName = AppPrefs.getRestaurantOrBarName();
-        String restaurantOrBarEmailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
+        String restaurantOrBarName = ParseUser.getCurrentUser().getUsername();
+        String restaurantOrBarEmailAddress = ParseUser.getCurrentUser().getString("account_type");
         String restaurantOrBarPhotoUrl = AppPrefs.getRestaurantOrBarPhotoUrl();
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawer(GravityCompat.START, true);
             switch (menuItem.getItemId()) {
+                case R.id.nav_print_cus_ticket:
+                    printQRCodeTag();
+                    break;
                 case R.id.nav_restaurant_prof_info:
                     transitionToRestaurantProfile();
                     break;
@@ -727,6 +743,7 @@ public class WaiterHomeActivity extends BaseActivity {
         TextView restaurantOrBarNameView = navHeaderView.findViewById(R.id.restaurant_or_bar_name);
         TextView restaurantOrBarEmailView = navHeaderView.findViewById(R.id.restaurant_or_bar_email_address);
         ImageView restaurantOrBarCoverPhotoView = navHeaderView.findViewById(R.id.restaurant_or_bar_cover_photo_view);
+
         if (StringUtils.isNotEmpty(restaurantOrBarName)) {
             restaurantOrBarNameView.setText(restaurantOrBarName);
         }
@@ -750,16 +767,6 @@ public class WaiterHomeActivity extends BaseActivity {
             kitchenItem.setVisible(false);
             barItem.setVisible(false);
         }
-
-//        if (currentUseType == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
-//            waiterMenuItem.setVisible(false);
-//        }
-//        if (currentUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
-//            kitchenItem.setVisible(false);
-//        }
-//        if (currentUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
-//            barItem.setVisible(false);
-//        }
         supportInvalidateOptionsMenu();
         navHeaderView.invalidate();
     }
@@ -786,6 +793,33 @@ public class WaiterHomeActivity extends BaseActivity {
     private void transitionToRestaurantProfile() {
         Intent profileInfoIntent = new Intent(this, RestaurantOrBarProfileInformationActivity.class);
         startActivity(profileInfoIntent);
+    }
+
+    private void printQRCodeTag(){
+        dialog = new android.app.AlertDialog.Builder(WaiterHomeActivity.this)
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .create();
+
+        OrderPrint orderPrint = new OrderPrint(WaiterHomeActivity.this, dialog);
+        orderPrint.printQRCode(generateRandString(10));
+
+    }
+
+
+    private static String generateRandString(int targetStringLength) {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+
+        return generatedString;
     }
 
     private void initLogOut() {

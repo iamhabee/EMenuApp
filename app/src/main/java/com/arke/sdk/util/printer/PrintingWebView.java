@@ -343,6 +343,7 @@ public class PrintingWebView {
         webView.setVisibility(View.INVISIBLE);
         linearLayout.addView(webView);
 
+        assert windowManager != null;
         windowManager.addView(linearLayout, params);
     }
 

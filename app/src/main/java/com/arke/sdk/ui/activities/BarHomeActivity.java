@@ -30,6 +30,7 @@ import androidx.work.WorkManager;
 import com.arke.sdk.R;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
@@ -49,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -81,6 +83,9 @@ public class BarHomeActivity extends BaseActivity {
     @BindView(R.id.search_view)
     ImageView searchViewIcon;
 
+    @BindView(R.id.refresh_view)
+    ImageView refreshViewIcon;
+
     @BindView(R.id.search_card_view)
     View searchCardView;
 
@@ -98,6 +103,7 @@ public class BarHomeActivity extends BaseActivity {
 
     private LottieAlertDialog logOutOperationProgressDialog;
     private AlertDialog adminPasswordDialog;
+    private android.app.AlertDialog dialog;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -173,6 +179,10 @@ public class BarHomeActivity extends BaseActivity {
             UiUtils.blinkView(view);
             openSearch();
             forceShowSoftKeyBoard();
+        });
+        refreshViewIcon.setOnClickListener(view -> {
+            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
+
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
@@ -321,12 +331,15 @@ public class BarHomeActivity extends BaseActivity {
     }
 
     private void setupDrawer() {
-        String restaurantOrBarName = AppPrefs.getRestaurantOrBarName();
-        String restaurantOrBarEmailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
+        String restaurantOrBarName = ParseUser.getCurrentUser().getUsername();
+        String restaurantOrBarEmailAddress = ParseUser.getCurrentUser().getString("account_type");
         String restaurantOrBarPhotoUrl = AppPrefs.getRestaurantOrBarPhotoUrl();
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             drawerLayout.closeDrawer(GravityCompat.START, true);
             switch (menuItem.getItemId()) {
+                case R.id.nav_print_cus_ticket:
+                    printQRCodeTag();
+                    break;
                 case R.id.nav_restaurant_prof_info:
                     transitionToRestaurantProfile();
                     break;
@@ -373,22 +386,13 @@ public class BarHomeActivity extends BaseActivity {
         MenuItem kitchenItem = navigationView.getMenu().findItem(R.id.kitchen_view);
         MenuItem barItem = navigationView.getMenu().findItem(R.id.bar_view);
         MenuItem adminItem = navigationView.getMenu().findItem(R.id.admin_view);
-        if (currentUseType != Globals.UseType.USE_TYPE_ADMIN.ordinal()) {
+        if (ParseUser.getCurrentUser().getInt("user_type") != Globals.ADMIN_TAG_ID) {
             adminItem.setVisible(false);
             waiterMenuItem.setVisible(false);
             kitchenItem.setVisible(false);
             barItem.setVisible(false);
 
         }
-//        if (currentUseType == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
-//            waiterMenuItem.setVisible(false);
-//        }
-//        if (currentUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
-//            kitchenItem.setVisible(false);
-//        }
-//        if (currentUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
-//            barItem.setVisible(false);
-//        }
         supportInvalidateOptionsMenu();
         navHeaderView.invalidate();
     }
@@ -497,6 +501,7 @@ public class BarHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
             hamBurgerView.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             searchViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
+            refreshViewIcon.setColorFilter(Color.BLACK, PorterDuff.Mode.MULTIPLY);
             titleView.setTextColor(Color.BLACK);
         } else {
             tabLayout.setBackgroundColor(Color.parseColor(primaryColorHex));
@@ -504,6 +509,7 @@ public class BarHomeActivity extends BaseActivity {
             tintToolbarAndTabLayout(Color.parseColor(primaryColorHex));
             hamBurgerView.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             searchViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+            refreshViewIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
             titleView.setTextColor(Color.WHITE);
         }
         tabLayout.setSelectedTabIndicatorHeight(6);
@@ -511,6 +517,34 @@ public class BarHomeActivity extends BaseActivity {
         if (mainViewPager.getAdapter() != null) {
             setupTabs((PagerAdapter) mainViewPager.getAdapter());
         }
+    }
+
+
+    private void printQRCodeTag(){
+        dialog = new android.app.AlertDialog.Builder(BarHomeActivity.this)
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .create();
+
+        OrderPrint orderPrint = new OrderPrint(BarHomeActivity.this, dialog);
+        orderPrint.printQRCode(generateRandString(10));
+
+    }
+
+
+    private static String generateRandString(int targetStringLength) {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+
+        return generatedString;
     }
 
     @Override

@@ -65,10 +65,30 @@ public class WelcomeActivity extends BaseActivity {
         welcomeView.animateText(welcomeMessage);
         welcomeView.setAnimationListener(hTextView -> {
             boolean setup = AppPrefs.isAppSetup();
+            int tag = AppPrefs.getUseType();
+
             if (setup) {
-                Intent adminHomeIntent = new Intent(this, UserLoginActivity.class);
-                startActivity(adminHomeIntent);
-                finish();
+                if(tag == 1){
+                    Intent waiterHomeIntent = new Intent(this, WaiterHomeActivity.class);
+                    startActivity(waiterHomeIntent);
+                    finish();
+                }else if(tag == 2){
+                    Intent kitchenHomeIntent = new Intent(this, KitchenHomeActivity.class);
+                    startActivity(kitchenHomeIntent);
+                    finish();
+                }else if(tag == 3){
+                    Intent barHomeIntent = new Intent(this, BarHomeActivity.class);
+                    startActivity(barHomeIntent);
+                    finish();
+                }else if(tag == 263389){
+                    Intent adminHomeIntent = new Intent(this, AdminHomeActivity.class);
+                    startActivity(adminHomeIntent);
+                    finish();
+                }else{
+                    Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+                    startActivity(userLoginIntent);
+                    finish();
+                }
 //                transitionWithPreferences(AppPrefs.getUseType());
             }
         });

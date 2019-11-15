@@ -77,9 +77,6 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
         // Bind sdk device service.
         bindSdkDeviceService();
 
-        // Create a global webView to load print template
-        Printer.initWebView(context);
-
         Completable.complete().delay(3, TimeUnit.SECONDS)
                 .andThen(Printer.preLoadHtml("multi-languages-template", "{}"))
                 .subscribe();

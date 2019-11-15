@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.appcompat.app.AlertDialog;
@@ -256,6 +257,10 @@ public class EMenuOrderView extends MaterialCardView implements
         }
     }
 
+    private void updateOrderProgress(){
+
+    }
+
     private void setUpTableName(String searchString, String tableName) {
         if (StringUtils.isNotEmpty(searchString)) {
             tableTagView.setText(UiUtils.highlightTextIfNecessary(searchString,
@@ -337,7 +342,11 @@ public class EMenuOrderView extends MaterialCardView implements
             dismissConsentDialog(lottieAlertDialog);
             markOrderAsTaken();
         });
-        takeOrderConfirmationBuilder.setNegativeListener(this::dismissConsentDialog);
+        takeOrderConfirmationBuilder.setNegativeListener(lottieAlertDialog -> {
+            dismissConsentDialog(lottieAlertDialog);
+            rejectOrder();
+        });
+//        takeOrderConfirmationBuilder.setNegativeListener(this::dismissConsentDialog);
         takeOrderConfirmationBuilder.build().show();
     }
 
@@ -357,6 +366,13 @@ public class EMenuOrderView extends MaterialCardView implements
                 .build();
         errorCreationErrorDialog.setCancelable(true);
         errorCreationErrorDialog.show();
+    }
+
+    private void rejectOrder(){
+        DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
+        Toast.makeText(getContext(), "Order rejected", Toast.LENGTH_SHORT).show();
+//        getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
     }
 
     private void markOrderAsTaken() {
@@ -503,8 +519,6 @@ public class EMenuOrderView extends MaterialCardView implements
         availablePaymentOptionsDialogBuilder.create().show();
     }
 
-
-
     private void initiateSingleTransferPaymentFlow(String customerKey) {
         AlertDialog.Builder transferPaymentDialog = new AlertDialog.Builder(getContext());
         transferPaymentDialog.setTitle("Payment By Transfer");
@@ -529,11 +543,6 @@ public class EMenuOrderView extends MaterialCardView implements
         transferPaymentDialog.create().show();
     }
 
-
-
-
-
-
     private void initiateSingleCashPaymentFlow(String customerKey) {
         AlertDialog.Builder cashPaymentDialog = new AlertDialog.Builder(getContext());
         cashPaymentDialog.setTitle("Cash Payment");
@@ -557,11 +566,6 @@ public class EMenuOrderView extends MaterialCardView implements
         });
         cashPaymentDialog.create().show();
     }
-
-
-
-
-
 
     private void initiateSingleCardPaymentFlow(String customerKey) {
         EventBus.getDefault().post(new CardProcessorEvent(eMenuOrder, getTotalRawCost(eMenuOrder.getItems()), customerKey));

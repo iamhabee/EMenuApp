@@ -14,8 +14,8 @@ public class Globals {
     public static final String USE_TYPE = "emenu_use_type";
     public static final String ADMIN_TAG = "admin";
     public static final int ADMIN_TAG_ID = 263389;
-    public static final int WAITER = 0;
-    public static final int BAR = 1;
+    public static final int WAITER = 1;
+    public static final int BAR = 3;
     public static final int KITCHEN = 2;
     public static final String DEFAULT_PWD = "12345";
     public static final String RESTAURANT_OR_BAR_NAME = "emenu_restaurant_or_bar_name";
@@ -25,10 +25,12 @@ public class Globals {
     public static final String RESTAURANT_OR_BAR_REVEALED_PASSWORD = "emenu_restaurant_or_bar_password_revealed";
     public static final String RESTAURANTS_AND_BARS = "EMenuRestaurantsAndBars";
     public static final String EMenuItems = "EMenuItems";
+    public static final String DESTINATION_ID = "destination_id";
     public static final String PREVIOUS_PASSWORD = "previous_password";
     public static final String EMENU_ITEM_PHOTO_URL = "emenu_item_photo_url";
     public static final String EMENU_ITEM_NAME = "emenu_item_name";
     public static final String EMENU_ITEM_DESCRIPTION = "emenu_item_description";
+    public static final int EMENU_ITEM_QUANTITY_IN_STOCK = 0;
     public static final String EMENU_ITEM_INGREDIENTS_LIST = "emenu_items_ingredients_list";
     public static final String EMENU_ITEM_PARENT_CATEGORY = "emenu_item_parent_category";
     public static final String EMENU_ITEM_SUB_PARENT_CATEGORY = "emenu_item_sub_parent_category";
@@ -117,6 +119,9 @@ public class Globals {
     public static boolean emenuItemUpdated = false;
     public static EMenuItem updatedEMenuItem = null;
     public static boolean unProcessedOrdersPushed = false;
+    public static final String REJECTED_ORDER = "order_rejected";
+    public static final String ACCEPTED_ORDER = "order_accepted";
+    public static final String REJECTED_NOTIFIER = "rejected_notifier";
 
 
     public enum StatusPage {
@@ -183,7 +188,8 @@ public class Globals {
         PENDING,
         PROCESSING,
         ALMOST_DONE,
-        DONE
+        DONE,
+        REJECTED
     }
 
 }
