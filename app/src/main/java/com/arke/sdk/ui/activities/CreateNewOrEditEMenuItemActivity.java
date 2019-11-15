@@ -216,7 +216,9 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             selectImage(view);
         } else if (view.getId() == R.id.create_item) {
             UiUtils.dismissKeyboard(itemDescriptionView);
-            processFormAndCreateNewEMenuItem();
+            if(Validate()) {
+                processFormAndCreateNewEMenuItem();
+            }
         } else if (view.getId() == R.id.close_activity) {
             finish();
         }
@@ -230,34 +232,46 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
         }
     }
 
+
+
+
+
+
+
+
+
     private void processFormAndCreateNewEMenuItem() {
         String itemName = itemNameView.getText().toString().trim().toLowerCase();
         String itemDescription = itemDescriptionView.getText().toString().trim();
         int stockNumber = Integer.parseInt(numberInStock.getText().toString().trim());
         String itemPrice = itemPriceView.getText().toString().trim();
         itemPrice = trimCommaOfString(itemPrice);
-
         String itemParentCategory = itemCategoryView.getText().toString().trim();
-        if (StringUtils.isEmpty(itemName)) {
-            itemNameView.setError("Please enter a name for this menu item");
-            return;
-        }
-        if (StringUtils.isEmpty(itemDescription)) {
-            itemDescriptionView.setError("Please provide a mini description for this menu item");
-            return;
-        }
-        if (StringUtils.isEmpty(itemPrice)) {
-            itemPriceView.setError("Please enter a price for this item");
-            return;
-        }
-        if (pickedFilePath == null) {
-            UiUtils.showSafeToast("Please pick a photo to represent this Menu Item");
-            return;
-        }
-        if (StringUtils.isEmpty(itemParentCategory)) {
-            itemCategoryView.setError("Please specify a category for this menu item");
-            return;
-        }
+
+
+
+
+//
+//        if (StringUtils.isEmpty(itemName)) {
+//            itemNameView.setError("Please enter a name for this menu item");
+//            return;
+//        }
+//        if (StringUtils.isEmpty(itemDescription)) {
+//            itemDescriptionView.setError("Please provide a mini description for this menu item");
+//            return;
+//        }
+//        if (StringUtils.isEmpty(itemPrice)) {
+//            itemPriceView.setError("Please enter a price for this item");
+//            return;
+//        }
+//        if (pickedFilePath == null) {
+//            UiUtils.showSafeToast("Please pick a photo to represent this Menu Item");
+//            return;
+//        }
+//        if (StringUtils.isEmpty(itemParentCategory)) {
+//            itemCategoryView.setError("Please specify a category for this menu item");
+//            return;
+//        }
         showOperationsDialog(editableEMenuItem != null ? "Updating EMenu Item" : "Creating New EMenu Item ", "Please wait...");
         String finalItemPrice = itemPrice;
         if (StringUtils.startsWithIgnoreCase(pickedFilePath, "https")
@@ -276,6 +290,63 @@ public class CreateNewOrEditEMenuItemActivity extends BaseActivity
             });
         }
     }
+
+
+
+    /* set edit text to error when empty */
+    public static boolean hasText(EditText editText) {
+
+        return hasText(editText, "Required");
+    }
+
+    /* check edit text length and set error message for required edit text
+     * Custom Message */
+    public static boolean hasText(EditText editText, String error_message) {
+
+        String text = editText.getText().toString().trim();
+        editText.setError(null);
+
+        // length 0 means there is no text
+        if (text.length() == 0) {
+            editText.setError(error_message);
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private boolean Validate(){
+        /* Validate all required edit text */
+        // check if username is not null
+        // check if password is not null
+        // check if res is true;;
+        boolean check = true;
+        if (hasText(itemNameView)) {
+            if (hasText(itemDescriptionView)){
+                if (hasText(numberInStock)){
+                    if (hasText(itemCategoryView)){
+                        if (hasText(itemPriceView)){
+                            check = true;
+
+                        }else {
+                            check = false;
+                        }
+                    }else {
+                        check = false;
+                    }
+                }else {
+                    check = false;
+                }
+            }else {
+                check = false;
+            }
+        }else{
+            check = false;
+        }
+        return check;
+    }
+
 
     private void upsertItem(String itemName, String itemDescription, int stockNumber, String itemParentCategory, String finalItemPrice, String fileUrl) {
         if (editableEMenuItem != null) {

@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -147,6 +148,7 @@ public class WaiterHomeActivity extends BaseActivity {
 
     private AlertDialog adminPasswordDialog = null;
     private android.app.AlertDialog dialog;
+    private LottieAlertDialog accountCreationSuccessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,7 +242,7 @@ public class WaiterHomeActivity extends BaseActivity {
                 //We are good to go, the payment was made successfully.
                 //Let's record the payment with the order associated with this payment
                 if (data == null) {
-                    UiUtils.showSafeToast("Oops! Sorry, failed to complete card payment.Please, try again.");
+                    showErrorMessage("Transaction Error", "Oops! Sorry, failed to complete card payment.Please, try again.");
                     return;
                 }
                 String response = (String) data.getSerializableExtra("response");
@@ -250,31 +252,40 @@ public class WaiterHomeActivity extends BaseActivity {
                 String batchNo = (String) data.getSerializableExtra("batchNo");
                 String seqNo = (String) data.getSerializableExtra("seqNo");
                 String persistedData = AppPrefs.getCurrentCardData();
-                if (persistedData != null) {
-                    CurrentCardPaymentProcessor currentCardPaymentProcessor = CurrentCardPaymentProcessor.getLastProcessing();
-                    if (currentCardPaymentProcessor != null) {
-                        EMenuOrder eMenuOrder = currentCardPaymentProcessor.getEMenuOrder();
-                        String[] customerKeys = currentCardPaymentProcessor.getCustomerKeys();
-                        String title;
-                        if (customerKeys.length == 1) {
-                            title = "Registering Payment for Customer " + customerKeys[0];
-                        } else {
-                            title = "Registering Payment for Customers " + Arrays.toString(customerKeys);
-                        }
-                        showOperationsDialog(title, "Please wait...");
-                        DataStoreClient.updateOrderPaymentStatus(eMenuOrder.getEMenuOrderId(), Globals.OrderPaymentStatus.PAID_BY_CARD, (paymentStatus, paymentException) -> {
-                            dismissProgressDialog();
-                            if (paymentException == null) {
-                                UiUtils.showSafeToast("Payment successfully registered for  " + (customerKeys.length == 1 ? " Customer " + customerKeys[0] : " Customers " + Arrays.toString(customerKeys)) + "!!!");
+                Log.d("Card Response", responseCode);
+                Toast.makeText(this, "Response "+responseCode, Toast.LENGTH_SHORT).show();
+                if(responseCode.equals("00")){
+                    if (persistedData != null) {
+                        CurrentCardPaymentProcessor currentCardPaymentProcessor = CurrentCardPaymentProcessor.getLastProcessing();
+                        if (currentCardPaymentProcessor != null) {
+                            EMenuOrder eMenuOrder = currentCardPaymentProcessor.getEMenuOrder();
+                            String[] customerKeys = currentCardPaymentProcessor.getCustomerKeys();
+                            String title;
+                            if (customerKeys.length == 1) {
+                                title = "Registering Payment for Customer " + customerKeys[0];
                             } else {
-                                UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer(s).Please try again.(" + paymentException.getMessage() + ")");
+                                title = "Registering Payment for Customers " + Arrays.toString(customerKeys);
                             }
-                        });
+                            showOperationsDialog(title, "Please wait...");
+                            DataStoreClient.updateOrderPaymentStatus(eMenuOrder.getEMenuOrderId(), Globals.OrderPaymentStatus.PAID_BY_CARD, (paymentStatus, paymentException) -> {
+                                dismissProgressDialog();
+                                if (paymentException == null) {
+                                    showSuccessMessage("Transaction Complete!", "Payment successfully registered for  " + (customerKeys.length == 1 ? " Customer " + customerKeys[0] : " Customers " + Arrays.toString(customerKeys)) + "!!!");
+                                } else {
+                                    showSuccessMessage("Transaction Complete!", "Sorry, an error occurred while registering payment for this customer(s).\nPlease try again.(" + paymentException.getMessage() + ")");
+                                }
+                            });
+                        }
                     }
+                }else{
+                    showErrorMessage("Transaction Error", response);
                 }
+            }else{
+                showErrorMessage("Transaction Cancelled", "An error occured while processing the payment");
             }
         }
     }
+
 
     private void initAppTour(String title, String description, View view, TargetDismissedCallback targetDismissedCallback) {
         new MaterialTapTargetPrompt.Builder(this)
@@ -360,6 +371,17 @@ public class WaiterHomeActivity extends BaseActivity {
                 .build();
         errorCreationErrorDialog.setCancelable(true);
         errorCreationErrorDialog.show();
+    }
+
+
+    private void showSuccessMessage(String title, String description) {
+        accountCreationSuccessDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        accountCreationSuccessDialog.setCancelable(true);
+        accountCreationSuccessDialog.show();
     }
 
     @SuppressLint("InflateParams")

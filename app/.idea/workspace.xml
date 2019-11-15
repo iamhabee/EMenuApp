@@ -6,8 +6,8 @@
     </shared>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_LOG_LEVEL" value="debug" />
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+    <option name="TOOL_WINDOW_LOG_LEVEL" value="info" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="No Filters" />
     <option name="TOOL_WINDOW_REGEXP_FILTER" value="false" />
   </component>
   <component name="AvailableLibraryUpdateStorage">
@@ -185,9 +185,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d88c5f91-9817-4ca2-950d-f8dc14f78088" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/InitialAccountSetupActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/InitialAccountSetupActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/adapters/CustomerOrdersRecyclerViewAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/adapters/CustomerOrdersRecyclerViewAdapter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/DataStoreClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/DataStoreClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/order_summary_layout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/order_summary_layout.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -219,116 +224,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="725">
-              <caret line="552" column="24" selection-start-line="552" selection-start-column="24" selection-end-line="552" selection-end-column="24" />
-              <folding>
-                <element signature="e#2434#2473#0" expanded="true" />
-                <element signature="e#15207#15208#0" expanded="true" />
-                <element signature="e#15259#15260#0" expanded="true" />
-                <element signature="e#15300#15301#0" expanded="true" />
-                <element signature="e#15337#15338#0" expanded="true" />
-                <element signature="e#26074#26075#0" expanded="true" />
-                <element signature="e#26113#26114#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="198" selection-start-line="198" selection-end-line="198" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/models/EMenuOrder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-442">
-              <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
-              <folding>
-                <element signature="e#4816#4817#0" expanded="true" />
-                <element signature="e#4846#4847#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/models/EMenuItem.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="21">
-              <caret line="158" column="15" selection-start-line="158" selection-start-column="15" selection-end-line="158" selection-end-column="15" />
-              <folding>
-                <element signature="e#3037#3038#0" expanded="true" />
-                <element signature="e#3084#3085#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/DataStoreClient.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="1117" column="15" selection-start-line="1117" selection-start-column="15" selection-end-line="1117" selection-end-column="15" />
+            <state relative-caret-position="196">
+              <caret line="303" column="68" selection-start-line="303" selection-start-column="68" selection-end-line="303" selection-end-column="68" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#46640#46679#0" expanded="true" />
-                <element signature="e#58146#58147#0" expanded="true" />
-                <element signature="e#58189#58190#0" expanded="true" />
-                <element signature="e#74709#74748#0" expanded="true" />
-                <element signature="e#78630#78669#0" expanded="true" />
-                <element signature="e#81364#81403#0" expanded="true" />
-                <element signature="e#83693#83732#0" expanded="true" />
-                <element signature="e#89310#89349#0" expanded="true" />
+                <element signature="method#suggestCategories#0;class#CreateNewOrEditEMenuItemActivity#0" />
+                <element signature="method#initEventHandlers#0;class#CreateNewOrEditEMenuItemActivity#0" />
+                <element signature="method#trimCommaOfString#0;class#CreateNewOrEditEMenuItemActivity#0" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/EMenuItemView.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="473">
-              <caret line="288" column="17" selection-start-line="288" selection-start-column="17" selection-end-line="288" selection-end-column="17" />
-              <folding>
-                <element signature="method#bindData#0;class#EMenuItemView#0" />
-                <element signature="method#performItemDeletionFromOrder#0;class#EMenuItemView#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/companions/Globals.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="90" column="66" selection-start-line="90" selection-start-column="66" selection-end-line="90" selection-end-column="66" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/res/layout/create_new_emenu_item_layout.xml">
+        <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_initial_account_setup.xml">
+          <provider selected="true" editor-type-id="text-editor" />
           <provider editor-type-id="android-designer2" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/InitialAccountSetupActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="153" selection-start-line="153" selection-end-line="153" />
+            <state relative-caret-position="1632">
+              <caret line="209" column="33" selection-start-line="209" selection-start-column="33" selection-end-line="209" selection-end-column="33" />
+              <folding>
+                <element signature="method#onSignUp#0;class#InitialAccountSetupActivity#0" />
+                <element signature="method#onRadioButtonClicked#0;class#InitialAccountSetupActivity#0" />
+                <element signature="method#hasText#0;class#InitialAccountSetupActivity#0" />
+                <element signature="method#hasText#1;class#InitialAccountSetupActivity#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -344,12 +270,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>include</find>
-      <find>passwordBackgroundView</find>
-      <find>closeActivityView</find>
-      <find>log</find>
-      <find>waiterTag</find>
-      <find>waiterTag.setText</find>
       <find>tabs</find>
       <find>listener</find>
       <find>setOnClickListener</find>
@@ -368,12 +288,18 @@
       <find>i</find>
       <find>host</find>
       <find>globa</find>
-      <find>in</find>
       <find>upd</find>
       <find>Quant</find>
       <find>EMenuOrder</find>
-      <find>stock</find>
       <find>settext</find>
+      <find>quantityAvailableInStock</find>
+      <find>stock</find>
+      <find>in</find>
+      <find>orders_recycler_view</find>
+      <find>ada</find>
+      <find>add</find>
+      <find>decre</find>
+      <find>update P</find>
     </findStrings>
     <replaceStrings>
       <replace>In</replace>
@@ -389,10 +315,7 @@
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/CustomerOrder.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/EMenuOrderView.java" />
         <option value="$PROJECT_DIR$/src/main/res/layout/emenu_order_view.xml" />
-        <option value="$PROJECT_DIR$/src/main/res/layout/order_summary_layout.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/models/EMenuItem.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/EMenuItemView.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/DrinksOnlyView.java" />
         <option value="$PROJECT_DIR$/build/generated/source/apt/debug/com/arke/sdk/models/EMenuOrder_Table.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/WelcomeActivity.java" />
@@ -416,15 +339,19 @@
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OnBoardingActivity.java" />
         <option value="$PROJECT_DIR$/src/main/res/layout/activity_initial_account_setup.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/AdminHomeActivity.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/InitialAccountSetupActivity.java" />
         <option value="$PROJECT_DIR$/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/src/main/res/values/strings.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/fragments/WaiterHomeFragment.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/companions/Globals.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java" />
         <option value="$PROJECT_DIR$/src/main/res/layout/create_new_emenu_item_layout.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/res/layout/order_summary_layout.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/EMenuItemView.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/DataStoreClient.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/adapters/CustomerOrdersRecyclerViewAdapter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/InitialAccountSetupActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java" />
       </list>
     </option>
   </component>
@@ -439,59 +366,12 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="ProjectPane" />
+      <pane id="Scope" />
       <pane id="PackagesPane" />
       <pane id="AndroidView">
         <subPane>
           <expand>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="arke" type="cbb59c9e:AndroidPsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="arke" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="sdk" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="arke" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="sdk" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="java" type="edd41e36:AndroidSourceTypeNode" />
-              <item name="arke" type="cbb59c9e:AndroidPsiDirectoryNode" />
-              <item name="sdk" type="462c0819:PsiDirectoryNode" />
-              <item name="ui" type="462c0819:PsiDirectoryNode" />
-              <item name="activities" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="app" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="res" type="d4f16f75:AndroidResFolderNode" />
-            </path>
             <path>
               <item name="app" type="1abcf292:AndroidViewProjectNode" />
               <item name="Gradle Scripts" type="ae0cef3a:AndroidBuildScriptsGroupNode" />
@@ -500,8 +380,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="ProjectPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -609,10 +487,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="704" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.19757085" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.19190283" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -621,14 +498,15 @@
       <window_info id="Resources Explorer" order="7" />
       <window_info id="Capture Tool" order="8" />
       <window_info anchor="bottom" id="Run" order="0" weight="0.32867134" />
-      <window_info anchor="bottom" id="Logcat" order="1" weight="0.36013985" />
+      <window_info anchor="bottom" id="Logcat" order="1" weight="0.052447554" />
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" />
-      <window_info anchor="bottom" id="Terminal" order="4" weight="0.5769231" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="4" visible="true" weight="0.37412587" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="6" />
       <window_info anchor="bottom" id="Build" order="7" weight="0.3583916" />
-      <window_info anchor="bottom" id="Android Profiler" order="8" />
+      <window_info anchor="bottom" id="Android Profiler" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="9" weight="0.32867134" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
       <window_info anchor="right" id="Capture Analysis" order="1" />
       <window_info anchor="right" id="Gradle" order="2" weight="0.32955465" />
@@ -664,315 +542,330 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/un_processed_menu_orders_activity_layout.xml">
-      <provider editor-type-id="android-designer2" />
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/login_auth_form.xml">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/unprocessed_orders_indicator.xml">
       <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/triple_px_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/total_price_header.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/tab_custom_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/sign_up_auth_form.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/sign_panel.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/rounded_section_header.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/restaurant_or_bar_profile.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/request_slip_code_dialog.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/quat_px_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/quantity_available_in_stock_layout.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/preview_layout_drinks_container.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/partial_module.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/partial_function.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/other_error_layout.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/order_summary_layout.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/network_error_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/nav_drawer_header.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/menu_categories_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/res/layout/menu_categories_row.xml">
-      <provider editor-type-id="android-designer2" />
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/login_auth_form.xml">
       <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/menu_categories_view.xml">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/loading_view.xml">
       <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/nav_drawer_header.xml">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/loading_footer.xml">
       <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/loadable_content_fragment.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="372">
-          <caret line="30" column="54" selection-start-line="30" selection-start-column="54" selection-end-line="30" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/emenu_item_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/emenu_item_preview_content.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="335" selection-start-line="335" selection-end-line="335" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_admin_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/content_waiter_home_activity.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="132" column="34" selection-start-line="132" selection-start-column="34" selection-end-line="132" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/emenu_order_view.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/admin_view_root.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_on_boarding.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_sale.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_mifare.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_initial_account_setup.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-29/android.jar!/java/lang/Integer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="10" column="19" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/contracts/EMenuItemUpdateDoneCallback.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/adapters/EMenuOrdersRecyclerAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.parse-community.Parse-SDK-Android/parse/1.20.0/e4c4108e98bbdb4bb1c2723847f08d5106bbb38f/parse-1.20.0-sources.jar!/com/parse/ParseObject.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/viewholders/EMenuOrdersRecyclerViewHolder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-427">
-          <caret line="55" column="13" selection-start-line="55" selection-start-column="13" selection-end-line="55" selection-end-column="13" />
-          <folding>
-            <element signature="e#1750#1858#0" />
-          </folding>
+        <state relative-caret-position="68">
+          <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-29/android.jar!/android/widget/AutoCompleteTextView.class">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/viewholders/EMenuItemRecyclerViewHolder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
+        <state relative-caret-position="85">
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/generated/source/apt/debug/com/arke/sdk/ui/activities/OrderSummaryActivity_ViewBinding.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="36" column="11" selection-start-line="36" selection-start-column="11" selection-end-line="36" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/EMenuOrderView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-374">
+          <caret line="56" column="13" selection-start-line="56" selection-start-column="13" selection-end-line="56" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/emenu_item_preview_layout.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/fragments/OutgoingOrdersFragment.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="114">
+          <caret line="110" column="64" lean-forward="true" selection-start-line="110" selection-start-column="64" selection-end-line="110" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="193" column="44" selection-start-line="193" selection-start-column="44" selection-end-line="193" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/CurrencyEditText.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-187">
           <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java">
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.greenrobot/eventbus/3.0.0/777f0a941d3dd0f9988d4f22b42b36ce2fe64ea4/eventbus-3.0.0-sources.jar!/org/greenrobot/eventbus/EventBus.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-29">
-          <caret line="138" column="9" selection-start-line="138" selection-start-column="9" selection-end-line="138" selection-end-column="9" />
-          <folding>
-            <element signature="method#initCategoryViewAdapter#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#suggestCategories#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#trimCommaOfString#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#dismissProgressDialog#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#showErrorMessage#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#showSuccessMessage#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#showOperationsDialog#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#onResume#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#onRequestPermissionsResult#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#selectImage#0;class#CreateNewOrEditEMenuItemActivity#0" />
-            <element signature="method#onActivityResult#0;class#CreateNewOrEditEMenuItemActivity#0" />
-          </folding>
+        <state relative-caret-position="-1297">
+          <caret line="77" column="27" selection-start-line="77" selection-start-column="27" selection-end-line="77" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/res/layout/create_new_emenu_item_layout.xml">
-      <provider editor-type-id="android-designer2" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="153" selection-start-line="153" selection-end-line="153" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="725">
-          <caret line="552" column="24" selection-start-line="552" selection-start-column="24" selection-end-line="552" selection-end-column="24" />
-          <folding>
-            <element signature="e#2434#2473#0" expanded="true" />
-            <element signature="e#15207#15208#0" expanded="true" />
-            <element signature="e#15259#15260#0" expanded="true" />
-            <element signature="e#15300#15301#0" expanded="true" />
-            <element signature="e#15337#15338#0" expanded="true" />
-            <element signature="e#26074#26075#0" expanded="true" />
-            <element signature="e#26113#26114#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java">
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/loadable_content_fragment.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
-          <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
+          <caret line="5" column="40" lean-forward="true" selection-start-line="5" selection-start-column="40" selection-end-line="5" selection-end-column="40" />
         </state>
       </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/companions/Globals.java">
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/fragment_recent_orders.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="90" column="66" selection-start-line="90" selection-start-column="66" selection-end-line="90" selection-end-column="66" />
+        <state relative-caret-position="85">
+          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/adapters/EMenuOrdersRecyclerAdapter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="174">
-          <caret line="24" column="62" selection-start-line="24" selection-start-column="62" selection-end-line="24" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/models/EMenuOrder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-442">
-          <caret line="31" column="8" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="8" />
-          <folding>
-            <element signature="e#4816#4817#0" expanded="true" />
-            <element signature="e#4846#4847#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider editor-type-id="android-designer2" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/models/EMenuItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21">
-          <caret line="158" column="15" selection-start-line="158" selection-start-column="15" selection-end-line="158" selection-end-column="15" />
+        <state relative-caret-position="293">
+          <caret line="165" column="23" selection-start-line="165" selection-start-column="23" selection-end-line="165" selection-end-column="23" />
           <folding>
-            <element signature="e#3037#3038#0" expanded="true" />
-            <element signature="e#3084#3085#0" expanded="true" />
+            <element signature="e#3287#3288#0" expanded="true" />
+            <element signature="e#3322#3323#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/views/EMenuItemView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="473">
-          <caret line="288" column="17" selection-start-line="288" selection-start-column="17" selection-end-line="288" selection-end-column="17" />
+        <state relative-caret-position="490">
+          <caret line="313" column="5" lean-forward="true" selection-start-line="313" selection-start-column="5" selection-end-line="313" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="779" lean-forward="true" selection-start-line="779" selection-end-line="779" />
           <folding>
-            <element signature="method#bindData#0;class#EMenuItemView#0" />
-            <element signature="method#performItemDeletionFromOrder#0;class#EMenuItemView#0" />
+            <element signature="e#30606#31662#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.greenrobot/eventbus/3.0.0/777f0a941d3dd0f9988d4f22b42b36ce2fe64ea4/eventbus-3.0.0-sources.jar!/org/greenrobot/eventbus/EventBus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-634">
-          <caret line="77" column="27" selection-start-line="77" selection-start-column="27" selection-end-line="77" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="198" selection-start-line="198" selection-end-line="198" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/DataStoreClient.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="1117" column="15" selection-start-line="1117" selection-start-column="15" selection-end-line="1117" selection-end-column="15" />
+        <state relative-caret-position="306">
+          <caret line="1025" column="41" lean-forward="true" selection-start-line="1025" selection-start-column="41" selection-end-line="1025" selection-end-column="41" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#46640#46679#0" expanded="true" />
-            <element signature="e#58146#58147#0" expanded="true" />
-            <element signature="e#58189#58190#0" expanded="true" />
-            <element signature="e#74709#74748#0" expanded="true" />
-            <element signature="e#78630#78669#0" expanded="true" />
-            <element signature="e#81364#81403#0" expanded="true" />
-            <element signature="e#83693#83732#0" expanded="true" />
-            <element signature="e#89310#89349#0" expanded="true" />
+            <element signature="e#61230#61231#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_admin_view.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/waiter_home_activity.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/un_processed_menu_orders_activity_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/unprocessed_orders_indicator.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/total_price_header.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/tab_custom_view.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/sign_up_auth_form.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/sign_panel.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/settings.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/restaurant_or_bar_profile.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/request_slip_code_dialog.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/quat_px_view.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/quantity_available_in_stock_layout.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/preview_layout_drinks_container.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/partial_module.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/other_error_layout.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/order_summary_layout.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="488">
+          <caret line="139" lean-forward="true" selection-start-line="139" selection-end-line="139" />
+          <folding>
+            <element signature="e#3549#5298#0" />
+          </folding>
+        </state>
+      </provider>
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/rounded_section_header.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/models/EMenuOrder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="27" column="13" selection-start-line="27" selection-start-column="13" selection-end-line="27" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/AdminHomeActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="610">
+          <caret line="240" selection-start-line="240" selection-end-line="240" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/adapters/CustomerOrdersRecyclerViewAdapter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="619">
+          <caret line="72" column="13" lean-forward="true" selection-start-line="72" selection-start-column="13" selection-end-line="72" selection-end-column="13" />
+          <folding>
+            <element signature="method#CustomerOrdersRecyclerViewAdapter#0;class#CustomerOrdersRecyclerViewAdapter#0" />
+            <element signature="e#3286#3287#0" expanded="true" />
+            <element signature="e#3329#3330#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/OrderSummaryActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="233" column="66" lean-forward="true" selection-start-line="233" selection-start-column="66" selection-end-line="233" selection-end-column="66" />
+          <folding>
+            <element signature="e#4063#4448#0" />
+            <element signature="method#checkAndLoadNewOrder#0;class#OrderSummaryActivity#0" />
+            <element signature="method#initEventHandlers#0;class#OrderSummaryActivity#0" />
+            <element signature="method#onResume#0;class#OrderSummaryActivity#0" />
+            <element signature="method#onPause#0;class#OrderSummaryActivity#0" />
+            <element signature="method#colorizeNecessaryComponents#0;class#OrderSummaryActivity#0" />
+            <element signature="method#displayCustomerOrderProgress#0;class#OrderSummaryActivity#0" />
+            <element signature="method#displayProgressMessage#0;class#OrderSummaryActivity#0" />
+            <element signature="method#toggleProgressUpdateClickability#0;class#OrderSummaryActivity#0" />
+            <element signature="e#16518#16519#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UserLoginActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+          <folding>
+            <element signature="method#logIn#0;class#UserLoginActivity#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/content_waiter_home_activity.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/create_new_emenu_item_layout.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/content_kitchen_or_bar_home_activity.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/kitchen_or_bar_home_activity.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/generated/source/apt/debug/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity_ViewBinding.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="30" column="11" selection-start-line="30" selection-start-column="11" selection-end-line="30" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/CreateNewOrEditEMenuItemActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="303" column="68" selection-start-line="303" selection-start-column="68" selection-end-line="303" selection-end-column="68" />
+          <folding>
+            <element signature="method#suggestCategories#0;class#CreateNewOrEditEMenuItemActivity#0" />
+            <element signature="method#initEventHandlers#0;class#CreateNewOrEditEMenuItemActivity#0" />
+            <element signature="method#trimCommaOfString#0;class#CreateNewOrEditEMenuItemActivity#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/res/layout/activity_initial_account_setup.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="android-designer2" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/InitialAccountSetupActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1632">
+          <caret line="209" column="33" selection-start-line="209" selection-start-column="33" selection-end-line="209" selection-end-column="33" />
+          <folding>
+            <element signature="method#onSignUp#0;class#InitialAccountSetupActivity#0" />
+            <element signature="method#onRadioButtonClicked#0;class#InitialAccountSetupActivity#0" />
+            <element signature="method#hasText#0;class#InitialAccountSetupActivity#0" />
+            <element signature="method#hasText#1;class#InitialAccountSetupActivity#0" />
           </folding>
         </state>
       </provider>
