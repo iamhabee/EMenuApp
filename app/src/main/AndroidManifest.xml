@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".ArkeSdkDemoApplication"
@@ -18,16 +19,14 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.GenerateCustomerTicketActivity" />
+        <activity android:name=".ui.activities.ScanActivity"></activity>
         <activity
             android:name=".ui.activities.InitialAccountSetupActivity"
             android:label="Add User"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.UserLoginActivity"
-            android:label="SIGN IN" />
-        <activity android:name=".demo.UserLoginActivity" />
-
+            android:label="SIGN IN" /> <!-- <activity android:name=".demo.UserLoginActivity" /> -->
         <uses-library
             android:name="android.epay.dataacq"
             android:required="false" />
