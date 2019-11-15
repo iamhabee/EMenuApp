@@ -1056,33 +1056,38 @@ public class DataStoreClient {
         if (items.contains(eMenuItem)) {
             int indexOfItem = items.indexOf(eMenuItem);
             EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
-            int existingQuantity = eMenuItem.getOrderedQuantity();
+            int existingQuantity = eMenuItem.getOrderedQuantity();  // order quantity
             EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
             int newQuantity;
             if (forcedQuantity != -1) {
-                newQuantity = forcedQuantity;
+                newQuantity = forcedQuantity; // 0
             } else {
-                newQuantity = existingQuantity - 1;
+                newQuantity = existingQuantity - 1; // -1
             }
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-            if (newQuantity <= 0) {
-                if (items.size() == 1) {
-                    eMenuOrder.delete();
+//            if (newQuantity >= eMenuItem.getQuantityAvailableInStock()){
+//                UiUtils.showSafeToast("Sorry the stock is empty");
+//            }
+//            else {
+                if (newQuantity <= 0) {
+                    if (items.size() == 1) {
+                        eMenuOrder.delete();
+                    } else {
+                        items.remove(eMenuItem);
+                        eMenuOrder.setItems(items);
+                        eMenuOrder.setDirty(true);
+                        eMenuOrder.update();
+                        EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+                    }
                 } else {
-                    items.remove(eMenuItem);
+                    eMenuItem.setOrderedQuantity(newQuantity);
+                    items.set(indexOfItem, eMenuItem);
                     eMenuOrder.setItems(items);
                     eMenuOrder.setDirty(true);
                     eMenuOrder.update();
-                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
                 }
-            } else {
-                eMenuItem.setOrderedQuantity(newQuantity);
-                items.set(indexOfItem, eMenuItem);
-                eMenuOrder.setItems(items);
-                eMenuOrder.setDirty(true);
-                eMenuOrder.update();
-            }
-            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
+                eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
+//            }
         } else {
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }

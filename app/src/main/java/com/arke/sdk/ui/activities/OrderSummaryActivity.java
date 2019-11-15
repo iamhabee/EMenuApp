@@ -26,6 +26,7 @@ import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;

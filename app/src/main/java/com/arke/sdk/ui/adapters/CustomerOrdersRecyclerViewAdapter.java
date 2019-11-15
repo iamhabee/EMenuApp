@@ -12,6 +12,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.arke.sdk.R;
+import com.arke.sdk.companions.Globals;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.preferences.AppPrefs;
@@ -52,6 +53,19 @@ public class CustomerOrdersRecyclerViewAdapter extends RecyclerView.Adapter<Recy
     }
 
     public void setEMenuItemList(List<EMenuItem> eMenuItemList) {
+//                if(eMenuItemList.size() > 0) {
+//                    for (EMenuItem order : eMenuItemList) {
+//                        if (AppPrefs.getUseType() == Globals.KITCHEN) {
+//                            if (order.getParentCategory().equals("Food")) {
+//                                this.eMenuItemList.add(order);
+//                            }
+//                        } else if (AppPrefs.getUseType() == Globals.BAR) {
+//                            if (order.getParentCategory().equals("Drinks")) {
+//                                this.eMenuItemList.add(order);
+//                            }
+//                        }
+//                    }
+//        }
         this.eMenuItemList = eMenuItemList;
     }
 
