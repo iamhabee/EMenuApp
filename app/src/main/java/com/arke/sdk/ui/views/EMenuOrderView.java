@@ -251,7 +251,7 @@ public class EMenuOrderView extends MaterialCardView implements
         if (orderProgressStatus != null) {
             if (eMenuOrder.isDirty()) {
                 orderProgressTextView.setText("Not Yet sent to Kitchen/Bar");
-            } else {
+            }else{
                 orderProgressTextView.setText(WordUtils.capitalize(orderProgressStatus.name().replace("_", " ")));
             }
         }
@@ -370,9 +370,13 @@ public class EMenuOrderView extends MaterialCardView implements
 
     private void rejectOrder(){
         DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
-        Toast.makeText(getContext(), "Order rejected", Toast.LENGTH_SHORT).show();
+        if (AppPrefs.getUseType() == Globals.KITCHEN){
+            Toast.makeText(getContext(), "Order rejected by kitchen", Toast.LENGTH_SHORT).show();
+        }else if (AppPrefs.getUseType() == Globals.BAR) {
+            Toast.makeText(getContext(), "Order rejected by bar", Toast.LENGTH_SHORT).show();
+        }
 //        getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
-        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
+//        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
     }
 
     private void markOrderAsTaken() {

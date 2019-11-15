@@ -15,6 +15,7 @@ import androidx.work.Worker;
 
 import com.arke.sdk.R;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.WaiterHomeActivity;
 import com.arke.sdk.utilities.Constants;
 import com.parse.FindCallback;
@@ -89,9 +90,14 @@ public class WaiterAlertWorker extends Worker {
 
     public void queryPendingOrdersForRejectedOrder() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
-        query.whereEqualTo("order_progress_status", '"'+"REJECTED"+'"');
+        if (AppPrefs.getUseType() == Globals.BAR){
+            query.whereEqualTo("order_progress_status", '"'+"BAR_REJECTED"+'"');
+            query.whereEqualTo(Globals.BAR_REJECTED_ORDER, true);
+        }else if (AppPrefs.getUseType() == Globals.KITCHEN) {
+            query.whereEqualTo("order_progress_status", '"'+"KITCHEN_REJECTED"+'"');
+            query.whereEqualTo(Globals.KITCHEN_REJECTED_ORDER, true);
+        }
         query.whereEqualTo("rejected_notifier", false);
-        query.whereEqualTo(Globals.REJECTED_ORDER, true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> objects, ParseException e) {
@@ -105,8 +111,15 @@ public class WaiterAlertWorker extends Worker {
                     if(mMessages.size() > 0) {
                         // loop through the response to update
                         // their notification_received_status
-                        String title = getInputData().getString(EXTRA_TITLE, "Order was rejected");
-                        String text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
+                        String title = null;
+                        String text = null;
+                        if (AppPrefs.getUseType() == Globals.BAR){
+                            title = getInputData().getString(EXTRA_TITLE, "Drink order was rejected");
+                            text = getInputData().getString(EXTRA_TEXT, "Click to view drink order");
+                        }else if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                            title = getInputData().getString(EXTRA_TITLE, "Food order was rejected");
+                            text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
+                        }
 
                         int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);
 
@@ -169,6 +182,7 @@ public class WaiterAlertWorker extends Worker {
                 }
             }
         });
+
     }
 
 
