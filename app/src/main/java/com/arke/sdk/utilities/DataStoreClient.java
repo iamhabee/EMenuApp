@@ -749,7 +749,7 @@ public class DataStoreClient {
         return eMenuItemCategory;
     }
 
-    public static void searchEMenuItems(String searchString, EMenuItemsFetchDoneCallBack eMenuItemsFetchDoneCallBack) {
+    public static void searchEMenuItems(Context context, String searchString, EMenuItemsFetchDoneCallBack eMenuItemsFetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> searchQuery = ParseQuery.getQuery(Globals.EMenuItems);
         searchQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);

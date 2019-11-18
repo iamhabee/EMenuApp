@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
@@ -255,7 +256,7 @@ public class WaiterHomeFragment extends BaseFragment  {
     }
 
     private void searchMenuItems(String searchTerm, int skip) {
-        DataStoreClient.searchEMenuItems(searchTerm.toLowerCase().trim(), (results, e) -> {
+        DataStoreClient.searchEMenuItems(mContext, searchTerm.toLowerCase().trim(), (results, e) -> {
             if (e != null) {
 //                swipeRefreshLayout.setRefreshing(false);
                 String errorMessage = e.getMessage();

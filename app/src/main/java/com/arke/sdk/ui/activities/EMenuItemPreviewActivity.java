@@ -339,7 +339,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     }
 
     private void searchItem(String searchString) {
-        DataStoreClient.searchEMenuItems(searchString, (results, e) -> {
+        DataStoreClient.searchEMenuItems(mContext, searchString, (results, e) -> {
             if (results != null && !results.isEmpty()) {
                 searchList.clear();
                 searchList.addAll(results);
