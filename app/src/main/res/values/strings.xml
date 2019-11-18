@@ -505,5 +505,17 @@
     <string name="open_notify">View Order</string>
     <string name="stock_number">Item Stock Quantity</string>
     <string name="create_customer_ticket">Create customer ticket</string>
+    <string name="password_reset">Reset Your Password </string>
+    <string name="password_reset_hint">If you\'ve forgotten your password, simply enter your registered email address and we\'ll send you instructions to reset your password</string>
+    <string name="email_address">Email Address</string>
+    <string name="request_password_reset">Request Password Reset</string>
+    <string name="btn_back"><![CDATA[<< Back]]></string>
+    <string name="welcome_to">Welcome to&#160;</string>
+    <string name="enter_token">Enter Token</string>
+    <string name="validate_token">Validate Token</string>
+    <string name="change_password">Change Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
+    <string name="new_password_hint">Kindly provide a new password and confirmation of the new password</string>
 
 </resources>

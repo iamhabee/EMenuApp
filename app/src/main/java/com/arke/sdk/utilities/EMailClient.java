@@ -29,10 +29,17 @@ public class EMailClient {
         return "Dear EMenu User, <br/> A password recovery process was initiated on your EMenu Account.<br/>Here are your existing credentials:<br/>Email Address: <b>" + emailAddress + "</b><br/>" + (isForAdmin ? "Admin " : "") + "Password:<b>" + password + "</b>.<br/>Login into the app and update your details as necessary.<br/><br/>Regards,<br/>The EMenu Team.";
     }
 
+    private static String getEmailContent(String token, String expiringDate) {
+        return "Dear EMenu User, <br/> A password recovery process was initiated on your EMenu Account.<br/>" +
+                "Kindly copy the below generated TOKEN, go back to your mobile application and paste " +
+                "it before it expires:<br/>TOKEN: <b>" + token + "</b><br/>" + "Expiring Time:<b>" + expiringDate + "</b>.<br/>Regards,<br/>The EMenu Team.";
+    }
+
     @SuppressWarnings("ConstantConditions")
-    public static void sendPasswordRecoveryEmail(boolean isForAdmin, String emailAddress,
+    public static void sendPasswordRecoveryEmail(boolean isPasswordReset, String emailAddress,
                                                  String restaurantOrBarName,
-                                                 String retrievedPassword,
+                                                 String token,
+                                                 String expiringDate,
                                                  BooleanOperationDoneCallback booleanOperationDoneCallback) {
         Handler mHandler = new Handler(Looper.getMainLooper());
         Log.d("res# handleMessage", "handleMessage() called");
@@ -56,7 +63,10 @@ public class EMailClient {
                 JSONArray contentArray = new JSONArray();
                 JSONObject contentArrObject = new JSONObject();
                 contentArrObject.put("type", "text/html");
-                contentArrObject.put("value", getEmailContent(isForAdmin, emailAddress, retrievedPassword));
+                if (isPasswordReset)
+                    contentArrObject.put("value", getEmailContent(token, expiringDate));
+                else
+                    contentArrObject.put("value", getEmailContent(isPasswordReset, emailAddress, CryptoUtils.getSha256Digest(token)));
                 contentArray.put(contentArrObject);
 
                 dataObject.put("content", contentArray);
