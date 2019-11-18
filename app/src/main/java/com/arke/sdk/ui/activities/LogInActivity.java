@@ -41,11 +41,11 @@ import ernestoyaquello.com.verticalstepperform.listener.StepperFormListener;
 public class LogInActivity extends BaseActivity implements StepperFormListener {
 
     private AppCompatActivity activity = LogInActivity.this;
-    @BindView(R.id.auth_action_header)
-    EMenuTextView authActionHeaderView;
+//    @BindView(R.id.auth_action_header)
+//    EMenuTextView authActionHeaderView;
 
-    @BindView(R.id.close_activity)
-    ImageView closeActivityView;
+//    @BindView(R.id.close_activity)
+//    ImageView closeActivityView;
 
     @BindView(R.id.account_creation_stepper_form)
     VerticalStepperFormView accountLogInView;
@@ -74,16 +74,16 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-        authActionHeaderView.setText(getString(R.string.sign_in_header));
+//        authActionHeaderView.setText(getString(R.string.sign_in_header));
         forgotPasswordView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             initiatePasswordReset();
             UiUtils.dismissKeyboard(view);
         });
-        closeActivityView.setOnClickListener(view -> {
-            UiUtils.blinkView(view);
-            finish();
-        });
+//        closeActivityView.setOnClickListener(view -> {
+//            UiUtils.blinkView(view);
+//            finish();
+//        });
         setupForm();
     }
 

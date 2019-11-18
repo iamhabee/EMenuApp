@@ -70,12 +70,14 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.SignUpActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Restaurant/Bar Setup"
+            android:parentActivityName=".ui.activities.WelcomeActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.LogInActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Restaurant/Bar Sign In"
+            android:parentActivityName=".ui.activities.WelcomeActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity

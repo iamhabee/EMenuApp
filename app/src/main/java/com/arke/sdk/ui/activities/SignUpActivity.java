@@ -36,11 +36,11 @@ import ernestoyaquello.com.verticalstepperform.listener.StepperFormListener;
 @SuppressWarnings("SameParameterValue")
 public class SignUpActivity extends BaseActivity implements StepperFormListener {
 
-    @BindView(R.id.auth_action_header)
-    EMenuTextView authActionHeaderView;
+//    @BindView(R.id.auth_action_header)
+//    EMenuTextView authActionHeaderView;
 
-    @BindView(R.id.close_activity)
-    ImageView closeActivityView;
+//    @BindView(R.id.close_activity)
+//    ImageView closeActivityView;
 
     @BindView(R.id.account_creation_stepper_form)
     VerticalStepperFormView accountCreationFormView;
@@ -55,11 +55,11 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-        authActionHeaderView.setText(getString(R.string.create_account_header));
-        closeActivityView.setOnClickListener(view -> {
-            UiUtils.blinkView(view);
-            finish();
-        });
+//        authActionHeaderView.setText(getString(R.string.create_account_header));
+//        closeActivityView.setOnClickListener(view -> {
+//            UiUtils.blinkView(view);
+//            finish();
+//        });
         setupForm();
     }
 
