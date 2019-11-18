@@ -144,6 +144,7 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
                             AppPrefs.setUseType(Globals.UseType.USE_TYPE_ADMIN);
                             Intent userLoginIntent = new Intent(SignUpActivity.this, AdminHomeActivity.class);
                             startActivity(userLoginIntent);
+                            finish();
                         }else{
                             // user is not an admin
                             Toast.makeText(SignUpActivity.this, "user s not admin", Toast.LENGTH_LONG).show();

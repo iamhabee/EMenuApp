@@ -70,10 +70,12 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.SignUpActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.LogInActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
