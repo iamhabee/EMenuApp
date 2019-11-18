@@ -321,7 +321,7 @@ public class DataStoreClient {
         newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emailAddress);
         newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_PASSWORD, CryptoUtils.getSha256Digest(passCode));
         newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_REVEALED_PASSWORD, passCode);
-        newRestaurantOrBar.put(Globals.IS_ACCOUNT_ACTIVE, true);
+        newRestaurantOrBar.put(Globals.IS_ACCOUNT_ACTIVE, true); // Sets is_account_active to true
         newRestaurantOrBar.saveInBackground(e -> {
             if (e == null) {
                 RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(newRestaurantOrBar);
