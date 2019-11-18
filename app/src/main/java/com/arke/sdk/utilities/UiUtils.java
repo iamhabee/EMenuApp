@@ -1,6 +1,9 @@
 package com.arke.sdk.utilities;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -39,6 +42,11 @@ import com.arke.sdk.contracts.SnackBarActionClickedListener;
 import com.arke.sdk.ui.views.LoadingImageView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
+import com.labters.lottiealertdialoglibrary.ClickListener;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+
+import org.jetbrains.annotations.NotNull;
 
 import static com.arke.sdk.utilities.DataStoreClient.TAG;
 import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
@@ -48,6 +56,13 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class UiUtils {
 
     public static Handler handler = new Handler(Looper.getMainLooper());
+
+    private static LottieAlertDialog lottieAlertDialog;
+    private static Context context;
+
+    public UiUtils(Context context) {
+        this.context = context;
+    }
 
     private static boolean isMainThread() {
         return Looper.myLooper() == Looper.getMainLooper();
@@ -310,6 +325,54 @@ public class UiUtils {
 //        int blue = 0xFF & (color);
 //        int luminance = (int) (0.2126 * red + 0.7152 * green + 0.0722 * blue);
         return color == Color.WHITE;
+    }
+
+    public static void showMessage(Context context, String title, String description, String restaurantOrBarName,
+                                   String restaurantEmailAddress, Class nextActivity) {
+        LottieAlertDialog lottieAlertDialog = new LottieAlertDialog
+                .Builder(context, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(lottieAlertDialog1 -> {
+                    lottieAlertDialog1.dismiss();
+                    Intent intent = new Intent(context, nextActivity);
+                    intent.putExtra("restaurantOrBarName", restaurantOrBarName);
+                    intent.putExtra("restaurantEmailAddress", restaurantEmailAddress);
+                    context.startActivity(intent);
+                    ((Activity)context).finish();
+                })
+                .build();
+        if (!lottieAlertDialog.isShowing()) {
+            lottieAlertDialog.setCancelable(true);
+            lottieAlertDialog.show();
+        }
+    }
+
+    public static void showErrorMessage(Context context, String title, String description) {
+        LottieAlertDialog lottieAlertDialog = new LottieAlertDialog
+                .Builder(context, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        if (!lottieAlertDialog.isShowing()) {
+            lottieAlertDialog.setCancelable(true);
+            lottieAlertDialog.show();
+        }
+    }
+
+    public static void showOperationsDialog(Context context, String title, String description) {
+        lottieAlertDialog = new LottieAlertDialog
+                .Builder(context, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        lottieAlertDialog.setCancelable(false);
+        lottieAlertDialog.show();
+    }
+
+
+    public static void dismissProgressDialog() {
+        if (lottieAlertDialog != null) {
+            lottieAlertDialog.dismiss();
+            lottieAlertDialog = null;
+        }
     }
 
 }
