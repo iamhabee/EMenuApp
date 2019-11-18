@@ -125,6 +125,8 @@ public class Globals {
     public static final String KITCHEN_ACCEPTED_ORDER = "kitchen_order_accepted";
     public static final String REJECTED_NOTIFIER = "rejected_notifier";
     public static final String IS_ACCOUNT_ACTIVE = "is_account_active";
+    public static final String OTP_TOKEN = "otp_token";
+    public static final String TOKEN_EXPIRING_DATE = "token_expiring_date";
 
 
     public enum StatusPage {

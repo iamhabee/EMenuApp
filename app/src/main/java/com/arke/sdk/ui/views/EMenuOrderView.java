@@ -523,8 +523,6 @@ public class EMenuOrderView extends MaterialCardView implements
         availablePaymentOptionsDialogBuilder.create().show();
     }
 
-
-
     private void initiateSingleTransferPaymentFlow(String customerKey) {
         AlertDialog.Builder transferPaymentDialog = new AlertDialog.Builder(getContext());
         transferPaymentDialog.setTitle("Payment By Transfer");
@@ -549,11 +547,6 @@ public class EMenuOrderView extends MaterialCardView implements
         transferPaymentDialog.create().show();
     }
 
-
-
-
-
-
     private void initiateSingleCashPaymentFlow(String customerKey) {
         AlertDialog.Builder cashPaymentDialog = new AlertDialog.Builder(getContext());
         cashPaymentDialog.setTitle("Cash Payment");
@@ -577,11 +570,6 @@ public class EMenuOrderView extends MaterialCardView implements
         });
         cashPaymentDialog.create().show();
     }
-
-
-
-
-
 
     private void initiateSingleCardPaymentFlow(String customerKey) {
         EventBus.getDefault().post(new CardProcessorEvent(eMenuOrder, getTotalRawCost(eMenuOrder.getItems()), customerKey));

@@ -1,5 +1,9 @@
 package com.arke.sdk.utilities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.arke.sdk.companions.Credentials;
 
 import okhttp3.OkHttpClient;
@@ -27,6 +31,14 @@ public class NetworkClient {
                 .retryOnConnectionFailure(false)
                 .addInterceptor(logging)
                 .build();
+    }
+
+    public static boolean isOnline(Context context) {
+        //return true;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting() && cm.getActiveNetworkInfo().isAvailable() && cm.getActiveNetworkInfo().isConnected();
     }
 
 }

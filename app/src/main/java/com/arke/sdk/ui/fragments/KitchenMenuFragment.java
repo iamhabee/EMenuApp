@@ -320,7 +320,7 @@ public class KitchenMenuFragment extends BaseFragment {
     }
 
     private void searchMenuItems(String searchTerm) {
-        DataStoreClient.searchEMenuItems(searchTerm.toLowerCase().trim(), (results, e) -> {
+        DataStoreClient.searchEMenuItems(mContext, searchTerm.toLowerCase().trim(), (results, e) -> {
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";
