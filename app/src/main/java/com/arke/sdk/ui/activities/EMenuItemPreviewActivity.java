@@ -270,7 +270,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 }
             });
         }
-
+    //onActivityResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -292,7 +292,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 //Write your code if there's no result
             }
         }
-    }//onActivityResult
+    }
 
     @Override
     public void onEventMainThread(Object event) {
