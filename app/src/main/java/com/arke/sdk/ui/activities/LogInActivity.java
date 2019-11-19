@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Patterns;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -21,7 +20,6 @@ import com.arke.sdk.companions.Globals;
 import com.arke.sdk.models.RestaurantOrBarInfo;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.auth.AuthFormStep;
-import com.arke.sdk.ui.views.EMenuTextView;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.NetworkClient;
 import com.arke.sdk.utilities.UiUtils;
@@ -41,11 +39,6 @@ import ernestoyaquello.com.verticalstepperform.listener.StepperFormListener;
 public class LogInActivity extends BaseActivity implements StepperFormListener {
 
     private AppCompatActivity activity = LogInActivity.this;
-    @BindView(R.id.auth_action_header)
-    EMenuTextView authActionHeaderView;
-
-    @BindView(R.id.close_activity)
-    ImageView closeActivityView;
 
     @BindView(R.id.account_creation_stepper_form)
     VerticalStepperFormView accountLogInView;
@@ -74,16 +67,13 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-        authActionHeaderView.setText(getString(R.string.sign_in_header));
+
         forgotPasswordView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             initiatePasswordReset();
             UiUtils.dismissKeyboard(view);
         });
-        closeActivityView.setOnClickListener(view -> {
-            UiUtils.blinkView(view);
-            finish();
-        });
+
         setupForm();
     }
 

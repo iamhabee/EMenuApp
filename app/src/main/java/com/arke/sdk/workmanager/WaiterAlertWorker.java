@@ -121,15 +121,18 @@ public class WaiterAlertWorker extends Worker {
                         // their notification_received_status
                         String title = null;
                         String text = null;
+                        int id = 0;
                         if (AppPrefs.getUseType() == Globals.BAR){
                             title = getInputData().getString(EXTRA_TITLE, "Drink order was rejected");
                             text = getInputData().getString(EXTRA_TEXT, "Click to view drink order");
+                            id = (int) getInputData().getLong(Constants.BAR_REJECT, 0);
                         }else if (AppPrefs.getUseType() == Globals.KITCHEN) {
                             title = getInputData().getString(EXTRA_TITLE, "Food order was rejected");
                             text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
+                            id = (int) getInputData().getLong(Constants.KITCHEN_REJECT, 0);
                         }
 
-                        int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);
+
 
                         sendNotificationOnDelete(title, text, id);
 
