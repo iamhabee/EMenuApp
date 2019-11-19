@@ -308,12 +308,14 @@ public class EMenuOrderView extends MaterialCardView implements
     @Override
     public void onClick(View view) {
         UiUtils.blinkView(view);
-        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity) {
+        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
             String currentDeviceId = AppPrefs.getDeviceId();
             if (currentDeviceId != null) {
                 String attendantDeviceId = getContext() instanceof KitchenHomeActivity
-                        ? eMenuOrder.getKitchenAttendantDeviceId() : eMenuOrder.getBarAttendantDeviceId();
-                EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", TaggedDeviceId=" + attendantDeviceId);
+                        ? eMenuOrder.getKitchenAttendantDeviceId()
+                        : eMenuOrder.getBarAttendantDeviceId();
+                EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", " +
+                        "TaggedDeviceId=" + attendantDeviceId);
                 if (attendantDeviceId != null) {
                     if (!attendantDeviceId.equals(currentDeviceId)) {
                         takeOrder();
@@ -340,6 +342,7 @@ public class EMenuOrderView extends MaterialCardView implements
         takeOrderConfirmationBuilder.setNegativeText("NO");
         takeOrderConfirmationBuilder.setPositiveListener(lottieAlertDialog -> {
             dismissConsentDialog(lottieAlertDialog);
+            acceptOrder();
             markOrderAsTaken();
         });
         takeOrderConfirmationBuilder.setNegativeListener(lottieAlertDialog -> {
@@ -347,7 +350,12 @@ public class EMenuOrderView extends MaterialCardView implements
             rejectOrder();
         });
 //        takeOrderConfirmationBuilder.setNegativeListener(this::dismissConsentDialog);
-        takeOrderConfirmationBuilder.build().show();
+        if(eMenuOrder.getOrderProgressStatus()==Globals.OrderProgressStatus.PENDING){
+            takeOrderConfirmationBuilder.build().show();
+        }else{
+            viewOrder();
+        }
+
     }
 
     private void dismissConsentDialog(LottieAlertDialog lottieAlertDialog) {
@@ -377,6 +385,15 @@ public class EMenuOrderView extends MaterialCardView implements
         }
 //        getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
 //        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
+    }
+
+    private void acceptOrder(){
+        DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {}) );
+        if (AppPrefs.getUseType() == Globals.KITCHEN){
+            Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
+        }else if (AppPrefs.getUseType() == Globals.BAR) {
+            Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void markOrderAsTaken() {
