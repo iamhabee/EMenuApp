@@ -136,7 +136,7 @@ public class DrinksOnlyView extends FrameLayout {
                     UiUtils.showSafeToast("Please add a waiter tag to this order.");
                     return;
                 }
-                DataStoreClient.decrementEMenuDrinksFromCustomerOrder(-1, drinkOrder, drinkItem, (eMenuOrder, eMenuItem, e) -> {
+                DataStoreClient.decrementEMenuItemFromCustomerOrder(-1, drinkOrder, drinkItem, (eMenuOrder, eMenuItem, e) -> {
                     if (e == null) {
                         EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
                     }

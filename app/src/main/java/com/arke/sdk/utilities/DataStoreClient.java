@@ -1101,7 +1101,6 @@ public class DataStoreClient {
 //            list array of items
 //            List<EMenuItem> ordered_items  = eMenuOrder.getItems();
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-<<<<<<< HEAD
             if (newQuantity <= 0) {
 //                for (EMenuItem item : ordered_items) {
 //
@@ -1128,58 +1127,57 @@ public class DataStoreClient {
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }
     }
-
-    public static void decrementEMenuDrinksFromCustomerOrder(int forcedQuantity,
-                                                           EMenuOrder eMenuOrder,
-                                                           EMenuItem eMenuItem,
-                                                           EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
-        List<EMenuItem> items = eMenuOrder.getItems();
-        if (items.contains(eMenuItem)) {
-            int indexOfItem = items.indexOf(eMenuItem);
-            EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
-            int existingQuantity = eMenuItem.getOrderedQuantity();
-            EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
-            int newQuantity;
-            if (forcedQuantity != -1) {
-                newQuantity = forcedQuantity;
-            } else {
-                newQuantity = existingQuantity - 1;
-            }
-            EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-            if (newQuantity <= 0) {
 //
-                if (items.size() == 0) {
-//                    eMenuOrder.delete();
-                    UiUtils.showSafeToast("You can not reduce beyond 1");
-=======
-//            if (newQuantity >= eMenuItem.getQuantityAvailableInStock()){
-//                UiUtils.showSafeToast("Sorry the stock is empty");
+//    public static void decrementEMenuDrinksFromCustomerOrder(int forcedQuantity,
+//                                                           EMenuOrder eMenuOrder,
+//                                                           EMenuItem eMenuItem,
+//                                                           EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
+//        List<EMenuItem> items = eMenuOrder.getItems();
+//        if (items.contains(eMenuItem)) {
+//            int indexOfItem = items.indexOf(eMenuItem);
+//            EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
+//            int existingQuantity = eMenuItem.getOrderedQuantity();
+//            EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
+//            int newQuantity;
+//            if (forcedQuantity != -1) {
+//                newQuantity = forcedQuantity;
+//            } else {
+//                newQuantity = existingQuantity - 1;
 //            }
-//            else {
-                if (newQuantity <= 0) {
-                    if (items.size() == 1) {
-                        eMenuOrder.delete();
-                    } else {
-                        items.remove(eMenuItem);
-                        eMenuOrder.setItems(items);
-                        eMenuOrder.setDirty(true);
-                        eMenuOrder.update();
-                        EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-                    }
->>>>>>> 63a2b39cde48ea350d2d8fc36e3088a886ebab4c
-                } else {
-                    eMenuItem.setOrderedQuantity(newQuantity);
-                    items.set(indexOfItem, eMenuItem);
-                    eMenuOrder.setItems(items);
-                    eMenuOrder.setDirty(true);
-                    eMenuOrder.update();
-                }
-                eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
-//            }
-        } else {
-            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
-        }
-    }
+//            EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
+//            if (newQuantity <= 0) {
+////
+//                if (items.size() == 0) {
+////                    eMenuOrder.delete();
+//                    UiUtils.showSafeToast("You can not reduce beyond 1");
+//=======
+////            if (newQuantity >= eMenuItem.getQuantityAvailableInStock()){
+////                UiUtils.showSafeToast("Sorry the stock is empty");
+////            }
+////            else {
+//                if (newQuantity <= 0) {
+//                    if (items.size() == 1) {
+//                        eMenuOrder.delete();
+//                    } else {
+//                        items.remove(eMenuItem);
+//                        eMenuOrder.setItems(items);
+//                        eMenuOrder.setDirty(true);
+//                        eMenuOrder.update();
+//                        EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+//                    }
+//                } else {
+//                    eMenuItem.setOrderedQuantity(newQuantity);
+//                    items.set(indexOfItem, eMenuItem);
+//                    eMenuOrder.setItems(items);
+//                    eMenuOrder.setDirty(true);
+//                    eMenuOrder.update();
+//                }
+//                eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
+////            }
+//        } else {
+//            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
+//        }
+//    }
 
     public static EMenuOrder getCustomerOrder(String tableTagValue, String customerTagValue) {
         return SQLite
