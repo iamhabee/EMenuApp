@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -48,6 +49,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -613,7 +615,7 @@ public class DataStoreClient {
                     rejectionStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
                 }
                 if (deviceId != null && rejectionStatus != null) {
-                    String errorMessage = " Order was rejected by the bar";
+                    String errorMessage = "Order was rejected by the bar";
                     rejectedOrder.done(true, getException(errorMessage));
                 } else {
                     if (deviceId != null) {
@@ -640,6 +642,11 @@ public class DataStoreClient {
                         } else if (AppPrefs.getUseType() == Globals.BAR) {
                             object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_REJECTED" + '"');
                         }
+                        String jsonString = object.get(Globals.ORDERED_ITEMS).toString();
+
+
+
+//                        Log.d("Somesin", );
                     }
                     object.saveInBackground(e1 -> {
                         if (e1 == null) {
@@ -1426,8 +1433,15 @@ public class DataStoreClient {
             newOrderObject.put(Globals.ORDER_PAYMENT_STATUS, orderPaymentStatusString);
         }
         List<EMenuItem> orderedItems = eMenuOrder.getItems();
+
+
+        Log.d("something", orderedItems.toString());
+
         if (orderedItems != null && !orderedItems.isEmpty()) {
             String orderedItemsString = serializeEMenuItems(orderedItems);
+
+            List<EMenuItem> news = getBackEMenuItemsFromString(orderedItemsString);
+            Log.d("something2", news.toString());
             newOrderObject.put(Globals.ORDERED_ITEMS, orderedItemsString);
         }
         return newOrderObject;
@@ -1460,22 +1474,30 @@ public class DataStoreClient {
         if (itemsString != null) {
             orderedItems = getBackEMenuItemsFromString(itemsString);
         }
-        eMenuOrder.setOrderId(orderId);
-        eMenuOrder.setTableTag(tableTag);
-        eMenuOrder.setCustomerTag(customerTag);
-        eMenuOrder.setWaiterTag(waiterTag);
-        eMenuOrder.setRestaurantOrBarId(restaurantOrBarId);
-        eMenuOrder.setKitchenAttendantTag(kitchenAttendantTag);
-        eMenuOrder.setBarAttendantTag(barAttendantTag);
-        eMenuOrder.setCreatedAt(parseObject.getCreatedAt().getTime());
-        eMenuOrder.setUpdatedAt(parseObject.getUpdatedAt().getTime());
-        eMenuOrder.setKitchenAttendantDeviceId(kitchenAttendantDeviceId);
-        eMenuOrder.setBarAttendantDeviceId(barAttendantDeviceId);
-        eMenuOrder.setOrderProgressStatus(orderProgressStatus);
-        eMenuOrder.setOrderPaymentStatus(orderPaymentStatus);
-        eMenuOrder.setItems(orderedItems);
-        eMenuOrder.setWaiterDeviceId(waiterDeviceId);
-        eMenuOrder.setDirty(false);
+//        if (parseObject.getBoolean(Globals.KITCHEN_REJECTED_ORDER) || parseObject.getBoolean(Globals.BAR_REJECTED_ORDER)){
+//            if (AppPrefs.getUseType() == 2){
+//                eMenuOrder.setKitchen_rejected(true);
+//            }else {
+//                eMenuOrder.setBar_rejected(true);
+//            }
+//        }else {
+            eMenuOrder.setOrderId(orderId);
+            eMenuOrder.setTableTag(tableTag);
+            eMenuOrder.setCustomerTag(customerTag);
+            eMenuOrder.setWaiterTag(waiterTag);
+            eMenuOrder.setRestaurantOrBarId(restaurantOrBarId);
+            eMenuOrder.setKitchenAttendantTag(kitchenAttendantTag);
+            eMenuOrder.setBarAttendantTag(barAttendantTag);
+            eMenuOrder.setCreatedAt(parseObject.getCreatedAt().getTime());
+            eMenuOrder.setUpdatedAt(parseObject.getUpdatedAt().getTime());
+            eMenuOrder.setKitchenAttendantDeviceId(kitchenAttendantDeviceId);
+            eMenuOrder.setBarAttendantDeviceId(barAttendantDeviceId);
+            eMenuOrder.setOrderProgressStatus(orderProgressStatus);
+            eMenuOrder.setOrderPaymentStatus(orderPaymentStatus);
+            eMenuOrder.setItems(orderedItems);
+            eMenuOrder.setWaiterDeviceId(waiterDeviceId);
+            eMenuOrder.setDirty(false);
+//        }
         return eMenuOrder;
     }
 
