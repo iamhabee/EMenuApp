@@ -1,59 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?><!-- new_user_form_activity.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="?attr/actionBarSize"-->
-<!--        android:orientation="vertical">-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:background="@color/white"-->
-<!--            android:clickable="false"-->
-<!--            android:focusable="false"-->
-<!--            android:orientation="horizontal">-->
-
-<!--            <androidx.appcompat.widget.AppCompatImageView-->
-<!--                android:id="@+id/close_activity"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:paddingStart="10dp"-->
-<!--                app:srcCompat="@drawable/ic_arrow_back_black_24dp"-->
-<!--                app:tint="@color/black"-->
-<!--                app:tintMode="multiply"-->
-<!--                tools:ignore="ContentDescription,RtlSymmetry" />-->
-
-<!--            <com.arke.sdk.ui.views.EMenuTextView-->
-<!--                android:id="@+id/auth_action_header"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_vertical"-->
-<!--                android:gravity="center_vertical"-->
-<!--                android:paddingStart="16dp"-->
-<!--                android:paddingLeft="16dp"-->
-<!--                android:paddingEnd="16dp"-->
-<!--                android:paddingRight="16dp"-->
-<!--                android:textColor="@color/black"-->
-<!--                android:textSize="20sp"-->
-<!--                app:textStyle="light" />-->
-
-<!--        </LinearLayout>-->
-
-<!--        <View-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="1dp"-->
-<!--            android:background="@color/light_gray" />-->
-
-<!--    </LinearLayout>-->
 
     <ernestoyaquello.com.verticalstepperform.VerticalStepperFormView
         android:id="@+id/account_creation_stepper_form"

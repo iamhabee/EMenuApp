@@ -914,7 +914,9 @@ public class DataStoreClient {
         if (searchString.length() > 0) {
             searchQuery.whereContains(Globals.EMENU_ITEM_NAME, searchString.toLowerCase());
         }
-        searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
+        if(AppPrefs.getUseType() != Globals.WAITER) {
+            searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType()); // return only items that are specific to the user's designation (Kitchen or bar)
+        }
         searchQuery.findInBackground((objects, e) -> {
             if (e != null) {
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
@@ -1812,7 +1814,7 @@ public class DataStoreClient {
         String deviceId = AppPrefs.getDeviceId();
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getString("username")); // get orders WRT logged in user
+        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getUsername()); // get orders WRT logged in user
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {

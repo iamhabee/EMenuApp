@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -18,13 +17,11 @@ import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.auth.AuthFormStep;
-import com.arke.sdk.ui.views.EMenuTextView;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,12 +32,6 @@ import ernestoyaquello.com.verticalstepperform.listener.StepperFormListener;
 
 @SuppressWarnings("SameParameterValue")
 public class SignUpActivity extends BaseActivity implements StepperFormListener {
-
-//    @BindView(R.id.auth_action_header)
-//    EMenuTextView authActionHeaderView;
-
-//    @BindView(R.id.close_activity)
-//    ImageView closeActivityView;
 
     @BindView(R.id.account_creation_stepper_form)
     VerticalStepperFormView accountCreationFormView;
@@ -55,11 +46,7 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-//        authActionHeaderView.setText(getString(R.string.create_account_header));
-//        closeActivityView.setOnClickListener(view -> {
-//            UiUtils.blinkView(view);
-//            finish();
-//        });
+
         setupForm();
     }
 
@@ -230,46 +217,6 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
         errorCreationErrorDialog.setCancelable(true);
         errorCreationErrorDialog.show();
     }
-
-//    private void onSignUp(){
-//        String aName = mUsername.getText().toString();
-//        String aEmail = mEmail.getText().toString();
-//        String aPassword = mPassword.getText().toString().trim();
-//        String aRetypePassword = mRetypePassword.getText().toString().trim();
-//        if(Validate()){
-//            // check if passwords match
-//            if(aPassword.equals(aRetypePassword)){
-//                ParseUser user = new ParseUser();
-//                // Set the user's username and password, which can be obtained by a forms
-//                user.setUsername(aName);
-//                user.setPassword(aEmail);
-//                user.setPassword(aPassword);
-//                user.setPassword(aRetypePassword);
-//                user.signUpInBackground(new SignUpCallback() {
-//                    @Override
-//                    public void done(ParseException e) {
-//                        if (e == null) {
-//                            try {
-//                                user.put("res_id", res_id); // restaurant ID
-//                                user.put("account_type", "Admin");
-//                                user.put("user_type", 263389);
-//                                user.save();
-//                            } catch (ParseException e1) {
-//                                e1.printStackTrace();
-//                            }
-//                            Intent intent = new Intent(InitialAccountSetupActivity.this, UserLoginActivity.class);
-//                            startActivity(intent);
-//                        } else {
-//                            ParseUser.logOut();
-//                            Toast.makeText(InitialAccountSetupActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-//                        }
-//                    }
-//                });
-//            }else{
-//                // password mis-match
-//            }
-//        }
-//    }
 
     private void dismissProgressDialog() {
         if (accountCreationProgressDialog != null) {

@@ -46,6 +46,7 @@ import com.arke.sdk.eventbuses.EMenuItemUpdatedEvent;
 import com.arke.sdk.eventbuses.FetchCategoryContentsEvent;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
+import com.arke.sdk.eventbuses.RefreshOrderEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
@@ -613,7 +614,7 @@ public class WaiterHomeActivity extends BaseActivity {
             forceShowSoftKeyBoard();
         });
         refreshiewIcon.setOnClickListener(view -> {
-            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
+            EventBus.getDefault().post(new RefreshOrderEvent(this, AppPrefs.getUseType(), 0));
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
@@ -649,6 +650,7 @@ public class WaiterHomeActivity extends BaseActivity {
         });
         initTabLayout();
     }
+
 
     private void forceShowSoftKeyBoard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
