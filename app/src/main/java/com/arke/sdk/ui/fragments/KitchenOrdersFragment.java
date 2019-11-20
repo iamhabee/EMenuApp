@@ -135,9 +135,7 @@ public class KitchenOrdersFragment extends BaseFragment {
                     searchIncomingOrders(itemSearchEvent.getSearchString(), 0);
                 }else{
                     // perform refresh
-                    showOperationsDialog("We're fetching incoming orders", "Please Wait");
-                    setSearchString("");
-                    searchIncomingOrders(itemSearchEvent.getSearchString(), 0);
+                    refreshOrders();
                 }
             }
         } else if (eventObject instanceof OrderUpdatedEvent) {
@@ -168,6 +166,51 @@ public class KitchenOrdersFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+
+    public void refreshOrders() {
+        int skip = 0;
+        showOperationsDialog("We're refreshing orders", "Please Wait");
+        DataStoreClient.fetchIncomingKitchenOrders(skip, (results, e) -> {
+            if (e != null) {
+                String errorMessage = e.getMessage();
+                String ref = "glitch";
+                if (errorMessage != null) {
+                    if (errorMessage.contains(ref)) {
+                        if (eMenuOrders.isEmpty()) {
+                            UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.NETWORK_ERROR_VIEW.ordinal());
+                            networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
+                        } else {
+                            UiUtils.snackMessage("A Network error occurred.Please review your data connection and try again", contentRecyclerView, false, null, null);
+                        }
+                    } else if (errorMessage.contains(Globals.EMPTY_PLACEHOLDER_ERROR_MESSAGE)) {
+                        if (eMenuOrders.isEmpty()) {
+                            UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.EMPTY_VIEW.ordinal());
+                            emptyViewMessageView.setText(getString(R.string.no_incoming_orders));
+                        }
+                    } else {
+                        if (eMenuOrders.isEmpty()) {
+                            UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.OTHER_ERROR_VIEW.ordinal());
+                            otherErrorMsgView.setText(errorMessage);
+                        } else {
+                            UiUtils.snackMessage(e.getMessage(), contentRecyclerView, false, null, null);
+                        }
+                    }
+                } else {
+                    if (eMenuOrders.isEmpty()) {
+                        UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.OTHER_ERROR_VIEW.ordinal());
+                        loaderProgressMessageView.setText(getString(R.string.unresolvable_error_msg));
+                    } else {
+                        UiUtils.showSafeToast(getString(R.string.unresolvable_error_msg));
+                    }
+                }
+            } else {
+                loadDataInToAdapter(true, results);
+            }
+            dismissProgressDialog();
+            UiUtils.toggleViewVisibility(footerView, false);
+        });
     }
 
     private void invalidateFlipper() {
@@ -269,8 +312,6 @@ public class KitchenOrdersFragment extends BaseFragment {
                 }
             } else {
                 loadDataInToAdapter(skip == 0, results);
-
-
             }
             UiUtils.toggleViewVisibility(footerView, false);
         });

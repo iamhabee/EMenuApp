@@ -515,6 +515,7 @@ public class DataStoreClient {
         });
     }
 
+
     public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
         ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery(Globals.WAITERS);
         waitersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
@@ -1396,26 +1397,24 @@ public class DataStoreClient {
         newOrderObject.put(Globals.HAS_FOOD, has_food);
         newOrderObject.put(Globals.FOOD_READY, false);
         newOrderObject.put(Globals.DRINK_READY, false);
-        String waiterDeviceId = eMenuOrder.getWaiterDeviceId();
-        if (waiterDeviceId != null) {
-            newOrderObject.put(Globals.WAITER_DEVICE_ID, waiterDeviceId);
+        if (ParseUser.getCurrentUser() != null) {
+            if(AppPrefs.getUseType() == Globals.WAITER) {
+                newOrderObject.put(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
+            }
         }
         newOrderObject.put(Globals.RESTAURANT_OR_BAR_ID, eMenuOrder.getRestaurantOrBarId());
         String kitchenAttendantTag = eMenuOrder.getKitchenAttendantTag();
         if (kitchenAttendantTag != null) {
-            newOrderObject.put(Globals.KITCHEN_ATTENDANT_TAG, kitchenAttendantTag);
+            if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                newOrderObject.put(Globals.KITCHEN_ATTENDANT_TAG, kitchenAttendantTag);
+                newOrderObject.put(Globals.KITCHEN_ATTENDANT_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
+            }
         }
-        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
-        if (kitchenAttendantDeviceId != null) {
-            newOrderObject.put(Globals.KITCHEN_ATTENDANT_DEVICE_ID, kitchenAttendantDeviceId);
-        }
-        String barAttendantTag = eMenuOrder.getBarAttendantTag();
-        if (barAttendantTag != null) {
-            newOrderObject.put(Globals.BAR_ATTENDANT_TAG, barAttendantTag);
-        }
-        String barAttendantDeviceId = eMenuOrder.getBarAttendantDeviceId();
-        if (barAttendantDeviceId != null) {
-            newOrderObject.put(Globals.BAR_ATTENDANT_DEVICE_ID, barAttendantDeviceId);
+        if (ParseUser.getCurrentUser() != null) {
+            if (AppPrefs.getUseType() == Globals.BAR) {
+                newOrderObject.put(Globals.BAR_ATTENDANT_TAG, ParseUser.getCurrentUser().getUsername());
+                newOrderObject.put(Globals.BAR_ATTENDANT_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
+            }
         }
         Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
         if (orderProgressStatus != null) {
@@ -1647,7 +1646,8 @@ public class DataStoreClient {
         eMenuOrder.setDirty(false);
         ParseObject newOrder = createParseObjectFromOrder(null, eMenuOrder);
         if (deviceId != null) {
-            newOrder.put(Globals.WAITER_DEVICE_ID, deviceId);
+//            newOrder.put(Globals.WAITER_DEVICE_ID, deviceId);
+            newOrder.put(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
         }
         newOrder.saveInBackground(e -> {
             if (e == null) {
@@ -1794,19 +1794,19 @@ public class DataStoreClient {
                 if (!objects.isEmpty()) {
                     for (ParseObject orderObject : objects) {
                         EMenuOrder eMenuOrder = loadParseObjectIntoEMenuOrder(orderObject);
-                        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
-                        if (kitchenAttendantDeviceId == null) {
+//                        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
+//                        if (kitchenAttendantDeviceId == null) {
                             if (!retrievedOrders.contains(eMenuOrder)) {
                                 retrievedOrders.add(eMenuOrder);
                             }
-                        } else {
-                            // fetching orders WRT kitchen device id
-                            if (kitchenAttendantDeviceId.equals(deviceId)) {
-                                if (!retrievedOrders.contains(eMenuOrder)) {
-                                    retrievedOrders.add(eMenuOrder);
-                                }
-                            }
-                        }
+//                        } else {
+//                            // fetching orders WRT kitchen device id
+//                            if (kitchenAttendantDeviceId.equals(deviceId)) {
+//                                if (!retrievedOrders.contains(eMenuOrder)) {
+//                                    retrievedOrders.add(eMenuOrder);
+//                                }
+//                            }
+//                        }
                     }
                     eMenuOrdersFetchDoneCallBack.done(retrievedOrders, null);
                 } else {
@@ -1840,9 +1840,9 @@ public class DataStoreClient {
         queries.add(tableTagQuery);
         ParseQuery<ParseObject> resultantQuery = ParseQuery.or(queries);
         resultantQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        if (deviceId != null) {
+        if (ParseUser.getCurrentUser() != null) {
             //This ensures that the waiter can only search for orders sent out from the current terminal
-            resultantQuery.whereEqualTo(Globals.WAITER_DEVICE_ID, deviceId);
+            resultantQuery.whereEqualTo(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
         }
         resultantQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         resultantQuery.orderByDescending("createdAt");
