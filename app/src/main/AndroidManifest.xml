@@ -19,7 +19,9 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.ScanActivity"></activity>
+        <activity android:name=".ui.activities.PasswordReset"></activity>
+        <activity android:name=".ui.activities.TokenActivity" />
+        <activity android:name=".ui.activities.ScanActivity" />
         <activity
             android:name=".ui.activities.InitialAccountSetupActivity"
             android:label="Add User"
@@ -68,10 +70,14 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.SignUpActivity"
+            android:label="Restaurant/Bar Setup"
+            android:parentActivityName=".ui.activities.WelcomeActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.LogInActivity"
+            android:label="Restaurant/Bar Sign In"
+            android:parentActivityName=".ui.activities.WelcomeActivity"
             android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
