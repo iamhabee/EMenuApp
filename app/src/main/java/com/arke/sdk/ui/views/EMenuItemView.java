@@ -50,6 +50,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 @SuppressWarnings("SameParameterValue")
 public class EMenuItemView extends MaterialCardView {
@@ -129,9 +130,27 @@ public class EMenuItemView extends MaterialCardView {
         int appUseType = AppPrefs.getUseType();
         boolean isWaiterView = appUseType == Globals.UseType.USE_TYPE_WAITER.ordinal();
         if (context instanceof OrderSummaryActivity && isWaiterView) {
-            UiUtils.toggleViewVisibility(quantityView, true);
+
+            /* get the progress status of the order */
+            assert eMenuOrder != null;
+            Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
+
+            /* show and hide increment/decrement layout in waiter order only when the order is still pending */
+            assert orderProgressStatus != null;
+            if (orderProgressStatus.equals(Globals.OrderProgressStatus.ALMOST_DONE)  ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.DONE) ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)){
+
+                /* disable increment and decrement */
+                UiUtils.toggleViewVisibility(quantityView, false);
+            }else {
+                /* show increment and decrement */
+                UiUtils.toggleViewVisibility(quantityView, true);
+            }
+
             itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
             eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
+
 
             incrementItem.setOnClickListener(view -> {
                 UiUtils.blinkView(view);

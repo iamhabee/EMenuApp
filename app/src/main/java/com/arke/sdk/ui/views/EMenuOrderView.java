@@ -349,7 +349,8 @@ public class EMenuOrderView extends MaterialCardView implements
             dismissConsentDialog(lottieAlertDialog);
             rejectOrder();
         });
-//        takeOrderConfirmationBuilder.setNegativeListener(this::dismissConsentDialog);
+
+        /* show dialog only when order is pending */
         if(eMenuOrder.getOrderProgressStatus()==Globals.OrderProgressStatus.PENDING){
             takeOrderConfirmationBuilder.build().show();
         }else{
@@ -478,9 +479,10 @@ public class EMenuOrderView extends MaterialCardView implements
             dialogInterface.dismiss();
             dialogInterface.cancel();
 
-            //Only delete an order that doesn't contain a done or almost progress report
+            /* get the progress status of the order */
             Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
 
+            /* Only delete an order that doesn't contain a done or almost progress report */
             assert orderProgressStatus != null;
             if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)){
