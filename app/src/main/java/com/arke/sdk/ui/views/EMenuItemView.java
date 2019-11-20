@@ -128,7 +128,8 @@ public class EMenuItemView extends MaterialCardView {
         }
         int appUseType = AppPrefs.getUseType();
         boolean isWaiterView = appUseType == Globals.UseType.USE_TYPE_WAITER.ordinal();
-        if (context instanceof OrderSummaryActivity && isWaiterView) {
+        if (context instanceof OrderSummaryActivity && isWaiterView &&
+                eMenuOrder.getOrderProgressStatus()==Globals.OrderProgressStatus.NOT_YET_SENT) {
             UiUtils.toggleViewVisibility(quantityView, true);
             itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
             eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
