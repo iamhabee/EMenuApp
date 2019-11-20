@@ -469,6 +469,7 @@ public class EMenuOrderView extends MaterialCardView implements
         operationsDialog.show();
     }
 
+    /* Delete waiter's order that doesn't contain done or almost done as progress */
     private void deleteOrder() {
         AlertDialog.Builder deleteConsentDialogBuilder = new AlertDialog.Builder(getContext());
         deleteConsentDialogBuilder.setTitle("Delete Order?");
@@ -476,13 +477,13 @@ public class EMenuOrderView extends MaterialCardView implements
         deleteConsentDialogBuilder.setPositiveButton("YES", (dialogInterface, i) -> {
             dialogInterface.dismiss();
             dialogInterface.cancel();
-            //Only delete an order that doesn't contain a done progress report
-            boolean canBeDeleted = true;
+
+            //Only delete an order that doesn't contain a done or almost progress report
             Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
-            if (orderProgressStatus != null) {
-                canBeDeleted = orderProgressStatus != Globals.OrderProgressStatus.DONE;
-            }
-            if (canBeDeleted) {
+
+            assert orderProgressStatus != null;
+            if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)){
                 showOperationsDialog("Deleting Order", "Please wait...");
                 eMenuOrder.delete();
                 DataStoreClient.deleteEMenuOrderRemotely(eMenuOrder.getEMenuOrderId(), (done, e) -> {
@@ -500,7 +501,8 @@ public class EMenuOrderView extends MaterialCardView implements
                         }
                     }
                 });
-            } else {
+            }
+            else {
                 showErrorMessage("Oops!", "Sorry, this order cannot be deleted as there are already fulfilled orders on it.");
             }
         });
@@ -511,6 +513,7 @@ public class EMenuOrderView extends MaterialCardView implements
         deleteConsentDialogBuilder.create().show();
     }
 
+    /* Receive payment by waiter after order has been served */
     private void receivePayment() {
         Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
         if (orderProgressStatus == Globals.OrderProgressStatus.DONE) {
