@@ -379,6 +379,9 @@ public class EMenuOrderView extends MaterialCardView implements
         errorCreationErrorDialog.show();
     }
 
+
+
+
     private void rejectOrder(){
         DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
         if (AppPrefs.getUseType() == Globals.KITCHEN){
@@ -400,7 +403,8 @@ public class EMenuOrderView extends MaterialCardView implements
     }
 
     private void markOrderAsTaken() {
-        UiUtils.showSafeToast("Please wait...");
+//        UiUtils.showSafeToast("Please wait...");
+        showOperationsDialog("Accepting order","Please wait...");
         DataStoreClient.markItemAsTaken(eMenuOrder.getEMenuOrderId(), (result, e) -> {
             if (e != null) {
                 String errorMessage = e.getMessage();
@@ -415,6 +419,7 @@ public class EMenuOrderView extends MaterialCardView implements
                 eMenuOrder.update();
                 new Handler().postDelayed(this::viewOrder, 1000);
             }
+            dismissProgressDialog();
         });
     }
 

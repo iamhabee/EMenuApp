@@ -238,16 +238,37 @@ public class KitchenOrdersFragment extends BaseFragment {
     @SuppressWarnings("ConstantConditions")
     private void setupRecyclerView() {
 //        List<EMenuOrder> newOrders = new ArrayList<>();
-//        List<EMenuItem> items = new ArrayList<>();
 //        // loop through eMenuOrders
 //        for(EMenuOrder order : eMenuOrders){
+//            EMenuOrder newOrder = new EMenuOrder();
+//            newOrder.setBarAttendantDeviceId(order.getBarAttendantDeviceId());
+//            newOrder.setBarAttendantTag(order.getBarAttendantTag());
+//            newOrder.setCreatedAt(order.getCreatedAt());
+//            newOrder.setCustomerTag(order.getCustomerTag());
+//            newOrder.setEMenuOrderId(order.getEMenuOrderId());
+//            newOrder.setKitchenAttendantDeviceId(order.getKitchenAttendantDeviceId());
+//            newOrder.setKitchenAttendantTag(order.getKitchenAttendantTag());
+//            newOrder.setOrderId(order.getOrderId());
+//            newOrder.setOrderPaymentStatus(order.getOrderPaymentStatus());
+//            newOrder.setOrderProgressStatus(order.getOrderProgressStatus());
+//            newOrder.setRestaurantOrBarId(order.getRestaurantOrBarId());
+//            newOrder.setTableTag(order.getTableTag());
+//            newOrder.setUpdatedAt(order.getUpdatedAt());
+//            newOrder.setWaiterDeviceId(order.getWaiterDeviceId());
+//            newOrder.setWaiterTag(order.getWaiterTag());
+//
+//            List<EMenuItem> items = new ArrayList<>();
 //            // loop through eMenu items
 //            for(EMenuItem item: order.getItems()){
 //                if(item.getParentCategory().equals(Globals.FOOD)){
 //                    items.add(item);
 //                }
 //            }
+//            newOrder.setItems(order.getItems());
+//
+//            newOrders.add(newOrder);
 //        }
+
         eMenuOrdersRecyclerAdapter = new EMenuOrdersRecyclerAdapter(getActivity(), getActivity().getClass().getSimpleName(), eMenuOrders);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         contentRecyclerView.setLayoutManager(linearLayoutManager);
