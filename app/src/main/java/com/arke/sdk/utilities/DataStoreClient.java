@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.contracts.AcceptedOrder;
 import com.arke.sdk.contracts.BaseModelOperationDoneCallback;
 import com.arke.sdk.contracts.BooleanOperationDoneCallback;
 import com.arke.sdk.contracts.EMenuCustomerOrderCallBack;
@@ -665,6 +666,79 @@ public class DataStoreClient {
         });
     }
 
+    public static void acceptEmenuOrder(String orderId, Boolean accepted, AcceptedOrder acceptedOrder) {
+        // Connect to the parse server
+        ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        String deviceId = AppPrefs.getDeviceId();
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        // Setting query clauses
+        orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+        orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        if (AppPrefs.getUseType() == Globals.KITCHEN) {
+            orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
+        } else if (AppPrefs.getUseType() == Globals.BAR) {
+            orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
+        }
+        orderQuery.getFirstInBackground((object, e) -> {
+            if (object != null) {
+                int appUseType = AppPrefs.getUseType();
+                String acceptanceStatus = null;
+                if (appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
+                    acceptanceStatus = object.getString(Globals.KITCHEN_ATTENDANT_DEVICE_ID);
+                } else if (appUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
+                    acceptanceStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
+                }
+                if (deviceId != null && acceptanceStatus != null) {
+                    object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
+                                    ? Globals.KITCHEN_ATTENDANT_ID
+                                    : Globals.BAR_ATTENDANT_ID,
+                            deviceId);
+                    Boolean orderRejectionState = false;
+                    Boolean orderAcceptedState = true;
+                    Boolean acceptedNotifier = true;
+
+                    if (AppPrefs.getUseType() == Globals.BAR) {
+                        object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
+                    } else if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                        object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
+                    }
+
+                    object.put(Globals.REJECTED_NOTIFIER, acceptedNotifier);
+                    if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_ACCEPTED" + '"');
+                    } else if (AppPrefs.getUseType() == Globals.BAR) {
+                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_ACCEPTED" + '"');
+                    }
+
+                    object.saveInBackground(e1 -> {
+                        if (e1 == null) {
+                            acceptedOrder.done(true, null);
+                        } else {
+                            acceptedOrder.done(true, e1);
+                        }
+                    });
+
+                    //String errorMessage = " Order was rejected by the bar";
+                    //acceptedOrder.done(true, getException(errorMessage));
+                } else {
+//                    if (deviceId != null) {
+//                        //
+//
+//                    }
+
+                }
+            }
+
+            // Send notification
+            EMenuOrder insertToAccepted = loadParseObjectIntoEMenuOrder(object);
+            sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION,
+                    serializeEMenuOrder(insertToAccepted),
+                    Globals.BAR_REJECTED_ORDER);
+        });
+    }
+
     public static void deleteEMenuOrderRemotely(String orderId, BooleanOperationDoneCallback deleteDoneCallBack) {
         ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
@@ -847,7 +921,9 @@ public class DataStoreClient {
         if (searchString.length() > 0) {
             searchQuery.whereContains(Globals.EMENU_ITEM_NAME, searchString.toLowerCase());
         }
-        searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
+        if(AppPrefs.getUseType() != Globals.WAITER) {
+            searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType()); // return only items that are specific to the user's designation (Kitchen or bar)
+        }
         searchQuery.findInBackground((objects, e) -> {
             if (e != null) {
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
@@ -1760,7 +1836,7 @@ public class DataStoreClient {
         String deviceId = AppPrefs.getDeviceId();
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getString("username")); // get orders WRT logged in user
+        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getUsername()); // get orders WRT logged in user
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {

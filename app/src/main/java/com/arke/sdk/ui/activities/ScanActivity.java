@@ -38,16 +38,9 @@ public class ScanActivity extends AppCompatActivity implements ZXingScannerView.
 
     @Override
     public void handleResult(Result rawResult) {
-
         Intent returnIntent = new Intent();
         returnIntent.putExtra("result",rawResult.getText());
         setResult(Activity.RESULT_OK,returnIntent);
         finish();
-
-//        EMenuItemPreviewActivity.tableTag.setPositiveTextxt(rawResult.getText());
-//        onBackPressed();
-
-        // If you would like to resume scanning, call this method below:
-        //mScannerView.resumeCameraPreview(this);
     }
 }
