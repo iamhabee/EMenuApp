@@ -27,7 +27,9 @@ import com.arke.sdk.eventbuses.DeviceConnectedToInternetEvent;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
+import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
@@ -235,6 +237,17 @@ public class KitchenOrdersFragment extends BaseFragment {
 
     @SuppressWarnings("ConstantConditions")
     private void setupRecyclerView() {
+//        List<EMenuOrder> newOrders = new ArrayList<>();
+//        List<EMenuItem> items = new ArrayList<>();
+//        // loop through eMenuOrders
+//        for(EMenuOrder order : eMenuOrders){
+//            // loop through eMenu items
+//            for(EMenuItem item: order.getItems()){
+//                if(item.getParentCategory().equals(Globals.FOOD)){
+//                    items.add(item);
+//                }
+//            }
+//        }
         eMenuOrdersRecyclerAdapter = new EMenuOrdersRecyclerAdapter(getActivity(), getActivity().getClass().getSimpleName(), eMenuOrders);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         contentRecyclerView.setLayoutManager(linearLayoutManager);
