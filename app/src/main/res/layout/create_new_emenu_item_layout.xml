@@ -182,6 +182,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="8dp"
             android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/button_corner"
             android:text="@string/create_item"
             android:theme="@style/Widget.Button.Login.Google" />
 
