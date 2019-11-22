@@ -17,6 +17,7 @@
         android:layout_marginRight="20dp"
         android:layout_marginBottom="70dp"
         android:text="welcome text"
+        android:textStyle="bold"
         android:textAlignment="center"
         android:textSize="28sp"
         tools:layout_editor_absoluteX="173dp"
@@ -65,11 +66,12 @@
         android:background="@android:color/transparent"
         android:gravity="start"
         android:paddingStart="12dp"
+        android:paddingTop="16dp"
         android:text="@string/forgot_password"
         android:textAllCaps="false"
         android:layout_gravity="end"
         android:layout_marginEnd="23dp"
-        android:textColor="@color/red_app"
+        android:textColor="@color/notify_orange"
         tools:ignore="RtlSymmetry" />
 
     <Button
@@ -79,7 +81,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:background="@color/cardview_dark_background"
+        android:background="@drawable/button_corner"
         android:text="SIGN IN"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"

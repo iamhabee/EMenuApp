@@ -5,6 +5,7 @@
     <color name="text_default">#ff333333</color>
     <color name="border_gray_color">#E6E6E6</color>
     <color name="custom_orange">#EE670E</color>
+    <color name="notify_orange">#D95E0A</color>
 
     <color name="psts_background_tab_pressed">#1AFFFFFF</color>
     <color name="ripple_black">#80000000</color>
