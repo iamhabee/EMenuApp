@@ -643,11 +643,25 @@ public class DataStoreClient {
                         } else if (AppPrefs.getUseType() == Globals.BAR) {
                             object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_REJECTED" + '"');
                         }
-                        String jsonString = object.get(Globals.ORDERED_ITEMS).toString();
+//                        "[{\"createdAt\":1573663096118,\"customerTag\":\"de\",\"favouriteCount\":0,\"inStock\":true,\"menuItemDescription\":\"medium size\",\"menuItemDisplayPhotoUrl\":\"https://cdn.filestackcontent.com/6lonGsyTahAPr2v3SgAW\",\"menuItemId\":\"hckf0302oq\",\"menuItemName\":\"plastic coke\",\"menuItemPrice\":\"100\",\"metaDataIcon\":0,\"orderedQuantity\":1,\"parentCategory\":\"drinks\",\"quantityAvailableInStock\":18,\"restaurantOrBarId\":\"NstZkDTWhw\",\"reviewsCount\":0,\"tableTag\":\"de\",\"updatedAt\":1574254625947,\"waiterTag\":\"charles\"}]"
+                        EMenuOrder order = loadParseObjectIntoEMenuOrder(object);
+                        for(EMenuItem item: order.getItems()){
+                            if (item.parentCategory.equals(Globals.DRINKS)){
+                                Log.d("sunsin", "Drink price: " + item.menuItemPrice + item.parentCategory);
+                                item.setOrderedQuantity(0);
+                                Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+                            }
+                            if(item.parentCategory.equals(Globals.FOOD)){
+                                Log.d("sunsin", "FOOD PRICE: " + item.menuItemName);
+                                item.setOrderedQuantity(0);
+                                Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+                            }
+                        }
 
+                        String newOrder = serializeEMenuItems(order.getItems());
+                        Log.d("sunsin", newOrder);
+                        object.put(Globals.ORDERED_ITEMS, newOrder);
 
-
-//                        Log.d("Somesin", );
                     }
                     object.saveInBackground(e1 -> {
                         if (e1 == null) {
@@ -1880,6 +1894,8 @@ public class DataStoreClient {
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.whereEqualTo(Globals.HAS_FOOD, true);
+        // Exclude orders that have been rejected
+        eMenuOrdersQuery.whereNotEqualTo(Globals.KITCHEN_ACCEPTED_ORDER, false);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);

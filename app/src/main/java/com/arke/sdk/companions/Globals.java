@@ -49,6 +49,7 @@ public class Globals {
     public static final String EMENU_ORDER_JSON = "emenu_order_json";
     public static final String EMENU_ORDER = "emenu_order_view";
     public static final String DRINKS = "drinks";
+    public static final String FOOD = "food";
     public static final String MEALS = "meals";
     public static final String EMENU_ITEM_SUB_CATEGORY = "emenu_item_sub_category";
     public static final String NON_DRINKS = "non_drinks";
