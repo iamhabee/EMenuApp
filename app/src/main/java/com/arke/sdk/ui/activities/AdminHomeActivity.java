@@ -56,6 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 public class AdminHomeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -110,9 +111,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.fetch_data_view)
     TextView fetchDataView;
 
-
-    @BindView(R.id.printt)
-    Button printtt;
 
     private List<AdminSummaryItem> adminSummaryItems = new ArrayList<>();
     private Calendar fromCalendar, toCalendar;
@@ -241,23 +239,27 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                 } else if (indexOfSelection == 7) {
                     //Load all the waiters in this restaurant/bar
                     UiUtils.showSafeToast("Please Wait...");
-                    DataStoreClient.fetchWaiters((e, waiters) -> {
-                        if (e == null) {
-                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
-                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
-                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
-                                if (i == -1) {
-                                    UiUtils.showSafeToast("No Selection Made");
-                                    return;
-                                }
-                                CharSequence waiter = waiters[i];
-                                fetchSalesFromWaiter(waiter);
-                            });
-                            waitersBuilder.create().show();
-                        } else {
-                            UiUtils.showSafeToast(e.getMessage());
-                        }
-                    });
+
+                    DataStoreClient.fetchWaiters();
+
+//                    DataStoreClient.fetchWaiters((e, waiters) -> {
+//                        if (e == null) {
+//                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
+//                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
+//                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
+//                                if (i == -1) {
+//                                    UiUtils.showSafeToast("No Selection Made");
+//                                    return;
+//                                }
+//                                CharSequence waiter = waiters[i];
+//                                fetchSalesFromWaiter(waiter);
+//                            });
+//                            waitersBuilder.create().show();
+//                        } else {
+//                            Timber.i("Not found");
+//                            UiUtils.showSafeToast(e.getMessage());
+//                        }
+//                    });
                 }
             }
         });
