@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -39,6 +38,7 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.TokenActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -58,6 +58,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 //import com.elitepath.android.emenu.R;
 //import com.elitepath.android.emenu.models.EMenuOrder_Table;
@@ -220,7 +222,7 @@ public class DataStoreClient {
     }
 
     public void passwordReset(String restaurantOrBarName, String restaurantEmailAddress,
-                                     BaseModelOperationDoneCallback doneCallback) {
+                              BaseModelOperationDoneCallback doneCallback) {
         final long ONE_MINUTE_IN_MILLIS = 60000;
 
         UiUtils.showOperationsDialog(mContext,"Sending password recovery token to email address",
@@ -518,34 +520,53 @@ public class DataStoreClient {
     }
 
 
-    public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
-        ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery("User");
-        Log.d("RES ID", AppPrefs.getRestaurantOrBarId());
-        waitersQuery.whereEqualTo(Globals.RES_ID, AppPrefs.getRestaurantOrBarId());
-        waitersQuery.whereEqualTo(Globals.USER_TYPE, Globals.WAITER);
-        waitersQuery.findInBackground((objects, e) -> {
-            if (e == null) {
-                if (!objects.isEmpty()) {
-                    List<String> waitersTagList = new ArrayList<>();
-                    for (ParseObject parseObject : objects) {
-                        String waiterTag = parseObject.getString("username");
-                        if (!waitersTagList.contains(waiterTag)) {
-                            waitersTagList.add(waiterTag);
-                        }
+//    public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
+//        ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery(Globals.WAITERS);
+//        waitersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
+//        waitersQuery.findInBackground((objects, e) -> {
+//            if (e == null) {
+//                if (!objects.isEmpty()) {
+//                    List<String> waitersTagList = new ArrayList<>();
+//                    for (ParseObject parseObject : objects) {
+//                        String waiterTag = parseObject.getString(Globals.WAITER_TAG);
+//                        if (!waitersTagList.contains(waiterTag)) {
+//                            waitersTagList.add(waiterTag);
+//                        }
+//                    }
+//                    CharSequence[] waiters = new CharSequence[waitersTagList.size()];
+//                    for (int i = 0; i < waiters.length; i++) {
+//                        waiters[i] = waitersTagList.get(i);
+//                    }
+//                    waitersFetchDoneCallBack.done(null, waiters);
+//                } else {
+//                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
+//                }
+//            } else {
+//                if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+//                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
+//                } else {
+//                    waitersFetchDoneCallBack.done(e, (CharSequence) null);
+//                }
+//            }
+//        });
+//    }
+
+    public static void fetchWaiters() {
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("user_type", 1);
+        query.whereEqualTo("res_id", AppPrefs.getRestaurantOrBarId());
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> users, ParseException e) {
+                if (e == null) {
+                    // The query was successful, returns the users that matches
+                    // the criterias.
+                    for(ParseUser user : users) {
+                        // Get matched users
+                        Timber.i(user.getUsername());
                     }
-                    CharSequence[] waiters = new CharSequence[waitersTagList.size()];
-                    for (int i = 0; i < waiters.length; i++) {
-                        waiters[i] = waitersTagList.get(i);
-                    }
-                    waitersFetchDoneCallBack.done(null, waiters);
                 } else {
-                    waitersFetchDoneCallBack.done(getException("No waiters found"), (CharSequence) null);
-                }
-            } else {
-                if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
-                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
-                } else {
-                    waitersFetchDoneCallBack.done(e, (CharSequence) null);
+                    // Something went wrong.
+                    Timber.i("No user found!");
                 }
             }
         });
@@ -596,10 +617,10 @@ public class DataStoreClient {
 
     public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder) {
 
-        String deviceId = AppPrefs.getDeviceId();
-        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         // Connect to the parse server
         ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        String deviceId = AppPrefs.getDeviceId();
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         // Setting query clauses
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
@@ -1371,23 +1392,23 @@ public class DataStoreClient {
 //                if (items.size() == 0) {
 ////                    eMenuOrder.delete();
 //                    UiUtils.showSafeToast("You can not reduce beyond 1");
-                    if (newQuantity <= 0) {
-                            UiUtils.showSafeToast("You have not add any drinks");
+            if (newQuantity <= 0) {
+                UiUtils.showSafeToast("You have not add any drinks");
 //                            eMenuOrder.delete();
-                            items.remove(eMenuItem);
-                            eMenuOrder.setItems(items);
-                            eMenuOrder.setDirty(true);
-                            eMenuOrder.update();
-                            EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+                items.remove(eMenuItem);
+                eMenuOrder.setItems(items);
+                eMenuOrder.setDirty(true);
+                eMenuOrder.update();
+                EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
 
-                    } else {
-                        eMenuItem.setOrderedQuantity(newQuantity);
-                        items.set(indexOfItem, eMenuItem);
-                        eMenuOrder.setItems(items);
-                        eMenuOrder.setDirty(true);
-                        eMenuOrder.update();
-                    }
-                    eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
+            } else {
+                eMenuItem.setOrderedQuantity(newQuantity);
+                items.set(indexOfItem, eMenuItem);
+                eMenuOrder.setItems(items);
+                eMenuOrder.setDirty(true);
+                eMenuOrder.update();
+            }
+            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
 //            }
 //                } else {
 //                    eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
@@ -1496,7 +1517,6 @@ public class DataStoreClient {
             });
         }
     }
-
 
     private static ParseObject createParseObjectFromOrder(ParseObject existingObject, EMenuOrder eMenuOrder) {
         boolean has_drink = false, has_food = false;
@@ -1928,9 +1948,9 @@ public class DataStoreClient {
                         EMenuOrder eMenuOrder = loadParseObjectIntoEMenuOrder(orderObject);
 //                        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
 //                        if (kitchenAttendantDeviceId == null) {
-                            if (!retrievedOrders.contains(eMenuOrder)) {
-                                retrievedOrders.add(eMenuOrder);
-                            }
+                        if (!retrievedOrders.contains(eMenuOrder)) {
+                            retrievedOrders.add(eMenuOrder);
+                        }
 //                        } else {
 //                            // fetching orders WRT kitchen device id
 //                            if (kitchenAttendantDeviceId.equals(deviceId)) {
