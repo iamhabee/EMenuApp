@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -518,14 +519,16 @@ public class DataStoreClient {
 
 
     public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
-        ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery(Globals.WAITERS);
-        waitersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
+        ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery("User");
+        Log.d("RES ID", AppPrefs.getRestaurantOrBarId());
+        waitersQuery.whereEqualTo(Globals.RES_ID, AppPrefs.getRestaurantOrBarId());
+        waitersQuery.whereEqualTo(Globals.USER_TYPE, Globals.WAITER);
         waitersQuery.findInBackground((objects, e) -> {
             if (e == null) {
                 if (!objects.isEmpty()) {
                     List<String> waitersTagList = new ArrayList<>();
                     for (ParseObject parseObject : objects) {
-                        String waiterTag = parseObject.getString(Globals.WAITER_TAG);
+                        String waiterTag = parseObject.getString("username");
                         if (!waitersTagList.contains(waiterTag)) {
                             waitersTagList.add(waiterTag);
                         }
@@ -536,7 +539,7 @@ public class DataStoreClient {
                     }
                     waitersFetchDoneCallBack.done(null, waiters);
                 } else {
-                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
+                    waitersFetchDoneCallBack.done(getException("No waiters found"), (CharSequence) null);
                 }
             } else {
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
@@ -593,10 +596,10 @@ public class DataStoreClient {
 
     public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder) {
 
-        // Connect to the parse server
-        ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         String deviceId = AppPrefs.getDeviceId();
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        // Connect to the parse server
+        ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         // Setting query clauses
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
@@ -1493,6 +1496,7 @@ public class DataStoreClient {
             });
         }
     }
+
 
     private static ParseObject createParseObjectFromOrder(ParseObject existingObject, EMenuOrder eMenuOrder) {
         boolean has_drink = false, has_food = false;

@@ -181,10 +181,11 @@ public class KitchenHomeActivity extends BaseActivity {
             openSearch();
             forceShowSoftKeyBoard();
         });
+
         refreshViewIcon.setOnClickListener(view -> {
             EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
-
         });
+
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             String searchString = searchBox.getText().toString().trim();
@@ -194,10 +195,12 @@ public class KitchenHomeActivity extends BaseActivity {
             }
             closeSearch();
         });
+
         addNewMenuItem.setOnClickListener(view -> {
             Intent createMenuIntent = new Intent(KitchenHomeActivity.this, CreateNewOrEditEMenuItemActivity.class);
             startActivity(createMenuIntent);
         });
+
         searchBox.addTextChangedListener(new TextWatcher() {
 
             @Override
