@@ -240,26 +240,26 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     //Load all the waiters in this restaurant/bar
                     UiUtils.showSafeToast("Please Wait...");
 
-                    DataStoreClient.fetchWaiters();
+//                    DataStoreClient.fetchWaiters(null);
 
-//                    DataStoreClient.fetchWaiters((e, waiters) -> {
-//                        if (e == null) {
-//                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
-//                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
-//                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
-//                                if (i == -1) {
-//                                    UiUtils.showSafeToast("No Selection Made");
-//                                    return;
-//                                }
-//                                CharSequence waiter = waiters[i];
-//                                fetchSalesFromWaiter(waiter);
-//                            });
-//                            waitersBuilder.create().show();
-//                        } else {
-//                            Timber.i("Not found");
-//                            UiUtils.showSafeToast(e.getMessage());
-//                        }
-//                    });
+                    DataStoreClient.fetchWaiters((e, waiters) -> {
+                        if (e == null) {
+                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
+                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
+                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
+                                if (i == -1) {
+                                    UiUtils.showSafeToast("No Selection Made");
+                                    return;
+                                }
+                                CharSequence waiter = waiters[i];
+                                fetchSalesFromWaiter(waiter);
+                            });
+                            waitersBuilder.create().show();
+                        } else {
+                            Timber.i("Not found");
+                            UiUtils.showSafeToast(e.getMessage());
+                        }
+                    });
                 }
             }
         });

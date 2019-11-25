@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
@@ -168,7 +170,7 @@ public class DataStoreClient {
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, waiterTag);
-        eMenuOrdersQuery.whereExists(Globals.ORDER_PAYMENT_STATUS);
+//        eMenuOrdersQuery.whereExists(Globals.ORDER_PAYMENT_STATUS);
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);
         }
@@ -551,18 +553,36 @@ public class DataStoreClient {
 //        });
 //    }
 
-    public static void fetchWaiters() {
+    public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.whereEqualTo("user_type", 1);
         query.whereEqualTo("res_id", AppPrefs.getRestaurantOrBarId());
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> users, ParseException e) {
                 if (e == null) {
-                    // The query was successful, returns the users that matches
-                    // the criterias.
-                    for(ParseUser user : users) {
-                        // Get matched users
-                        Timber.i(user.getUsername());
+                    if(!users.isEmpty()) {
+                        List<String> waitersTagList = new ArrayList<>();
+                        // The query was successful, returns the users that matches
+                        // the criterias.
+                        for (ParseUser user : users) {
+                            // Get matched users
+                            Timber.i(user.getUsername());
+                            String waiterTag = user.getUsername();
+                            if (!waitersTagList.contains(waiterTag)) {
+                                waitersTagList.add(waiterTag);
+                            }
+                        }
+                        CharSequence[] waiters = new CharSequence[waitersTagList.size()];
+                        for (int i = 0; i < waiters.length; i++) {
+                            waiters[i] = waitersTagList.get(i);
+                        }
+                        waitersFetchDoneCallBack.done(null, waiters);
+                    }else{
+                        if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                            waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
+                        } else {
+                            waitersFetchDoneCallBack.done(e, (CharSequence) null);
+                        }
                     }
                 } else {
                     // Something went wrong.
