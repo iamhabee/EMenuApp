@@ -577,7 +577,7 @@ public class BarHomeActivity extends BaseActivity {
         });
 
         no.setOnClickListener(view -> {
-            finish();
+            dialog.dismiss();
         });
     }
 

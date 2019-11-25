@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -577,25 +579,39 @@ public class WaiterHomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START, true);
-        } else {
-            if (searchCardView.getVisibility() == View.VISIBLE) {
-                closeSearch();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START, true);
             } else {
-                if (mainViewPager.getCurrentItem() != 0) {
-                    mainViewPager.setCurrentItem(0);
+                if (searchCardView.getVisibility() == View.VISIBLE) {
+                    closeSearch();
                 } else {
-                    if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
-                        bottomSheetDialog.dismiss();
-                        bottomSheetDialog.cancel();
-                        bottomSheetDialog = null;
+                    if (mainViewPager.getCurrentItem() != 0) {
+                        mainViewPager.setCurrentItem(0);
                     } else {
-                        super.onBackPressed();
+                        if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                            bottomSheetDialog.dismiss();
+                            bottomSheetDialog.cancel();
+                            bottomSheetDialog = null;
+                        } else {
+                            super.onBackPressed();
+                        }
                     }
                 }
             }
-        }
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+
     }
 
     private void closeSearch() {
