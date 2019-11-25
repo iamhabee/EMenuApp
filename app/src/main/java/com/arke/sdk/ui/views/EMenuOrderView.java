@@ -39,6 +39,7 @@ import com.google.gson.reflect.TypeToken;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -310,6 +311,7 @@ public class EMenuOrderView extends MaterialCardView implements
         UiUtils.blinkView(view);
         if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
             String currentDeviceId = AppPrefs.getDeviceId();
+//            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
             if (currentDeviceId != null) {
                 String attendantDeviceId = getContext() instanceof KitchenHomeActivity
                         ? eMenuOrder.getKitchenAttendantDeviceId()
@@ -351,7 +353,7 @@ public class EMenuOrderView extends MaterialCardView implements
         });
 
         /* show dialog only when order is pending */
-        if(eMenuOrder.getOrderProgressStatus()==Globals.OrderProgressStatus.PENDING){
+        if(eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
             takeOrderConfirmationBuilder.build().show();
         }else{
             viewOrder();
@@ -377,6 +379,9 @@ public class EMenuOrderView extends MaterialCardView implements
         errorCreationErrorDialog.show();
     }
 
+
+
+
     private void rejectOrder(){
         DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
         if (AppPrefs.getUseType() == Globals.KITCHEN){
@@ -398,7 +403,8 @@ public class EMenuOrderView extends MaterialCardView implements
     }
 
     private void markOrderAsTaken() {
-        UiUtils.showSafeToast("Please wait...");
+//        UiUtils.showSafeToast("Please wait...");
+        showOperationsDialog("Accepting order","Please wait...");
         DataStoreClient.markItemAsTaken(eMenuOrder.getEMenuOrderId(), (result, e) -> {
             if (e != null) {
                 String errorMessage = e.getMessage();
@@ -413,6 +419,7 @@ public class EMenuOrderView extends MaterialCardView implements
                 eMenuOrder.update();
                 new Handler().postDelayed(this::viewOrder, 1000);
             }
+            dismissProgressDialog();
         });
     }
 
@@ -432,10 +439,13 @@ public class EMenuOrderView extends MaterialCardView implements
         if (getContext() instanceof WaiterHomeActivity || getContext() instanceof UnProcessedOrdersActivity) {
             AlertDialog.Builder orderOptionsDialog = new AlertDialog.Builder(getContext());
             List<CharSequence> orderOptionsList = new ArrayList<>();
+
             orderOptionsList.add("Delete This Order");
+
             if (!eMenuOrder.isDirty()) {
                 orderOptionsList.add("Receive Payment");
             }
+
             CharSequence[] orderOptions = orderOptionsList.toArray(new CharSequence[0]);
             orderOptionsDialog.setTitle("What would you like to do?");
             orderOptionsDialog.setSingleChoiceItems(orderOptions, -1, (dialogInterface, i) -> {

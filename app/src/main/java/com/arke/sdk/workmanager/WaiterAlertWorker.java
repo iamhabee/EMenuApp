@@ -216,11 +216,11 @@ public class WaiterAlertWorker extends Worker {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "default")
                 .setContentTitle(title)
                 .setContentText(text)
-                .setColor(Color.BLUE)
+                .setColor(Color.rgb(255, 127, 0))
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_menu_notify)
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-//                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(true)
                 .setAutoCancel(true);
 
 
@@ -244,11 +244,11 @@ public class WaiterAlertWorker extends Worker {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "default")
                 .setContentTitle(title)
                 .setContentText(text)
-                .setColor(Color.BLUE)
+                .setColor(Color.rgb(255, 127, 0))
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_menu_notify)
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-//                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(true)
                 .setAutoCancel(true);
 
 
@@ -272,11 +272,11 @@ public class WaiterAlertWorker extends Worker {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "default")
                 .setContentTitle(title)
                 .setContentText(text)
-                .setColor(Color.BLUE)
+                .setColor(Color.rgb(255, 127, 0))
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_menu_notify)
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-//                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(true)
                 .setAutoCancel(true);
 
 

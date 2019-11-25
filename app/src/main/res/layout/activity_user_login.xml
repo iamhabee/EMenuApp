@@ -10,7 +10,21 @@
 
     <ScrollView
         android:layout_width="match_parent"
+<<<<<<< HEAD
         android:layout_height="wrap_content">
+=======
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="70dp"
+        android:text="welcome text"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textSize="28sp"
+        tools:layout_editor_absoluteX="173dp"
+        tools:layout_editor_absoluteY="148dp" />
+>>>>>>> refs/remotes/origin/master
 
         <TextView
             android:id="@+id/welcome_text"
@@ -59,6 +73,7 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="463dp" />
 
+<<<<<<< HEAD
         <Button
             android:id="@+id/btnForgotPassword"
             android:layout_width="wrap_content"
@@ -88,6 +103,38 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:layout_editor_absoluteY="617dp" />
+=======
+    <Button
+        android:id="@+id/btnForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-20dp"
+        android:background="@android:color/transparent"
+        android:gravity="start"
+        android:paddingStart="12dp"
+        android:paddingTop="16dp"
+        android:text="@string/forgot_password"
+        android:textAllCaps="false"
+        android:layout_gravity="end"
+        android:layout_marginEnd="23dp"
+        android:textColor="@color/notify_orange"
+        tools:ignore="RtlSymmetry" />
+
+    <Button
+        android:id="@+id/signIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/button_corner"
+        android:text="SIGN IN"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="617dp" />
+>>>>>>> refs/remotes/origin/master
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/switchAccount"

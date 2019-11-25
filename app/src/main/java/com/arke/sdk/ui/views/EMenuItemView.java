@@ -137,7 +137,15 @@ public class EMenuItemView extends MaterialCardView {
 
             /* show and hide increment/decrement layout in waiter order only when the order is still pending */
             assert orderProgressStatus != null;
+<<<<<<< HEAD
             if( orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)){
+=======
+            if (orderProgressStatus.equals(Globals.OrderProgressStatus.ALMOST_DONE)  ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.DONE) ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING) ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)){
+
+>>>>>>> refs/remotes/origin/master
                 /* disable increment and decrement */
                 UiUtils.toggleViewVisibility(quantityView, true);
                 itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
@@ -200,6 +208,7 @@ public class EMenuItemView extends MaterialCardView {
                 }
             }
         });
+
         setOnLongClickListener(view -> {
             //Only the waiter/waitress should be able to remove an item from an order, no other person should
             if (getContext() instanceof OrderSummaryActivity && AppPrefs.getUseType() == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
@@ -211,11 +220,16 @@ public class EMenuItemView extends MaterialCardView {
                         dialogInterface.dismiss();
                         dialogInterface.cancel();
                         Globals.OrderPaymentStatus orderPaymentStatus = eMenuOrder.getOrderPaymentStatus();
-                        if (orderPaymentStatus == null) {
+                        /* get the progress status of the order */
+                        Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
+                        assert orderProgressStatus != null;
+
+                        if (orderPaymentStatus == null || orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)
+                                || orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)) {
                             //Let's confirm to make sure this customer hasn't already paid
                             performItemDeletionFromOrder(eMenuOrder, eMenuItem, customerKey);
                         } else {
-                            UiUtils.showSafeToast("Oops! Sorry can't delete an already paid for item");
+                            UiUtils.showSafeToast("Oops! Sorry can't delete an already paid for item or item that has been fulfilled");
                         }
                     }
                 });

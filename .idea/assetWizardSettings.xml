@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_receipt_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_restaurant_menu_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -29,7 +29,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="d95e0a" />
-                            <entry key="outputName" value="ic_receipt_orange_24dp" />
+                            <entry key="outputName" value="ic_menu_notify" />
                             <entry key="sourceFile" value="$APPLICATION_HOME_DIR$/bin/C:\Users\Zheeno" />
                           </map>
                         </option>
