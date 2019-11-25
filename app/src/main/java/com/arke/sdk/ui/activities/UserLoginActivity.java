@@ -16,6 +16,7 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.NetworkClient;
 import com.arke.sdk.utilities.UiUtils;
+//import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
@@ -24,6 +25,7 @@ import com.parse.LogInCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.arke.sdk.R;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 

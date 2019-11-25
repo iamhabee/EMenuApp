@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -129,6 +130,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private LottieAlertDialog operationsProgressDialog;
     private AlertDialog dialog;
 
+    private Dialog closeDialog;
 
 
     @SuppressLint("SetTextI18n")
@@ -166,7 +168,22 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         if (mainViewContentFlipper.getDisplayedChild() == 0) {
-            finish();
+            closeDialog = new Dialog(this);
+            closeDialog.setContentView(R.layout.close_app_dialog);
+            closeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            closeDialog.show();
+
+            Button yes = closeDialog.findViewById(R.id.yes);
+            Button no = closeDialog.findViewById(R.id.no);
+
+            yes.setOnClickListener(view -> {
+                closeDialog.dismiss();
+                finish();
+            });
+
+            no.setOnClickListener(view -> {
+                closeDialog.dismiss();
+            });
             return;
         }
         if (mainViewContentFlipper.getDisplayedChild() != 1) {
