@@ -197,8 +197,8 @@ public class DataStoreClient {
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         eMenuOrdersQuery.whereExists(Globals.ORDER_PAYMENT_STATUS);
         long fromTime = fromMidNight(from.getTime());
-        eMenuOrdersQuery.whereGreaterThanOrEqualTo(Globals.CREATED_AT, new Date(fromTime));
-        eMenuOrdersQuery.whereLessThanOrEqualTo(Globals.CREATED_AT, new Date(to.getTime()));
+//        eMenuOrdersQuery.whereGreaterThanOrEqualTo(Globals.CREATED_AT, new Date(fromTime));
+//        eMenuOrdersQuery.whereLessThanOrEqualTo(Globals.CREATED_AT, new Date(to.getTime()));
         eMenuOrdersQuery.whereExists(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.findInBackground((objects, e) -> {
             if (e == null) {
@@ -1735,6 +1735,28 @@ public class DataStoreClient {
         }.getType());
     }
 
+
+    public static List<EMenuOrder> getPaidOrders() {
+        List<EMenuOrder> retrievedOrders = new ArrayList<>();
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        ParseQuery<ParseObject> success = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        success.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        success.whereExists(Globals.ORDER_PAYMENT_STATUS);
+        success.findInBackground((objects, e) -> {
+            if(e == null){
+                if (!objects.isEmpty()) {
+                    for (ParseObject orderObject : objects) {
+                        EMenuOrder eMenuOrder = loadParseObjectIntoEMenuOrder(orderObject);
+                        if (!retrievedOrders.contains(eMenuOrder)) {
+                            retrievedOrders.add(eMenuOrder);
+                        }
+                    }
+                }
+            }
+        });
+        return retrievedOrders;
+    }
+
     public static void updateOrderPaymentStatus(String orderId, Globals.OrderPaymentStatus orderPaymentStatus, PaymentDoneCallBack paymentDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> emenuOrderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
@@ -1742,10 +1764,21 @@ public class DataStoreClient {
         emenuOrderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         emenuOrderQuery.getFirstInBackground((object, e) -> {
             if (e == null) {
+                double total = 0;
+                EMenuOrder order = loadParseObjectIntoEMenuOrder(object);
+                //get order items
+                for(EMenuItem item : order.getItems()){
+                    double amount = item.getOrderedQuantity() * Double.parseDouble(item.getMenuItemPrice());
+                    total = total + amount;
+                }
+
+//                Toast.makeText()
+                Log.d(Globals.ORDER_TOTAL_PAYABLE, total+"");
                 String orderPaymentStatusString = serializeOrderPayment(orderPaymentStatus);
                 String progressStatusString = serializeOrderProgress(Globals.OrderProgressStatus.DONE);
                 object.put(Globals.ORDER_PAYMENT_STATUS, orderPaymentStatusString);
                 object.put(Globals.ORDER_PROGRESS_STATUS, progressStatusString);
+                object.put(Globals.ORDER_TOTAL_PAYABLE, total);
                 object.saveInBackground(e1 -> {
                     if (e1 == null) {
                         EMenuOrder eMenuOrder = loadParseObjectIntoEMenuOrder(object);
