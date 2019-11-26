@@ -175,15 +175,18 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/create_item"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="8dp"
             android:gravity="center"
-            android:text="@string/create_item"
-            android:theme="@style/Widget.Button.Login.Google" />
+            app:cornerRadius="25dp"
+            android:padding="15dp"
+            android:textColor="@color/white"
+            android:background="@drawable/button_corner"
+            android:text="@string/create_item" />
 
     </LinearLayout>
 

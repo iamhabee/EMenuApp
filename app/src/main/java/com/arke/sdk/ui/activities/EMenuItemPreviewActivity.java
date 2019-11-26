@@ -48,6 +48,7 @@ import com.arke.sdk.ui.views.AutofitRecyclerView;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.google.gson.Gson;
 import com.jkb.slidemenu.SlideMenuLayout;
+import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
@@ -58,6 +59,7 @@ import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -270,7 +272,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 }
             });
         }
-
+    //onActivityResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -292,7 +294,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 //Write your code if there's no result
             }
         }
-    }//onActivityResult
+    }
 
     @Override
     public void onEventMainThread(Object event) {
@@ -339,7 +341,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     }
 
     private void searchItem(String searchString) {
-        DataStoreClient.searchEMenuItems(searchString, (results, e) -> {
+        DataStoreClient.searchEMenuItems(mContext, searchString, (results, e) -> {
             if (results != null && !results.isEmpty()) {
                 searchList.clear();
                 searchList.addAll(results);
@@ -775,6 +777,24 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         }
     }
 
+
+    private void showSuccessMessage(String title, String description) {
+        operationsDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title)
+                .setPositiveText("Continue")
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        dismissProgressDialog();
+                        finish();
+                    }
+                })
+                .setDescription(description).build();
+        operationsDialog.setCancelable(false);
+        operationsDialog.show();
+    }
+
     private void showOperationsDialog(String title, String description) {
         operationsDialog = new LottieAlertDialog
                 .Builder(this, DialogTypes.TYPE_LOADING)
@@ -788,7 +808,6 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         String customerTagValue = customerTag.getText().toString().trim();
 //        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
         String waiterTagValue = waiterId;
-
         boolean isTakeAway = takeAway.isChecked();
         if (!isTakeAway && StringUtils.isEmpty(tableTagValue)) {
             tableTag.setError("Please provide a table tag to associate with this Item.");
@@ -834,14 +853,17 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         item.setCustomerTag(customerTagValue);
         item.setWaiterTag(waiterTagValue);
 
-        showOperationsDialog("Adding " + WordUtils.capitalize(eMenuItem.getMenuItemName()) + " Customer " + customerTagValue + " Orders", "Please wait...");
         DataStoreClient dataStoreClient = new DataStoreClient(this);
         dataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTagValue, customerTagValue, waiterTagValue, quantityCount, item, (eMenuOrder, eMenuItem, e) -> {
-            dismissProgressDialog();
             if (e == null) {
-                UiUtils.showSafeToast(WordUtils.capitalize(eMenuItem.getMenuItemName()) + " was successfully added to Customer " + eMenuOrder.getCustomerTag() + " orders ");
+                showSuccessMessage("Success",WordUtils.capitalize(eMenuItem.getMenuItemName()) + " was successfully added to Customer " + eMenuOrder.getCustomerTag() + " orders ");
             }
+            tableTag.setText(null);
+            customerTag.setText(null);
+            quantityBox.setText(null);
         });
     }
+
+
 
 }

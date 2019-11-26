@@ -67,7 +67,6 @@ public class SplashActivity extends BaseActivity {
                 .withErrorListener(error -> UiUtils.showSafeToast("Error occurred! " + error.toString()))
                 .onSameThread()
                 .check();
-        ;
     }
 
     private void showSettingsDialog() {

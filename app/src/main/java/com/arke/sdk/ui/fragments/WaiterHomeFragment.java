@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.arke.sdk.eventbuses.EMenuItemCreatedEvent;
 import com.arke.sdk.eventbuses.EMenuItemDeletedEvent;
 import com.arke.sdk.eventbuses.EMenuItemUpdatedEvent;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
+import com.arke.sdk.eventbuses.RefreshOrderEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.ui.activities.WaiterHomeActivity;
 import com.arke.sdk.utilities.CollectionsCache;
@@ -40,6 +42,7 @@ import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAda
 import com.liucanwen.app.headerfooterrecyclerview.RecyclerViewUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +112,11 @@ public class WaiterHomeFragment extends BaseFragment  {
     private void handleIncomingEvent(Object event) {
         if (event instanceof ItemSearchEvent) {
             processIncomingSearch((ItemSearchEvent) event);
-        } else if (event instanceof EMenuItemDeletedEvent) {
+        }
+        else if(event instanceof RefreshOrderEvent){
+            EventBus.getDefault().post(new ItemSearchEvent(((RefreshOrderEvent) event).getContext(), ((RefreshOrderEvent) event).getViewPagerIndex()));
+        }
+        else if (event instanceof EMenuItemDeletedEvent) {
             EMenuItem deletedItem = ((EMenuItemDeletedEvent) event).getDeletedEMenuItem();
             if (eMenuItems.contains(deletedItem)) {
                 eMenuItems.remove(deletedItem);
@@ -145,6 +152,7 @@ public class WaiterHomeFragment extends BaseFragment  {
             }
         }
     }
+
 
     private void processIncomingSearch(ItemSearchEvent event) {
         if (event.getViewPagerIndex() == 0) {
@@ -255,7 +263,7 @@ public class WaiterHomeFragment extends BaseFragment  {
     }
 
     private void searchMenuItems(String searchTerm, int skip) {
-        DataStoreClient.searchEMenuItems(searchTerm.toLowerCase().trim(), (results, e) -> {
+        DataStoreClient.searchEMenuItems(mContext, searchTerm.toLowerCase().trim(), (results, e) -> {
             if (e != null) {
 //                swipeRefreshLayout.setRefreshing(false);
                 String errorMessage = e.getMessage();

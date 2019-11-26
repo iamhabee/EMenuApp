@@ -27,6 +27,10 @@ import java.util.List;
         updateConflict = ConflictAction.REPLACE)
 public class EMenuOrder extends BaseModel implements Serializable {
 
+    public boolean kitchen_rejected;
+
+    public boolean bar_rejected;
+
     /**
      * A unique id for this order
      **/
@@ -296,6 +300,22 @@ public class EMenuOrder extends BaseModel implements Serializable {
 
     public String getBarAttendantDeviceId() {
         return barAttendantDeviceId;
+    }
+
+    public boolean isKitchen_rejected() {
+        return kitchen_rejected;
+    }
+
+    public void setKitchen_rejected(boolean kitchen_rejected) {
+        this.kitchen_rejected = kitchen_rejected;
+    }
+
+    public boolean isBar_rejected() {
+        return bar_rejected;
+    }
+
+    public void setBar_rejected(boolean bar_rejected) {
+        this.bar_rejected = bar_rejected;
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -17,10 +18,12 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +48,7 @@ import com.arke.sdk.eventbuses.EMenuItemUpdatedEvent;
 import com.arke.sdk.eventbuses.FetchCategoryContentsEvent;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
+import com.arke.sdk.eventbuses.RefreshOrderEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
@@ -147,6 +151,7 @@ public class WaiterHomeActivity extends BaseActivity {
 
     private AlertDialog adminPasswordDialog = null;
     private android.app.AlertDialog dialog;
+    private LottieAlertDialog accountCreationSuccessDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,7 +250,7 @@ public class WaiterHomeActivity extends BaseActivity {
                 //We are good to go, the payment was made successfully.
                 //Let's record the payment with the order associated with this payment
                 if (data == null) {
-                    UiUtils.showSafeToast("Oops! Sorry, failed to complete card payment.Please, try again.");
+                    showErrorMessage("Transaction Error", "Oops! Sorry, failed to complete card payment.Please, try again.");
                     return;
                 }
                 String response = (String) data.getSerializableExtra("response");
@@ -255,45 +260,39 @@ public class WaiterHomeActivity extends BaseActivity {
                 String batchNo = (String) data.getSerializableExtra("batchNo");
                 String seqNo = (String) data.getSerializableExtra("seqNo");
                 String persistedData = AppPrefs.getCurrentCardData();
-                if (persistedData != null) {
-                    CurrentCardPaymentProcessor currentCardPaymentProcessor = CurrentCardPaymentProcessor.getLastProcessing();
-                    if (currentCardPaymentProcessor != null) {
-                        EMenuOrder eMenuOrder = currentCardPaymentProcessor.getEMenuOrder();
-                        String[] customerKeys = currentCardPaymentProcessor.getCustomerKeys();
-                        String title;
-                        if (customerKeys.length == 1) {
-                            title = "Registering Payment for Customer " + customerKeys[0];
-                        } else {
-                            title = "Registering Payment for Customers " + Arrays.toString(customerKeys);
-                        }
-                        showOperationsDialog(title, "Please wait...");
-                        DataStoreClient.updateOrderPaymentStatus(eMenuOrder.getEMenuOrderId(), Globals.OrderPaymentStatus.PAID_BY_CARD, (paymentStatus, paymentException) -> {
-                            dismissProgressDialog();
-                            if (paymentException == null) {
-                                UiUtils.showSafeToast("Payment successfully registered for  " + (customerKeys.length == 1 ? " Customer " + customerKeys[0] : " Customers " + Arrays.toString(customerKeys)) + "!!!");
+                Log.d("Card Response", responseCode);
+                Toast.makeText(this, "Response "+responseCode, Toast.LENGTH_SHORT).show();
+                if(responseCode.equals("00")){
+                    if (persistedData != null) {
+                        CurrentCardPaymentProcessor currentCardPaymentProcessor = CurrentCardPaymentProcessor.getLastProcessing();
+                        if (currentCardPaymentProcessor != null) {
+                            EMenuOrder eMenuOrder = currentCardPaymentProcessor.getEMenuOrder();
+                            String[] customerKeys = currentCardPaymentProcessor.getCustomerKeys();
+                            String title;
+                            if (customerKeys.length == 1) {
+                                title = "Registering Payment for Customer " + customerKeys[0];
                             } else {
-                                UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer(s).Please try again.(" + paymentException.getMessage() + ")");
+                                title = "Registering Payment for Customers " + Arrays.toString(customerKeys);
                             }
-                        });
+                            showOperationsDialog(title, "Please wait...");
+                            DataStoreClient.updateOrderPaymentStatus(eMenuOrder.getEMenuOrderId(), Globals.OrderPaymentStatus.PAID_BY_CARD, (paymentStatus, paymentException) -> {
+                                dismissProgressDialog();
+                                if (paymentException == null) {
+                                    showSuccessMessage("Transaction Complete!", "Payment successfully registered for  " + (customerKeys.length == 1 ? " Customer " + customerKeys[0] : " Customers " + Arrays.toString(customerKeys)) + "!!!");
+                                } else {
+                                    showSuccessMessage("Transaction Complete!", "Sorry, an error occurred while registering payment for this customer(s).\nPlease try again.(" + paymentException.getMessage() + ")");
+                                }
+                            });
+                        }
                     }
+                }else{
+                    showErrorMessage("Transaction Error", response);
                 }
+            }else{
+                showErrorMessage("Transaction Cancelled", "An error occured while processing the payment");
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private void initAppTour(String title, String description, View view, TargetDismissedCallback targetDismissedCallback) {
         new MaterialTapTargetPrompt.Builder(this)
                 .setTarget(view)
@@ -378,6 +377,17 @@ public class WaiterHomeActivity extends BaseActivity {
                 .build();
         errorCreationErrorDialog.setCancelable(true);
         errorCreationErrorDialog.show();
+    }
+
+
+    private void showSuccessMessage(String title, String description) {
+        accountCreationSuccessDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        accountCreationSuccessDialog.setCancelable(true);
+        accountCreationSuccessDialog.show();
     }
 
     @SuppressLint("InflateParams")
@@ -572,25 +582,39 @@ public class WaiterHomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START, true);
-        } else {
-            if (searchCardView.getVisibility() == View.VISIBLE) {
-                closeSearch();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START, true);
             } else {
-                if (mainViewPager.getCurrentItem() != 0) {
-                    mainViewPager.setCurrentItem(0);
+                if (searchCardView.getVisibility() == View.VISIBLE) {
+                    closeSearch();
                 } else {
-                    if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
-                        bottomSheetDialog.dismiss();
-                        bottomSheetDialog.cancel();
-                        bottomSheetDialog = null;
+                    if (mainViewPager.getCurrentItem() != 0) {
+                        mainViewPager.setCurrentItem(0);
                     } else {
-                        super.onBackPressed();
+                        if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                            bottomSheetDialog.dismiss();
+                            bottomSheetDialog.cancel();
+                            bottomSheetDialog = null;
+                        } else {
+                            super.onBackPressed();
+                        }
                     }
                 }
             }
-        }
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+
     }
 
     private void closeSearch() {
@@ -609,7 +633,7 @@ public class WaiterHomeActivity extends BaseActivity {
             forceShowSoftKeyBoard();
         });
         refreshiewIcon.setOnClickListener(view -> {
-            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
+            EventBus.getDefault().post(new RefreshOrderEvent(this, AppPrefs.getUseType(), 0));
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
@@ -645,6 +669,7 @@ public class WaiterHomeActivity extends BaseActivity {
         });
         initTabLayout();
     }
+
 
     private void forceShowSoftKeyBoard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);

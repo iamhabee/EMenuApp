@@ -15,6 +15,7 @@ import androidx.work.Worker;
 import com.arke.sdk.R;
 
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.KitchenHomeActivity;
 import com.arke.sdk.utilities.Constants;
 import com.parse.FindCallback;
@@ -32,7 +33,7 @@ public class KitchenAlertWorker extends Worker {
     public static final String EXTRA_TITLE = "title";
     public static final String EXTRA_TEXT = "text";
     protected List<ParseObject> mMessages;
-
+    private String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
 
     @NonNull
     @Override
@@ -45,6 +46,7 @@ public class KitchenAlertWorker extends Worker {
 
     public void queryPendingOrders() {
         ParseQuery<ParseObject> query = new ParseQuery<>("EMenuOrders");
+        query.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         query.whereEqualTo("order_progress_status", '"'+"PENDING"+'"');
         query.whereEqualTo("kitchen_received_notify", false);
         query.whereEqualTo(Globals.HAS_FOOD, true);
@@ -85,8 +87,6 @@ public class KitchenAlertWorker extends Worker {
         });
     }
 
-
-
     private void sendNotification(String title, String text, int id) {
         Intent intent = new Intent(getApplicationContext(), KitchenHomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -104,11 +104,11 @@ public class KitchenAlertWorker extends Worker {
         NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), "default")
                 .setContentTitle(title)
                 .setContentText(text)
-                .setColor(Color.BLUE)
+                .setColor(Color.rgb(255, 127, 0))
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_menu_notify)
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
-//                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(true)
                 .setAutoCancel(true);
 
 

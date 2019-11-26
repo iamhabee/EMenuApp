@@ -1,6 +1,7 @@
 package com.arke.sdk.companions;
 
 import com.arke.sdk.models.EMenuItem;
+import com.parse.ParseObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -49,6 +50,7 @@ public class Globals {
     public static final String EMENU_ORDER_JSON = "emenu_order_json";
     public static final String EMENU_ORDER = "emenu_order_view";
     public static final String DRINKS = "drinks";
+    public static final String FOOD = "food";
     public static final String MEALS = "meals";
     public static final String EMENU_ITEM_SUB_CATEGORY = "emenu_item_sub_category";
     public static final String NON_DRINKS = "non_drinks";
@@ -114,15 +116,23 @@ public class Globals {
     public static final String IS_TAKE_AWAY = "is_take_away";
     public static final String RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED = "restaurant_or_bar_admin_password_revealed";
     public static final String ORDER_TOTAL_PAYABLE = "order_total_payable";
+    public static final String USERS = "User";
+    public static final String USER_TYPE = "user_type";
+    public static final String RES_ID = "res_id";
     public static String APP_PREFS_NAME = "elitepath_emenu";
     public static String EMPTY_PLACEHOLDER_ERROR_MESSAGE = "Nothing Available";
     public static boolean newMenuItemCreated = false;
     public static boolean emenuItemUpdated = false;
     public static EMenuItem updatedEMenuItem = null;
     public static boolean unProcessedOrdersPushed = false;
-    public static final String REJECTED_ORDER = "order_rejected";
-    public static final String ACCEPTED_ORDER = "order_accepted";
+    public static final String BAR_REJECTED_ORDER = "bar_order_rejected";
+    public static final String BAR_ACCEPTED_ORDER = "bar_order_accepted";
+    public static final String KITCHEN_REJECTED_ORDER = "kitchen_order_rejected";
+    public static final String KITCHEN_ACCEPTED_ORDER = "kitchen_order_accepted";
     public static final String REJECTED_NOTIFIER = "rejected_notifier";
+    public static final String IS_ACCOUNT_ACTIVE = "is_account_active";
+    public static final String OTP_TOKEN = "otp_token";
+    public static final String TOKEN_EXPIRING_DATE = "token_expiring_date";
 
 
     public enum StatusPage {
@@ -190,7 +200,8 @@ public class Globals {
         PROCESSING,
         ALMOST_DONE,
         DONE,
-        REJECTED
+        BAR_REJECTED,
+        KITCHEN_REJECTED
     }
 
 }

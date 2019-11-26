@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Patterns;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -17,14 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.R;
-import com.arke.sdk.models.RestaurantOrBarInfo;
-import com.arke.sdk.utilities.DataStoreClient;
-import com.arke.sdk.utilities.EMailClient;
-import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.models.RestaurantOrBarInfo;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.auth.AuthFormStep;
-import com.arke.sdk.ui.views.EMenuTextView;
+import com.arke.sdk.utilities.DataStoreClient;
+import com.arke.sdk.utilities.NetworkClient;
+import com.arke.sdk.utilities.UiUtils;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
@@ -41,11 +39,6 @@ import ernestoyaquello.com.verticalstepperform.listener.StepperFormListener;
 public class LogInActivity extends BaseActivity implements StepperFormListener {
 
     private AppCompatActivity activity = LogInActivity.this;
-    @BindView(R.id.auth_action_header)
-    EMenuTextView authActionHeaderView;
-
-    @BindView(R.id.close_activity)
-    ImageView closeActivityView;
 
     @BindView(R.id.account_creation_stepper_form)
     VerticalStepperFormView accountLogInView;
@@ -55,7 +48,6 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
 
     private LottieAlertDialog accountCreationProgressDialog;
     private LottieAlertDialog accountCreationSuccessDialog;
-
 
 
     SharedPreferences preferences;
@@ -68,24 +60,20 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         setContentView(R.layout.login_auth_form);
 
 
-
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         editor = preferences.edit();
-
 
 
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-        authActionHeaderView.setText(getString(R.string.sign_in_header));
+
         forgotPasswordView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             initiatePasswordReset();
+            UiUtils.dismissKeyboard(view);
         });
-        closeActivityView.setOnClickListener(view -> {
-            UiUtils.blinkView(view);
-            finish();
-        });
+
         setupForm();
     }
 
@@ -97,33 +85,36 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
             if (!Patterns.EMAIL_ADDRESS.matcher(restaurantOrBarEmailAddress).find()) {
                 UiUtils.showSafeToast("Please enter a valid email address to reset your password");
             } else {
-                showOperationsDialog("Loading", "Please wait...");
-                DataStoreClient.checkIfEmailAddressIsAlreadyRegistered(false, (result, e) -> {
-                    dismissProgressDialog();
-                    if (e == null) {
-                        RestaurantOrBarInfo restaurantOrBarInfo = (RestaurantOrBarInfo) result;
-                        String restaurantOrBarName = restaurantOrBarInfo.getRestaurantOrBarName();
-                        String restaurantOrBarPassword = restaurantOrBarInfo.getRestaurantOrBarPassword();
-                        String restaurantEmailAddress = restaurantOrBarInfo.getRestaurantOrBarEmailAddress();
-                        showOperationsDialog("Initiating Password Reset", "Please wait...");
-                        EMailClient.sendPasswordRecoveryEmail(false,restaurantEmailAddress, restaurantOrBarName, restaurantOrBarPassword, (done, e1) -> {
-                            dismissProgressDialog();
-                            activity.runOnUiThread(() -> {
-                                if (e1 == null) {
-                                    showMessage("Recovery Message Sent!", "A password recovery email was sent to the email provided. If the email is not in your inbox by now, then check the SPAM folder.");
-                                } else {
-                                    showErrorMessage("Oops!", e1.getMessage());
-                                }
+
+                if (NetworkClient.isOnline(activity)) {
+                    showOperationsDialog("Verifying Email Address", "Please wait...");
+                    DataStoreClient.checkIfEmailAddressIsAlreadyRegistered(false, (result, e) -> {
+                        dismissProgressDialog();
+                        if (e == null) {
+                            RestaurantOrBarInfo restaurantOrBarInfo = (RestaurantOrBarInfo) result;
+                            String restaurantOrBarName = restaurantOrBarInfo.getRestaurantOrBarName();
+                            String restaurantEmailAddress = restaurantOrBarInfo.getRestaurantOrBarEmailAddress();
+
+                            DataStoreClient dataStoreClient = new DataStoreClient(activity);
+
+                            dataStoreClient.passwordReset(restaurantOrBarName, restaurantEmailAddress, (done, e1) -> {
+                                activity.runOnUiThread(() -> {
+                                    if (e1 != null) {
+                                        UiUtils.dismissProgressDialog();
+                                        showErrorMessage("Oops!", e1.getMessage());
+                                    }
+                                });
                             });
-                        });
-                    } else {
-                        showErrorMessage("Oops!", e.getMessage());
-                    }
-                });
+                        } else {
+                            showErrorMessage("Oops!", e.getMessage());
+                        }
+                    });
+                } else {
+                    showErrorMessage("Oops...", DataStoreClient.getNetworkErrorMessage());
+                }
             }
         }
     }
-
 
 
     private void setupForm() {
@@ -131,9 +122,6 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
         AuthFormStep restaurantPassword = new AuthFormStep("Restaurant Password", "Provide Restaurant/Bar Password", Globals.AuthFormStepType.STEP_TYPE_PASSWORD, accountLogInView);
         accountLogInView.setup(this, restaurantEmailAddressStep, restaurantPassword).init();
 
-
-//        editor.putString(getString(""));
-//        editor.putString(getString(restaurantEmailAddressStep,restaurantEmailAddressStep));
         editor.commit();
     }
 

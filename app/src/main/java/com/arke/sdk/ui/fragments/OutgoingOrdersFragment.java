@@ -6,10 +6,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.NonNull;
@@ -26,6 +28,7 @@ import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
+import com.arke.sdk.eventbuses.RefreshOrderEvent;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuLogger;
@@ -178,7 +181,7 @@ public class OutgoingOrdersFragment extends BaseFragment {
                     }
                 }
             } else {
-                loadDataInToAdapter(skip == 0, results);
+                loadDataInToAdapter(true, results);
             }
         });
     }
@@ -237,7 +240,13 @@ public class OutgoingOrdersFragment extends BaseFragment {
 
                 }
             }
-        } else if (event instanceof OrderUpdatedEvent) {
+        }
+        else if (event instanceof RefreshOrderEvent) {
+            int userType = ((RefreshOrderEvent) event).getUser_type();
+            mContext = ((RefreshOrderEvent) event).getContext();
+            refreshOrders(userType);
+        }
+        else if (event instanceof OrderUpdatedEvent) {
             OrderUpdatedEvent orderUpdatedEvent = (OrderUpdatedEvent) event;
             EMenuOrder updatedOrder = orderUpdatedEvent.getUpdatedOrder();
             if (orderUpdatedEvent.isDeleted()) {
@@ -297,6 +306,51 @@ public class OutgoingOrdersFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+
+    private void refreshOrders(int userType) {
+        int skip = 0;
+        showOperationsDialog("We're refreshing orders", "Please Wait");
+        DataStoreClient.fetchOutgoingOrders(skip, (results, e) -> {
+            if (e != null) {
+                String errorMessage = e.getMessage();
+                String ref = "glitch";
+                if (errorMessage != null) {
+                    if (errorMessage.contains(ref)) {
+                        if (eMenuOrders.isEmpty()) {
+                            UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.NETWORK_ERROR_VIEW.ordinal());
+                            networkErrorMsgView.setText(getString(R.string.network_glitch_error_msg));
+                        } else {
+                            UiUtils.snackMessage("A Network error occurred.Please review your data connection", contentRecyclerView, false, null, null);
+                        }
+                    } else if (errorMessage.contains(Globals.EMPTY_PLACEHOLDER_ERROR_MESSAGE)) {
+                        if (eMenuOrders.isEmpty()) {
+                            UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.EMPTY_VIEW.ordinal());
+                            emptyViewMessageView.setText("Recently Placed orders from this device would show up here when available.");
+                        }
+                    } else {
+                        if (eMenuOrders.isEmpty()) {
+                            UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.OTHER_ERROR_VIEW.ordinal());
+                            otherErrorMessageView.setText(errorMessage);
+                        } else {
+                            UiUtils.snackMessage(e.getMessage(), contentRecyclerView, false, null, null);
+                        }
+                    }
+                } else {
+                    if (eMenuOrders.isEmpty()) {
+                        UiUtils.toggleViewFlipperChild(contentFlipper, Globals.StatusPage.OTHER_ERROR_VIEW.ordinal());
+                        loaderProgressMessageView.setText(getString(R.string.unresolvable_error_msg));
+                    } else {
+                        UiUtils.showSafeToast(getString(R.string.unresolvable_error_msg));
+                    }
+                }
+            } else {
+                loadDataInToAdapter(skip == 0, results);
+            }
+            dismissProgressDialog();
+//            Toast.makeText(mContext, "Refresh Complete", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void checkAndAddOrder(EMenuOrder refreshedOrder) {

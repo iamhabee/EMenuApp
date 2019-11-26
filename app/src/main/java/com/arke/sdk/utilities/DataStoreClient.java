@@ -1,26 +1,20 @@
 package com.arke.sdk.utilities;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.ArkeSdkDemoApplication;
 import com.arke.sdk.R;
-import com.arke.sdk.contracts.AcceptedOrder;
-import com.arke.sdk.contracts.RejectedOrder;
-import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
-import com.arke.sdk.eventbuses.OrderPaidForEvent;
-import com.arke.sdk.eventbuses.OrderUpdatedEvent;
-//import com.elitepath.android.emenu.R;
-
-
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.contracts.AcceptedOrder;
 import com.arke.sdk.contracts.BaseModelOperationDoneCallback;
 import com.arke.sdk.contracts.BooleanOperationDoneCallback;
 import com.arke.sdk.contracts.EMenuCustomerOrderCallBack;
@@ -28,20 +22,26 @@ import com.arke.sdk.contracts.EMenuItemCategoriesFetchDoneCallback;
 import com.arke.sdk.contracts.EMenuItemUpdateDoneCallback;
 import com.arke.sdk.contracts.EMenuItemsFetchDoneCallBack;
 import com.arke.sdk.contracts.EMenuOrdersFetchDoneCallBack;
+import com.arke.sdk.contracts.GetDrinksServed;
 import com.arke.sdk.contracts.OrderUpdateDoneCallback;
 import com.arke.sdk.contracts.PaymentDoneCallBack;
+import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.contracts.RestaurantUpdateDoneCallback;
 import com.arke.sdk.contracts.UnProcessedOrderPushCallBack;
 import com.arke.sdk.contracts.WaitersFetchDoneCallBack;
+import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
+import com.arke.sdk.eventbuses.OrderPaidForEvent;
+import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuItemCategory;
 import com.arke.sdk.models.EMenuOrder;
-//import com.elitepath.android.emenu.models.EMenuOrder_Table;
 import com.arke.sdk.models.EMenuOrder_Table;
 import com.arke.sdk.models.RestaurantOrBarInfo;
 import com.arke.sdk.preferences.AppPrefs;
+import com.arke.sdk.ui.activities.TokenActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -53,25 +53,30 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
+
+import timber.log.Timber;
+
 
 @SuppressWarnings("ConstantConditions")
 public class DataStoreClient {
 
     public static String TAG = DataStoreClient.class.getSimpleName();
-     SharedPreferences preferences;
+    SharedPreferences preferences;
     SharedPreferences.Editor editor;
-     Context mContext;
+    private Context mContext;
 
     public DataStoreClient(Context context) {
         this.preferences = preferences;
-        this.mContext = context;
+        mContext = context;
 
         preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         editor = preferences.edit();
@@ -86,18 +91,24 @@ public class DataStoreClient {
         }
         ParseQuery<ParseObject> restaurantsAndBars = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
         restaurantsAndBars.whereEqualTo(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emailAddress.trim());
+//        restaurantsAndBars.whereEqualTo(Globals.IS_ACCOUNT_ACTIVE, true);
         restaurantsAndBars.getFirstInBackground((object, e) -> {
             if (e != null) {
+                boolean isAccountActive = true;
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
                     baseModelOperationDoneCallback.done(null, getException("Sorry, Your Restaurant/Bar has probably not being setup yet. Consider Creating an account first."));
                 } else if (e.getCode() == ParseException.CONNECTION_FAILED) {
                     baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
+                } else if (object.getBoolean(Globals.IS_ACCOUNT_ACTIVE) != isAccountActive) {
+                    baseModelOperationDoneCallback.done(null, getException("Sorry, account has been deactivated"));
                 } else {
                     baseModelOperationDoneCallback.done(null, getException(e.getMessage()));
                 }
             } else {
                 String existingPassCode = object.getString(Globals.RESTAURANT_OR_BAR_PASSWORD);
-                if (CryptoUtils.getSha256Digest(passCode).equals(existingPassCode)) {
+                if (!object.getBoolean(Globals.IS_ACCOUNT_ACTIVE)) {
+                    baseModelOperationDoneCallback.done(null, getException("Sorry, account may no longer be active"));
+                } else if (CryptoUtils.getSha256Digest(passCode).equals(existingPassCode)) {
                     RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(object);
                     baseModelOperationDoneCallback.done(result, null);
                 } else {
@@ -106,6 +117,7 @@ public class DataStoreClient {
             }
         });
     }
+
 
     public static void checkIfEmailAddressIsAlreadyRegistered(boolean isForAdmin, BaseModelOperationDoneCallback baseModelOperationDoneCallback) {
         String emailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
@@ -124,7 +136,7 @@ public class DataStoreClient {
                 String existingPassCode = object.getString(Globals.RESTAURANT_OR_BAR_REVEALED_PASSWORD);
                 if (isForAdmin) {
                     existingPassCode = object.getString(Globals.RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED);
-                    if (existingPassCode==null){
+                    if (existingPassCode == null) {
                         existingPassCode = AppPrefs.getRestaurantAdminPasswordRevealed();
                     }
                 }
@@ -139,7 +151,7 @@ public class DataStoreClient {
         });
     }
 
-    private static String getNetworkErrorMessage() {
+    public static String getNetworkErrorMessage() {
         return "A network glitch happened. Please review your data connection and try again.";
     }
 
@@ -158,7 +170,7 @@ public class DataStoreClient {
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, waiterTag);
-        eMenuOrdersQuery.whereExists(Globals.ORDER_PAYMENT_STATUS);
+//        eMenuOrdersQuery.whereExists(Globals.ORDER_PAYMENT_STATUS);
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);
         }
@@ -204,6 +216,90 @@ public class DataStoreClient {
         });
     }
 
+    private static Exception getException(String message) {
+        if (message.toLowerCase().contains("nullpointerexception")) {
+            message = "Unresolvable Error";
+        }
+        return new Exception(message);
+    }
+
+    public void passwordReset(String restaurantOrBarName, String restaurantEmailAddress,
+                              BaseModelOperationDoneCallback doneCallback) {
+        final long ONE_MINUTE_IN_MILLIS = 60000;
+
+        UiUtils.showOperationsDialog(mContext,"Sending password recovery token to email address",
+                "Please wait...");
+
+        ParseQuery<ParseObject> restaurantBars = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
+        restaurantBars.whereEqualTo(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, restaurantEmailAddress);
+        restaurantBars.getFirstInBackground((object, ex) -> {
+            if (ex != null) {
+
+                doneCallback.done(null, getException("Oops..Something went wrong" + ex.getMessage()));
+                return;
+            }
+            if (object == null) {
+                doneCallback.done(null, getException("Sorry, the entered email address was " +
+                        "not found. Consider signing up if you don't have account with us!"));
+                return;
+            }
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
+            String expiring_time = null;
+            String expiringDate = null;
+            long t = new Date().getTime();
+            Date afterAddingMinutes = new Date(t + (20 * ONE_MINUTE_IN_MILLIS));
+            try {
+
+                expiring_time = sdf.format(afterAddingMinutes);
+                expiringDate = getMyDate(expiring_time);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // Generate a time-based token and send to our database and the provided restaurant email address
+            String otp_token = new SimpleDateFormat("ddHHmmss", Locale.getDefault()).format(
+                    Calendar.getInstance().getTime());
+            object.put(Globals.OTP_TOKEN, CryptoUtils.getSha256Digest(otp_token));
+            object.put(Globals.TOKEN_EXPIRING_DATE, afterAddingMinutes);
+            String finalExpiringDate = expiringDate;
+            object.saveInBackground(e -> {
+                if (e != null) {
+                    UiUtils.dismissProgressDialog();
+                    UiUtils.showErrorMessage(mContext, "Something went wrong", e.getMessage());
+                } else {
+                    EMailClient.sendPasswordRecoveryEmail(true, restaurantEmailAddress,
+                            restaurantOrBarName, otp_token, finalExpiringDate, (done, exc) -> {
+                                UiUtils.dismissProgressDialog();
+                                ((Activity) mContext).runOnUiThread(() -> {
+                                    if (exc == null) {
+                                        UiUtils.showMessage(mContext, "Recovery Message Sent!",
+                                                "A password recovery email was sent to the email provided. " +
+                                                        "If the email is not in your inbox by now, then check the SPAM folder.",
+                                                restaurantOrBarName, restaurantEmailAddress, TokenActivity.class);
+                                    } else {
+                                        UiUtils.showErrorMessage(mContext, "Oops!", exc.getMessage());
+                                    }
+                                });
+                            });
+                }
+            });
+        });
+    }
+
+    private static String getMyDate(String myDate) {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss a", Locale.getDefault());
+        Date date = null;
+        String returnValue = "";
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.ENGLISH).parse(myDate);
+            returnValue = dateFormat.format(date);
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        return returnValue;
+    }
+
     public static void registerAccount(BaseModelOperationDoneCallback baseModelOperationDoneCallback) {
         String restaurantOrBarName = AppPrefs.getRestaurantOrBarName();
         String emailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
@@ -231,6 +327,7 @@ public class DataStoreClient {
         newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emailAddress);
         newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_PASSWORD, CryptoUtils.getSha256Digest(passCode));
         newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_REVEALED_PASSWORD, passCode);
+        newRestaurantOrBar.put(Globals.IS_ACCOUNT_ACTIVE, true); // Sets is_account_active to true
         newRestaurantOrBar.saveInBackground(e -> {
             if (e == null) {
                 RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(newRestaurantOrBar);
@@ -247,7 +344,7 @@ public class DataStoreClient {
         });
     }
 
-    private static void createNewAdminAccount(RestaurantOrBarInfo restaurantOrBarInfo, ParseObject restaurant){
+    private static void createNewAdminAccount(RestaurantOrBarInfo restaurantOrBarInfo, ParseObject restaurant) {
         String passCode = restaurant.getString(Globals.RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED);
 
         ParseUser user = new ParseUser();
@@ -424,36 +521,89 @@ public class DataStoreClient {
         });
     }
 
+
     public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
-        ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery(Globals.WAITERS);
-        waitersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
-        waitersQuery.findInBackground((objects, e) -> {
-            if (e == null) {
-                if (!objects.isEmpty()) {
-                    List<String> waitersTagList = new ArrayList<>();
-                    for (ParseObject parseObject : objects) {
-                        String waiterTag = parseObject.getString(Globals.WAITER_TAG);
-                        if (!waitersTagList.contains(waiterTag)) {
-                            waitersTagList.add(waiterTag);
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("user_type", 1);
+        query.whereEqualTo("res_id", AppPrefs.getRestaurantOrBarId());
+        query.findInBackground(new FindCallback<ParseUser>() {
+            public void done(List<ParseUser> users, ParseException e) {
+                if (e == null) {
+                    if(!users.isEmpty()) {
+                        List<String> waitersTagList = new ArrayList<>();
+                        // The query was successful, returns the users that matches
+                        // the criterias.
+                        for (ParseUser user : users) {
+                            // Get matched users
+                            Timber.i(user.getUsername());
+                            String waiterTag = user.getUsername();
+                            if (!waitersTagList.contains(waiterTag)) {
+                                waitersTagList.add(waiterTag);
+                            }
+                        }
+                        CharSequence[] waiters = new CharSequence[waitersTagList.size()];
+                        for (int i = 0; i < waiters.length; i++) {
+                            waiters[i] = waitersTagList.get(i);
+                        }
+                        waitersFetchDoneCallBack.done(null, waiters);
+                    }else{
+                        if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                            waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
+                        } else {
+                            waitersFetchDoneCallBack.done(e, (CharSequence) null);
                         }
                     }
-                    CharSequence[] waiters = new CharSequence[waitersTagList.size()];
-                    for (int i = 0; i < waiters.length; i++) {
-                        waiters[i] = waitersTagList.get(i);
-                    }
-                    waitersFetchDoneCallBack.done(null, waiters);
                 } else {
-                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
-                }
-            } else {
-                if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
-                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
-                } else {
-                    waitersFetchDoneCallBack.done(e, (CharSequence) null);
+                    // Something went wrong.
+                    Timber.i("No user found!");
                 }
             }
         });
     }
+
+    public static void fetchDrinksServed(int skip,
+                                         GetDrinksServed getDrinksServed){
+
+        ParseQuery<ParseObject> drinksServed = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        drinksServed.whereEqualTo(Globals.DRINK_READY, true);
+        drinksServed.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
+        drinksServed.whereEqualTo(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+        drinksServed.whereEqualTo(Globals.BAR_REJECTED_ORDER, false);
+        if (skip != 0) {
+            drinksServed.setSkip(skip);
+        }
+        drinksServed.findInBackground((objects, e) -> {
+            if (e == null){
+
+                int count = 0;
+                int drink = 0;
+
+                for (ParseObject orderObject : objects) {
+
+                    EMenuOrder order = loadParseObjectIntoEMenuOrder(orderObject);
+
+                    for (EMenuItem item : order.getItems()) {
+                        if (item.parentCategory.equals(Globals.DRINKS)) {
+
+                            drink = item.getOrderedQuantity();
+                        }
+
+                        count = count + drink;
+                    }
+
+                }
+
+//                Timber.i(String.valueOf(count));
+                getDrinksServed.done(String.valueOf(count), null);
+
+
+            }else {
+                 Timber.i(e);
+            }
+        });
+
+    }
+
 
     public static void setQuantityAvailableInStockForItem(int qtyInStock, String itemId, EMenuItemUpdateDoneCallback eMenuItemUpdateDoneCallback) {
         ParseQuery<ParseObject> itemQuery = ParseQuery.getQuery(Globals.EMenuItems);
@@ -498,15 +648,20 @@ public class DataStoreClient {
         });
     }
 
-    public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder){
+    public static void rejectEmenuOrder(String orderId, Boolean rejected, RejectedOrder rejectedOrder) {
 
-    // Connect to the parse server
+        // Connect to the parse server
         ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         String deviceId = AppPrefs.getDeviceId();
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         // Setting query clauses
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        if (AppPrefs.getUseType() == Globals.KITCHEN) {
+            orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
+        } else if (AppPrefs.getUseType() == Globals.BAR) {
+            orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
+        }
         orderQuery.getFirstInBackground((object, e) -> {
             if (object != null) {
                 int appUseType = AppPrefs.getUseType();
@@ -517,7 +672,7 @@ public class DataStoreClient {
                     rejectionStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
                 }
                 if (deviceId != null && rejectionStatus != null) {
-                    String errorMessage = " Order was rejected";
+                    String errorMessage = "Order was rejected by the bar";
                     rejectedOrder.done(true, getException(errorMessage));
                 } else {
                     if (deviceId != null) {
@@ -529,10 +684,40 @@ public class DataStoreClient {
                         Boolean orderRejectionState = true;
                         Boolean orderAcceptedState = false;
                         Boolean rejectedNotifier = false;
-                        object.put(Globals.REJECTED_ORDER, orderRejectionState);
-                        object.put(Globals.ACCEPTED_ORDER, orderAcceptedState);
+
+                        if (AppPrefs.getUseType() == Globals.BAR) {
+                            object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
+                            object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
+                        } else if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                            object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
+                            object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
+                        }
+
                         object.put(Globals.REJECTED_NOTIFIER, rejectedNotifier);
-                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "REJECTED" + '"');
+                        if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                            object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_REJECTED" + '"');
+                        } else if (AppPrefs.getUseType() == Globals.BAR) {
+                            object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_REJECTED" + '"');
+                        }
+//                        "[{\"createdAt\":1573663096118,\"customerTag\":\"de\",\"favouriteCount\":0,\"inStock\":true,\"menuItemDescription\":\"medium size\",\"menuItemDisplayPhotoUrl\":\"https://cdn.filestackcontent.com/6lonGsyTahAPr2v3SgAW\",\"menuItemId\":\"hckf0302oq\",\"menuItemName\":\"plastic coke\",\"menuItemPrice\":\"100\",\"metaDataIcon\":0,\"orderedQuantity\":1,\"parentCategory\":\"drinks\",\"quantityAvailableInStock\":18,\"restaurantOrBarId\":\"NstZkDTWhw\",\"reviewsCount\":0,\"tableTag\":\"de\",\"updatedAt\":1574254625947,\"waiterTag\":\"charles\"}]"
+                        EMenuOrder order = loadParseObjectIntoEMenuOrder(object);
+                        for(EMenuItem item: order.getItems()){
+                            if (item.parentCategory.equals(Globals.DRINKS)){
+                                Log.d("sunsin", "Drink price: " + item.menuItemPrice + item.parentCategory);
+                                item.setOrderedQuantity(0);
+                                Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+                            }
+                            if(item.parentCategory.equals(Globals.FOOD)){
+                                Log.d("sunsin", "FOOD PRICE: " + item.menuItemName);
+                                item.setOrderedQuantity(0);
+                                Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+                            }
+                        }
+
+                        String newOrder = serializeEMenuItems(order.getItems());
+                        Log.d("sunsin", newOrder);
+                        object.put(Globals.ORDERED_ITEMS, newOrder);
+
                     }
                     object.saveInBackground(e1 -> {
                         if (e1 == null) {
@@ -547,7 +732,80 @@ public class DataStoreClient {
             // Send notification
             EMenuOrder insertToRejected = loadParseObjectIntoEMenuOrder(object);
             sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(insertToRejected),
-                Globals.REJECTED_ORDER);
+                    Globals.BAR_REJECTED_ORDER);
+        });
+    }
+
+    public static void acceptEmenuOrder(String orderId, Boolean accepted, AcceptedOrder acceptedOrder) {
+        // Connect to the parse server
+        ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        String deviceId = AppPrefs.getDeviceId();
+        String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
+        // Setting query clauses
+        orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
+        orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+        if (AppPrefs.getUseType() == Globals.KITCHEN) {
+            orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
+        } else if (AppPrefs.getUseType() == Globals.BAR) {
+            orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
+        }
+        orderQuery.getFirstInBackground((object, e) -> {
+            if (object != null) {
+                int appUseType = AppPrefs.getUseType();
+                String acceptanceStatus = null;
+                if (appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
+                    acceptanceStatus = object.getString(Globals.KITCHEN_ATTENDANT_DEVICE_ID);
+                } else if (appUseType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
+                    acceptanceStatus = object.getString(Globals.BAR_ATTENDANT_DEVICE_ID);
+                }
+                if (deviceId != null && acceptanceStatus != null) {
+                    object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
+                                    ? Globals.KITCHEN_ATTENDANT_ID
+                                    : Globals.BAR_ATTENDANT_ID,
+                            deviceId);
+                    Boolean orderRejectionState = false;
+                    Boolean orderAcceptedState = true;
+                    Boolean acceptedNotifier = true;
+
+                    if (AppPrefs.getUseType() == Globals.BAR) {
+                        object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
+                    } else if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                        object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
+                        object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
+                    }
+
+                    object.put(Globals.REJECTED_NOTIFIER, acceptedNotifier);
+                    if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_ACCEPTED" + '"');
+                    } else if (AppPrefs.getUseType() == Globals.BAR) {
+                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_ACCEPTED" + '"');
+                    }
+
+                    object.saveInBackground(e1 -> {
+                        if (e1 == null) {
+                            acceptedOrder.done(true, null);
+                        } else {
+                            acceptedOrder.done(true, e1);
+                        }
+                    });
+
+                    //String errorMessage = " Order was rejected by the bar";
+                    //acceptedOrder.done(true, getException(errorMessage));
+                } else {
+//                    if (deviceId != null) {
+//                        //
+//
+//                    }
+
+                }
+            }
+
+            // Send notification
+            EMenuOrder insertToAccepted = loadParseObjectIntoEMenuOrder(object);
+            sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION,
+                    serializeEMenuOrder(insertToAccepted),
+                    Globals.BAR_REJECTED_ORDER);
         });
     }
 
@@ -595,13 +853,13 @@ public class DataStoreClient {
     }
 
 
-/* This method fetches all available menu  items for waiter, kitchen and bar */
+    /* This method fetches all available menu  items for waiter, kitchen and bar */
     public static void fetchAvailableEMenuItemsForRestaurant(int skip,
                                                              EMenuItemsFetchDoneCallBack fetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> eMenuItemsQuery = ParseQuery.getQuery(Globals.EMenuItems);
         eMenuItemsQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        if(AppPrefs.getUseType() != Globals.WAITER) {
+        if (AppPrefs.getUseType() != Globals.WAITER) {
             eMenuItemsQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
         }
         eMenuItemsQuery.setLimit(100);
@@ -726,14 +984,16 @@ public class DataStoreClient {
         return eMenuItemCategory;
     }
 
-    public static void searchEMenuItems(String searchString, EMenuItemsFetchDoneCallBack eMenuItemsFetchDoneCallBack) {
+    public static void searchEMenuItems(Context context, String searchString, EMenuItemsFetchDoneCallBack eMenuItemsFetchDoneCallBack) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> searchQuery = ParseQuery.getQuery(Globals.EMenuItems);
         searchQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        if(searchString.length() > 0) {
+        if (searchString.length() > 0) {
             searchQuery.whereContains(Globals.EMENU_ITEM_NAME, searchString.toLowerCase());
         }
-        searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType());
+        if(AppPrefs.getUseType() != Globals.WAITER) {
+            searchQuery.whereEqualTo(Globals.DESTINATION_ID, AppPrefs.getUseType()); // return only items that are specific to the user's designation (Kitchen or bar)
+        }
         searchQuery.findInBackground((objects, e) -> {
             if (e != null) {
                 if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
@@ -809,7 +1069,6 @@ public class DataStoreClient {
             }
         });
     }
-
 
 
     /* create menu item */
@@ -1024,21 +1283,30 @@ public class DataStoreClient {
             if (existingItems == null) {
                 existingItems = new ArrayList<>();
             }
+
             if (existingItems.contains(eMenuItem)) {
                 int indexOfEMenuItem = existingItems.indexOf(eMenuItem);
                 eMenuItem = existingItems.get(indexOfEMenuItem);
                 int previouslyOrderedQuantity = eMenuItem.getOrderedQuantity();
-                int quantityIncrement = previouslyOrderedQuantity + increment;
-
-
-                eMenuItem.setOrderedQuantity(quantityIncrement);
-                eMenuItem.setTableTag(tableTagValue);
-                eMenuItem.setCustomerTag(customerTagValue);
-                eMenuItem.setWaiterTag(waiterTagValue);
-                existingItems.set(indexOfEMenuItem, eMenuItem);
+                int quantityIncrement = 0;
+                if (checkItemInStock(eMenuItem, previouslyOrderedQuantity)) {
+                    quantityIncrement = previouslyOrderedQuantity + increment;
+                    eMenuItem.setOrderedQuantity(quantityIncrement);
+                    eMenuItem.setTableTag(tableTagValue);
+                    eMenuItem.setCustomerTag(customerTagValue);
+                    eMenuItem.setWaiterTag(waiterTagValue);
+                    existingItems.set(indexOfEMenuItem, eMenuItem);
+                } else {
+                    quantityIncrement = previouslyOrderedQuantity;
+                    eMenuItem.setOrderedQuantity(quantityIncrement);
+                    eMenuItem.setTableTag(tableTagValue);
+                    eMenuItem.setCustomerTag(customerTagValue);
+                    eMenuItem.setWaiterTag(waiterTagValue);
+                    existingItems.set(indexOfEMenuItem, eMenuItem);
+                    Toast.makeText(mContext, "Sorry item is out of stock", Toast.LENGTH_SHORT).show();
+                }
 
             } else {
-
 
                 existingItems.add(eMenuItem);
             }
@@ -1046,6 +1314,14 @@ public class DataStoreClient {
             customerOrder.setDirty(true);
             customerOrder.update();
             eMenuCustomerOrderCallBack.done(customerOrder, eMenuItem, null);
+        }
+    }
+
+    private boolean checkItemInStock(EMenuItem eMenuItem, int previouslyOrderedQuantity) {
+        if (previouslyOrderedQuantity <= eMenuItem.getQuantityAvailableInStock()) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -1065,34 +1341,136 @@ public class DataStoreClient {
             } else {
                 newQuantity = existingQuantity - 1; // -1
             }
+//            list array of items
+//            List<EMenuItem> ordered_items  = eMenuOrder.getItems();
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-//            if (newQuantity >= eMenuItem.getQuantityAvailableInStock()){
-//                UiUtils.showSafeToast("Sorry the stock is empty");
-//            }
-//            else {
-                if (newQuantity <= 0) {
-                    if (items.size() == 1) {
-                        eMenuOrder.delete();
-                    } else {
-                        items.remove(eMenuItem);
-                        eMenuOrder.setItems(items);
-                        eMenuOrder.setDirty(true);
-                        eMenuOrder.update();
-                        EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-                    }
+            if (newQuantity <= 0) {
+//                for (EMenuItem item : ordered_items) {
+//
+//                }
+                if (items.size() == 1) {
+//                    eMenuOrder.delete();
+                    UiUtils.showSafeToast("You can not reduce beyond 1");
                 } else {
-                    eMenuItem.setOrderedQuantity(newQuantity);
-                    items.set(indexOfItem, eMenuItem);
+                    items.remove(eMenuItem);
                     eMenuOrder.setItems(items);
                     eMenuOrder.setDirty(true);
                     eMenuOrder.update();
+                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
                 }
-                eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
-//            }
+            } else {
+                eMenuItem.setOrderedQuantity(newQuantity);
+                items.set(indexOfItem, eMenuItem);
+                eMenuOrder.setItems(items);
+                eMenuOrder.setDirty(true);
+                eMenuOrder.update();
+            }
+            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
         } else {
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }
     }
+//
+//    public static void decrementEMenuDrinksFromCustomerOrder(int forcedQuantity,
+//                                                           EMenuOrder eMenuOrder,
+//                                                           EMenuItem eMenuItem,
+//                                                           EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
+//        List<EMenuItem> items = eMenuOrder.getItems();
+//        if (items.contains(eMenuItem)) {
+//            int indexOfItem = items.indexOf(eMenuItem);
+//            EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
+//            int existingQuantity = eMenuItem.getOrderedQuantity();
+//            EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
+//            int newQuantity;
+//            if (forcedQuantity != -1) {
+//                newQuantity = forcedQuantity;
+//            } else {
+//                newQuantity = existingQuantity - 1;
+//            }
+//            EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
+//            if (newQuantity <= 0) {
+////
+//                if (items.size() == 0) {
+////                    eMenuOrder.delete();
+//                    UiUtils.showSafeToast("You can not reduce beyond 1");
+//=======
+////            if (newQuantity >= eMenuItem.getQuantityAvailableInStock()){
+////                UiUtils.showSafeToast("Sorry the stock is empty");
+////            }
+////            else {
+//                if (newQuantity <= 0) {
+//                    if (items.size() == 1) {
+//                        eMenuOrder.delete();
+//                    } else {
+//                        items.remove(eMenuItem);
+//                        eMenuOrder.setItems(items);
+//                        eMenuOrder.setDirty(true);
+//                        eMenuOrder.update();
+//                        EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+//                    }
+//                } else {
+//                    eMenuItem.setOrderedQuantity(newQuantity);
+//                    items.set(indexOfItem, eMenuItem);
+//                    eMenuOrder.setItems(items);
+//                    eMenuOrder.setDirty(true);
+//                    eMenuOrder.update();
+//                }
+//                eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
+////            }
+//        } else {
+//            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
+//        }
+//    }
+
+    public static void decrementEMenuDrinksFromCustomerOrder(int forcedQuantity,
+                                                             EMenuOrder eMenuOrder,
+                                                             EMenuItem eMenuItem,
+                                                             EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
+        List<EMenuItem> items = eMenuOrder.getItems();
+        if (items.contains(eMenuItem)) {
+            int indexOfItem = items.indexOf(eMenuItem);
+            EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
+            int existingQuantity = eMenuItem.getOrderedQuantity();
+            EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
+            int newQuantity;
+            if (forcedQuantity != -1) {
+                newQuantity = forcedQuantity;
+            } else {
+                newQuantity = existingQuantity - 1;
+            }
+            EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
+//            if (newQuantity >= 0) {
+////
+//                if (items.size() == 0) {
+////                    eMenuOrder.delete();
+//                    UiUtils.showSafeToast("You can not reduce beyond 1");
+            if (newQuantity <= 0) {
+                UiUtils.showSafeToast("You have not add any drinks");
+//                            eMenuOrder.delete();
+                items.remove(eMenuItem);
+                eMenuOrder.setItems(items);
+                eMenuOrder.setDirty(true);
+                eMenuOrder.update();
+                EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+
+            } else {
+                eMenuItem.setOrderedQuantity(newQuantity);
+                items.set(indexOfItem, eMenuItem);
+                eMenuOrder.setItems(items);
+                eMenuOrder.setDirty(true);
+                eMenuOrder.update();
+            }
+            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
+//            }
+//                } else {
+//                    eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
+//                }
+//            }else{
+//
+//            }
+        }
+    }
+
 
     public static EMenuOrder getCustomerOrder(String tableTagValue, String customerTagValue) {
         return SQLite
@@ -1162,8 +1540,6 @@ public class DataStoreClient {
         for (EMenuOrder eMenuOrder : orders) {
             if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.NOT_YET_SENT) {
                 eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
-            }else if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.REJECTED){
-                eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
             }
             checkAndPushOrder(eMenuOrder, (eMenuOrder1, exists, e) -> {
                 if (e == null) {
@@ -1175,10 +1551,11 @@ public class DataStoreClient {
             });
         }
     }
-// decrease item from e-menu items list
+
+    // decrease item from e-menu items list
     private static void decreaseItemInStock(EMenuOrder eMenuOrder) {
         // get ordered_items from eMenuOrder
-        List<EMenuItem> ordered_items  = eMenuOrder.getItems();
+        List<EMenuItem> ordered_items = eMenuOrder.getItems();
         // loop through
         for (EMenuItem item : ordered_items) {
             int stockNumber = item.getQuantityAvailableInStock();
@@ -1197,10 +1574,10 @@ public class DataStoreClient {
         boolean has_drink = false, has_food = false;
         // loop through the list of eMenuItems
         List<EMenuItem> eMenuItems = eMenuOrder.getItems();
-        for(EMenuItem eMenuItem: eMenuItems){
+        for (EMenuItem eMenuItem : eMenuItems) {
             if (eMenuItem.parentCategory.equals("drinks")) {
                 has_drink = true;
-            }else{
+            } else {
                 has_food = true;
             }
         }
@@ -1224,26 +1601,30 @@ public class DataStoreClient {
         newOrderObject.put(Globals.HAS_FOOD, has_food);
         newOrderObject.put(Globals.FOOD_READY, false);
         newOrderObject.put(Globals.DRINK_READY, false);
-        String waiterDeviceId = eMenuOrder.getWaiterDeviceId();
-        if (waiterDeviceId != null) {
-            newOrderObject.put(Globals.WAITER_DEVICE_ID, waiterDeviceId);
+
+        newOrderObject.put(Globals.BAR_REJECTED_ORDER, false);
+        newOrderObject.put(Globals.BAR_ACCEPTED_ORDER, false);
+        newOrderObject.put(Globals.KITCHEN_ACCEPTED_ORDER, false);
+        newOrderObject.put(Globals.KITCHEN_REJECTED_ORDER, false);
+
+        if (ParseUser.getCurrentUser() != null) {
+            if(AppPrefs.getUseType() == Globals.WAITER) {
+                newOrderObject.put(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
+            }
         }
         newOrderObject.put(Globals.RESTAURANT_OR_BAR_ID, eMenuOrder.getRestaurantOrBarId());
         String kitchenAttendantTag = eMenuOrder.getKitchenAttendantTag();
         if (kitchenAttendantTag != null) {
-            newOrderObject.put(Globals.KITCHEN_ATTENDANT_TAG, kitchenAttendantTag);
+            if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                newOrderObject.put(Globals.KITCHEN_ATTENDANT_TAG, kitchenAttendantTag);
+                newOrderObject.put(Globals.KITCHEN_ATTENDANT_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
+            }
         }
-        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
-        if (kitchenAttendantDeviceId != null) {
-            newOrderObject.put(Globals.KITCHEN_ATTENDANT_DEVICE_ID, kitchenAttendantDeviceId);
-        }
-        String barAttendantTag = eMenuOrder.getBarAttendantTag();
-        if (barAttendantTag != null) {
-            newOrderObject.put(Globals.BAR_ATTENDANT_TAG, barAttendantTag);
-        }
-        String barAttendantDeviceId = eMenuOrder.getBarAttendantDeviceId();
-        if (barAttendantDeviceId != null) {
-            newOrderObject.put(Globals.BAR_ATTENDANT_DEVICE_ID, barAttendantDeviceId);
+        if (ParseUser.getCurrentUser() != null) {
+            if (AppPrefs.getUseType() == Globals.BAR) {
+                newOrderObject.put(Globals.BAR_ATTENDANT_TAG, ParseUser.getCurrentUser().getUsername());
+                newOrderObject.put(Globals.BAR_ATTENDANT_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
+            }
         }
         Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
         if (orderProgressStatus != null) {
@@ -1256,8 +1637,15 @@ public class DataStoreClient {
             newOrderObject.put(Globals.ORDER_PAYMENT_STATUS, orderPaymentStatusString);
         }
         List<EMenuItem> orderedItems = eMenuOrder.getItems();
+
+
+        Log.d("something", orderedItems.toString());
+
         if (orderedItems != null && !orderedItems.isEmpty()) {
             String orderedItemsString = serializeEMenuItems(orderedItems);
+
+            List<EMenuItem> news = getBackEMenuItemsFromString(orderedItemsString);
+            Log.d("something2", news.toString());
             newOrderObject.put(Globals.ORDERED_ITEMS, orderedItemsString);
         }
         return newOrderObject;
@@ -1290,22 +1678,30 @@ public class DataStoreClient {
         if (itemsString != null) {
             orderedItems = getBackEMenuItemsFromString(itemsString);
         }
-        eMenuOrder.setOrderId(orderId);
-        eMenuOrder.setTableTag(tableTag);
-        eMenuOrder.setCustomerTag(customerTag);
-        eMenuOrder.setWaiterTag(waiterTag);
-        eMenuOrder.setRestaurantOrBarId(restaurantOrBarId);
-        eMenuOrder.setKitchenAttendantTag(kitchenAttendantTag);
-        eMenuOrder.setBarAttendantTag(barAttendantTag);
-        eMenuOrder.setCreatedAt(parseObject.getCreatedAt().getTime());
-        eMenuOrder.setUpdatedAt(parseObject.getUpdatedAt().getTime());
-        eMenuOrder.setKitchenAttendantDeviceId(kitchenAttendantDeviceId);
-        eMenuOrder.setBarAttendantDeviceId(barAttendantDeviceId);
-        eMenuOrder.setOrderProgressStatus(orderProgressStatus);
-        eMenuOrder.setOrderPaymentStatus(orderPaymentStatus);
-        eMenuOrder.setItems(orderedItems);
-        eMenuOrder.setWaiterDeviceId(waiterDeviceId);
-        eMenuOrder.setDirty(false);
+//        if (parseObject.getBoolean(Globals.KITCHEN_REJECTED_ORDER) || parseObject.getBoolean(Globals.BAR_REJECTED_ORDER)){
+//            if (AppPrefs.getUseType() == 2){
+//                eMenuOrder.setKitchen_rejected(true);
+//            }else {
+//                eMenuOrder.setBar_rejected(true);
+//            }
+//        }else {
+            eMenuOrder.setOrderId(orderId);
+            eMenuOrder.setTableTag(tableTag);
+            eMenuOrder.setCustomerTag(customerTag);
+            eMenuOrder.setWaiterTag(waiterTag);
+            eMenuOrder.setRestaurantOrBarId(restaurantOrBarId);
+            eMenuOrder.setKitchenAttendantTag(kitchenAttendantTag);
+            eMenuOrder.setBarAttendantTag(barAttendantTag);
+            eMenuOrder.setCreatedAt(parseObject.getCreatedAt().getTime());
+            eMenuOrder.setUpdatedAt(parseObject.getUpdatedAt().getTime());
+            eMenuOrder.setKitchenAttendantDeviceId(kitchenAttendantDeviceId);
+            eMenuOrder.setBarAttendantDeviceId(barAttendantDeviceId);
+            eMenuOrder.setOrderProgressStatus(orderProgressStatus);
+            eMenuOrder.setOrderPaymentStatus(orderPaymentStatus);
+            eMenuOrder.setItems(orderedItems);
+            eMenuOrder.setWaiterDeviceId(waiterDeviceId);
+            eMenuOrder.setDirty(false);
+//        }
         return eMenuOrder;
     }
 
@@ -1424,39 +1820,37 @@ public class DataStoreClient {
                     Boolean foodReady = (Boolean) object.get(Globals.FOOD_READY);
                     Boolean drinkReady = (Boolean) object.get(Globals.DRINK_READY);
 
-                    if (hasDrink && hasFood){
+                    if (hasDrink && hasFood) {
                         // check if the user is a bar or kitchen attendant
-                        if(currentUser.getInt("user_type") == 3 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID){
+                        if (currentUser.getInt("user_type") == 3 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID) {
                             // bar attendant or admin
-                            if(foodReady){
+                            if (foodReady) {
                                 // set status to done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"DONE"+'"');
-                            }else{
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                            } else {
                                 // set status to almost done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"ALMOST DONE"+'"');
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
                             }
                             object.put(Globals.DRINK_READY, true);
                         }
-                        if(currentUser.getInt("user_type") == 2 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID){
+                        if (currentUser.getInt("user_type") == 2 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID) {
                             // kitchen attendant or admin
-                            if(drinkReady){
+                            if (drinkReady) {
                                 // set status to done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"DONE"+'"');
-                            }else{
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                            } else {
                                 // set status to almost done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"'+"ALMOST DONE"+'"');
+                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
                             }
                             object.put(Globals.FOOD_READY, true);
                         }
-                    }
-                     else if (hasDrink){
-                         if(orderProgressString.equals('"'+"DONE"+'"')){
-                             object.put(Globals.DRINK_READY, true);
-                         }
+                    } else if (hasDrink) {
+                        if (orderProgressString.equals('"' + "DONE" + '"')) {
+                            object.put(Globals.DRINK_READY, true);
+                        }
                         object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
-                    }
-                    else if (hasFood){
-                        if(orderProgressString.equals('"'+"DONE"+'"') ) {
+                    } else if (hasFood) {
+                        if (orderProgressString.equals('"' + "DONE" + '"')) {
                             object.put(Globals.FOOD_READY, true);
                         }
                         object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
@@ -1510,7 +1904,8 @@ public class DataStoreClient {
         eMenuOrder.setDirty(false);
         ParseObject newOrder = createParseObjectFromOrder(null, eMenuOrder);
         if (deviceId != null) {
-            newOrder.put(Globals.WAITER_DEVICE_ID, deviceId);
+//            newOrder.put(Globals.WAITER_DEVICE_ID, deviceId);
+            newOrder.put(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
         }
         newOrder.saveInBackground(e -> {
             if (e == null) {
@@ -1554,6 +1949,8 @@ public class DataStoreClient {
         drinkOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         drinkOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         drinkOrdersQuery.whereEqualTo(Globals.HAS_DRINK, true);
+        // Remove any order that has been rejected from the bar's table
+        drinkOrdersQuery.whereNotEqualTo(Globals.BAR_ACCEPTED_ORDER, false);
         drinkOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             drinkOrdersQuery.setSkip(skip);
@@ -1601,7 +1998,7 @@ public class DataStoreClient {
         String deviceId = AppPrefs.getDeviceId();
         ParseQuery<ParseObject> eMenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getString("username")); // get orders WRT logged in user
+        eMenuOrdersQuery.whereEqualTo(Globals.WAITER_TAG, ParseUser.getCurrentUser().getUsername()); // get orders WRT logged in user
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
@@ -1645,6 +2042,8 @@ public class DataStoreClient {
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.whereEqualTo(Globals.HAS_FOOD, true);
+        // Exclude orders that have been rejected
+        eMenuOrdersQuery.whereNotEqualTo(Globals.KITCHEN_ACCEPTED_ORDER, false);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);
@@ -1655,19 +2054,19 @@ public class DataStoreClient {
                 if (!objects.isEmpty()) {
                     for (ParseObject orderObject : objects) {
                         EMenuOrder eMenuOrder = loadParseObjectIntoEMenuOrder(orderObject);
-                        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
-                        if (kitchenAttendantDeviceId == null) {
-                            if (!retrievedOrders.contains(eMenuOrder)) {
-                                retrievedOrders.add(eMenuOrder);
-                            }
-                        } else {
-                            // fetching orders WRT kitchen device id
-                            if (kitchenAttendantDeviceId.equals(deviceId)) {
-                                if (!retrievedOrders.contains(eMenuOrder)) {
-                                    retrievedOrders.add(eMenuOrder);
-                                }
-                            }
+//                        String kitchenAttendantDeviceId = eMenuOrder.getKitchenAttendantDeviceId();
+//                        if (kitchenAttendantDeviceId == null) {
+                        if (!retrievedOrders.contains(eMenuOrder)) {
+                            retrievedOrders.add(eMenuOrder);
                         }
+//                        } else {
+//                            // fetching orders WRT kitchen device id
+//                            if (kitchenAttendantDeviceId.equals(deviceId)) {
+//                                if (!retrievedOrders.contains(eMenuOrder)) {
+//                                    retrievedOrders.add(eMenuOrder);
+//                                }
+//                            }
+//                        }
                     }
                     eMenuOrdersFetchDoneCallBack.done(retrievedOrders, null);
                 } else {
@@ -1683,13 +2082,6 @@ public class DataStoreClient {
                 }
             }
         });
-    }
-
-    private static Exception getException(String message) {
-        if (message.toLowerCase().contains("nullpointerexception")) {
-            message = "Unresolvable Error";
-        }
-        return new Exception(message);
     }
 
     public static void searchOutgoingOrders(int skip, String searchString, EMenuOrdersFetchDoneCallBack eMenuOrdersFetchDoneCallBack) {
@@ -1708,9 +2100,9 @@ public class DataStoreClient {
         queries.add(tableTagQuery);
         ParseQuery<ParseObject> resultantQuery = ParseQuery.or(queries);
         resultantQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
-        if (deviceId != null) {
+        if (ParseUser.getCurrentUser() != null) {
             //This ensures that the waiter can only search for orders sent out from the current terminal
-            resultantQuery.whereEqualTo(Globals.WAITER_DEVICE_ID, deviceId);
+            resultantQuery.whereEqualTo(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
         }
         resultantQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         resultantQuery.orderByDescending("createdAt");
@@ -1751,10 +2143,10 @@ public class DataStoreClient {
         String deviceId = AppPrefs.getDeviceId();
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         // fetch orders with has_drink == true if useType == 2 and has_food if useType == 3
-        if(AppPrefs.getUseType() == Globals.KITCHEN){
+        if (AppPrefs.getUseType() == Globals.KITCHEN) {
             eMenuOrdersQuery.whereEqualTo(Globals.HAS_FOOD, true);
 
-        }else if(AppPrefs.getUseType() == Globals.BAR){
+        } else if (AppPrefs.getUseType() == Globals.BAR) {
             eMenuOrdersQuery.whereEqualTo(Globals.HAS_DRINK, true);
 
         }

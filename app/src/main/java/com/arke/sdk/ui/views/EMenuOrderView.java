@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -39,6 +40,7 @@ import com.google.gson.reflect.TypeToken;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -145,6 +147,7 @@ public class EMenuOrderView extends MaterialCardView implements
         setupCustomerName(searchString, customerName);
         List<EMenuItem> orderedItems = eMenuOrder.getItems();
         String description = stringifyEMenuItems(orderedItems);
+        Log.d("sonsin", description);
         orderedItemsSummaryView.setText(UiUtils.fromHtml(description));
         totalPrice = getTotalPrice(orderedItems);
         tintCurrencyViews();
@@ -161,6 +164,10 @@ public class EMenuOrderView extends MaterialCardView implements
         setupOrderImageView(eMenuOrder);
         setOnClickListener(this);
         setOnLongClickListener(this);
+    }
+
+    private void removeOrderWithRejected(List<EMenuItem> orderedItems){
+//        List<EMenuItem> sortedOrderedItem = orderedItems.
     }
 
     private void setupCustomerName(String searchString, String customerName) {
@@ -251,7 +258,7 @@ public class EMenuOrderView extends MaterialCardView implements
         if (orderProgressStatus != null) {
             if (eMenuOrder.isDirty()) {
                 orderProgressTextView.setText("Not Yet sent to Kitchen/Bar");
-            } else {
+            }else{
                 orderProgressTextView.setText(WordUtils.capitalize(orderProgressStatus.name().replace("_", " ")));
             }
         }
@@ -308,12 +315,15 @@ public class EMenuOrderView extends MaterialCardView implements
     @Override
     public void onClick(View view) {
         UiUtils.blinkView(view);
-        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity) {
+        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
             String currentDeviceId = AppPrefs.getDeviceId();
+//            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
             if (currentDeviceId != null) {
                 String attendantDeviceId = getContext() instanceof KitchenHomeActivity
-                        ? eMenuOrder.getKitchenAttendantDeviceId() : eMenuOrder.getBarAttendantDeviceId();
-                EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", TaggedDeviceId=" + attendantDeviceId);
+                        ? eMenuOrder.getKitchenAttendantDeviceId()
+                        : eMenuOrder.getBarAttendantDeviceId();
+                EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", " +
+                        "TaggedDeviceId=" + attendantDeviceId);
                 if (attendantDeviceId != null) {
                     if (!attendantDeviceId.equals(currentDeviceId)) {
                         takeOrder();
@@ -340,14 +350,21 @@ public class EMenuOrderView extends MaterialCardView implements
         takeOrderConfirmationBuilder.setNegativeText("NO");
         takeOrderConfirmationBuilder.setPositiveListener(lottieAlertDialog -> {
             dismissConsentDialog(lottieAlertDialog);
+            acceptOrder();
             markOrderAsTaken();
         });
         takeOrderConfirmationBuilder.setNegativeListener(lottieAlertDialog -> {
             dismissConsentDialog(lottieAlertDialog);
             rejectOrder();
         });
-//        takeOrderConfirmationBuilder.setNegativeListener(this::dismissConsentDialog);
-        takeOrderConfirmationBuilder.build().show();
+
+        /* show dialog only when order is pending */
+        if(eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+            takeOrderConfirmationBuilder.build().show();
+        }else{
+            viewOrder();
+        }
+
     }
 
     private void dismissConsentDialog(LottieAlertDialog lottieAlertDialog) {
@@ -368,15 +385,32 @@ public class EMenuOrderView extends MaterialCardView implements
         errorCreationErrorDialog.show();
     }
 
+
+
+
     private void rejectOrder(){
         DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
-        Toast.makeText(getContext(), "Order rejected", Toast.LENGTH_SHORT).show();
+        if (AppPrefs.getUseType() == Globals.KITCHEN){
+            Toast.makeText(getContext(), "Order rejected by kitchen", Toast.LENGTH_SHORT).show();
+        }else if (AppPrefs.getUseType() == Globals.BAR) {
+            Toast.makeText(getContext(), "Order rejected by bar", Toast.LENGTH_SHORT).show();
+        }
 //        getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
-        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
+//        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
+    }
+
+    private void acceptOrder(){
+        DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {}) );
+        if (AppPrefs.getUseType() == Globals.KITCHEN){
+            Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
+        }else if (AppPrefs.getUseType() == Globals.BAR) {
+            Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void markOrderAsTaken() {
-        UiUtils.showSafeToast("Please wait...");
+//        UiUtils.showSafeToast("Please wait...");
+        showOperationsDialog("Accepting order","Please wait...");
         DataStoreClient.markItemAsTaken(eMenuOrder.getEMenuOrderId(), (result, e) -> {
             if (e != null) {
                 String errorMessage = e.getMessage();
@@ -391,6 +425,7 @@ public class EMenuOrderView extends MaterialCardView implements
                 eMenuOrder.update();
                 new Handler().postDelayed(this::viewOrder, 1000);
             }
+            dismissProgressDialog();
         });
     }
 
@@ -410,10 +445,13 @@ public class EMenuOrderView extends MaterialCardView implements
         if (getContext() instanceof WaiterHomeActivity || getContext() instanceof UnProcessedOrdersActivity) {
             AlertDialog.Builder orderOptionsDialog = new AlertDialog.Builder(getContext());
             List<CharSequence> orderOptionsList = new ArrayList<>();
+
             orderOptionsList.add("Delete This Order");
+
             if (!eMenuOrder.isDirty()) {
                 orderOptionsList.add("Receive Payment");
             }
+
             CharSequence[] orderOptions = orderOptionsList.toArray(new CharSequence[0]);
             orderOptionsDialog.setTitle("What would you like to do?");
             orderOptionsDialog.setSingleChoiceItems(orderOptions, -1, (dialogInterface, i) -> {
@@ -448,6 +486,7 @@ public class EMenuOrderView extends MaterialCardView implements
         operationsDialog.show();
     }
 
+    /* Delete waiter's order that doesn't contain done or almost done as progress */
     private void deleteOrder() {
         AlertDialog.Builder deleteConsentDialogBuilder = new AlertDialog.Builder(getContext());
         deleteConsentDialogBuilder.setTitle("Delete Order?");
@@ -455,13 +494,14 @@ public class EMenuOrderView extends MaterialCardView implements
         deleteConsentDialogBuilder.setPositiveButton("YES", (dialogInterface, i) -> {
             dialogInterface.dismiss();
             dialogInterface.cancel();
-            //Only delete an order that doesn't contain a done progress report
-            boolean canBeDeleted = true;
+
+            /* get the progress status of the order */
             Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
-            if (orderProgressStatus != null) {
-                canBeDeleted = orderProgressStatus != Globals.OrderProgressStatus.DONE;
-            }
-            if (canBeDeleted) {
+
+            /* Only delete an order that doesn't contain a done or almost progress report */
+            assert orderProgressStatus != null;
+            if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)){
                 showOperationsDialog("Deleting Order", "Please wait...");
                 eMenuOrder.delete();
                 DataStoreClient.deleteEMenuOrderRemotely(eMenuOrder.getEMenuOrderId(), (done, e) -> {
@@ -479,7 +519,8 @@ public class EMenuOrderView extends MaterialCardView implements
                         }
                     }
                 });
-            } else {
+            }
+            else {
                 showErrorMessage("Oops!", "Sorry, this order cannot be deleted as there are already fulfilled orders on it.");
             }
         });
@@ -490,6 +531,7 @@ public class EMenuOrderView extends MaterialCardView implements
         deleteConsentDialogBuilder.create().show();
     }
 
+    /* Receive payment by waiter after order has been served */
     private void receivePayment() {
         Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
         if (orderProgressStatus == Globals.OrderProgressStatus.DONE) {
@@ -519,8 +561,6 @@ public class EMenuOrderView extends MaterialCardView implements
         availablePaymentOptionsDialogBuilder.create().show();
     }
 
-
-
     private void initiateSingleTransferPaymentFlow(String customerKey) {
         AlertDialog.Builder transferPaymentDialog = new AlertDialog.Builder(getContext());
         transferPaymentDialog.setTitle("Payment By Transfer");
@@ -545,11 +585,6 @@ public class EMenuOrderView extends MaterialCardView implements
         transferPaymentDialog.create().show();
     }
 
-
-
-
-
-
     private void initiateSingleCashPaymentFlow(String customerKey) {
         AlertDialog.Builder cashPaymentDialog = new AlertDialog.Builder(getContext());
         cashPaymentDialog.setTitle("Cash Payment");
@@ -573,11 +608,6 @@ public class EMenuOrderView extends MaterialCardView implements
         });
         cashPaymentDialog.create().show();
     }
-
-
-
-
-
 
     private void initiateSingleCardPaymentFlow(String customerKey) {
         EventBus.getDefault().post(new CardProcessorEvent(eMenuOrder, getTotalRawCost(eMenuOrder.getItems()), customerKey));

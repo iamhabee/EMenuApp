@@ -112,6 +112,7 @@ dependencies {
     implementation 'androidx.core:core:1.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'com.airbnb.android:lottie:3.0.7'
+    implementation 'com.github.mohammadatif:Animatoo:master'
     implementation 'com.github.mayuce:LottieAlertDialog:1.1'
     implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'com.ernestoyaquello.stepperform:vertical-stepper-form:2.2.0'

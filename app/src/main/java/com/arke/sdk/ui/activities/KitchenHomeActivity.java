@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -115,7 +117,7 @@ public class KitchenHomeActivity extends BaseActivity {
         initUI();
         initEventHandlers();
 
-        /* trigger work manager every 30sec */
+        /* trigger work manager every 30sec periodically once the activity is active */
         PeriodicWorkRequest periodicWorkRequest =
                 new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 30, TimeUnit.SECONDS)
                 .addTag("periodic_work")
@@ -181,10 +183,11 @@ public class KitchenHomeActivity extends BaseActivity {
             openSearch();
             forceShowSoftKeyBoard();
         });
+
         refreshViewIcon.setOnClickListener(view -> {
             EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
-
         });
+
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             String searchString = searchBox.getText().toString().trim();
@@ -194,10 +197,12 @@ public class KitchenHomeActivity extends BaseActivity {
             }
             closeSearch();
         });
+
         addNewMenuItem.setOnClickListener(view -> {
             Intent createMenuIntent = new Intent(KitchenHomeActivity.this, CreateNewOrEditEMenuItemActivity.class);
             startActivity(createMenuIntent);
         });
+
         searchBox.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -565,18 +570,32 @@ public class KitchenHomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START, true);
-        } else {
-            if (searchCardView.getVisibility() == View.VISIBLE) {
-                closeSearch();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START, true);
             } else {
-                if (mainViewPager.getCurrentItem() != 0) {
-                    mainViewPager.setCurrentItem(0);
+                if (searchCardView.getVisibility() == View.VISIBLE) {
+                    closeSearch();
                 } else {
-                    super.onBackPressed();
+                    if (mainViewPager.getCurrentItem() != 0) {
+                        mainViewPager.setCurrentItem(0);
+                    } else {
+                        super.onBackPressed();
+                    }
                 }
             }
-        }
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
     }
 }

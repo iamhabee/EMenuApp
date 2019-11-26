@@ -50,6 +50,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 @SuppressWarnings("SameParameterValue")
 public class EMenuItemView extends MaterialCardView {
@@ -129,31 +130,48 @@ public class EMenuItemView extends MaterialCardView {
         int appUseType = AppPrefs.getUseType();
         boolean isWaiterView = appUseType == Globals.UseType.USE_TYPE_WAITER.ordinal();
         if (context instanceof OrderSummaryActivity && isWaiterView) {
-            UiUtils.toggleViewVisibility(quantityView, true);
-            itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
-            eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
 
-            incrementItem.setOnClickListener(view -> {
-                UiUtils.blinkView(view);
-                assert eMenuOrder != null;
-               DataStoreClient dataStoreClient = new DataStoreClient(context);
-               dataStoreClient.addEMenuItemToCustomerCart(AppPrefs.getDeviceId(), eMenuOrder.getTableTag(), eMenuOrder.getCustomerTag(), eMenuOrder.getWaiterTag(), 1, eMenuItem, (eMenuOrder1, eMenuItem1, e) -> {
-                    if (e == null) {
-                        EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem1));
-                    }
-                });
-            });
+            /* get the progress status of the order */
+            assert eMenuOrder != null;
+            Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
 
-            decrementItem.setOnClickListener(view -> {
-                UiUtils.blinkView(view);
-                assert eMenuOrder != null;
-                EMenuLogger.d("QuantityLogger", "Existing Quantity Of Item=" + eMenuItem.getOrderedQuantity());
-                DataStoreClient.decrementEMenuItemFromCustomerOrder(-1, eMenuOrder, eMenuItem, (eMenuOrder12, eMenuItem12, e) -> {
-                    if (e == null) {
-                        EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem12));
-                    }
+            /* show and hide increment/decrement layout in waiter order only when the order is still pending */
+            assert orderProgressStatus != null;
+
+            if( orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)){
+
+                /* disable increment and decrement */
+                UiUtils.toggleViewVisibility(quantityView, true);
+                itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
+                eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
+
+
+                incrementItem.setOnClickListener(view -> {
+                    UiUtils.blinkView(view);
+                    assert eMenuOrder != null;
+                    DataStoreClient dataStoreClient = new DataStoreClient(context);
+                    dataStoreClient.addEMenuItemToCustomerCart(AppPrefs.getDeviceId(), eMenuOrder.getTableTag(), eMenuOrder.getCustomerTag(), eMenuOrder.getWaiterTag(), 1, eMenuItem, (eMenuOrder1, eMenuItem1, e) -> {
+                        if (e == null) {
+                            EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem1));
+                        }
+                    });
                 });
-            });
+
+                decrementItem.setOnClickListener(view -> {
+                    UiUtils.blinkView(view);
+                    assert eMenuOrder != null;
+                    EMenuLogger.d("QuantityLogger", "Existing Quantity Of Item=" + eMenuItem.getOrderedQuantity());
+                    DataStoreClient.decrementEMenuItemFromCustomerOrder(-1, eMenuOrder, eMenuItem, (eMenuOrder12, eMenuItem12, e) -> {
+                        if (e == null) {
+                            EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem12));
+                        }
+                    });
+                });
+
+            }else {
+                /* show increment and decrement */
+                UiUtils.toggleViewVisibility(quantityView, false);
+            }
         }
         String menuItemDescription = eMenuItem.getMenuItemDescription();
         if (StringUtils.isNotEmpty(menuItemDescription)) {
@@ -184,6 +202,7 @@ public class EMenuItemView extends MaterialCardView {
                 }
             }
         });
+
         setOnLongClickListener(view -> {
             //Only the waiter/waitress should be able to remove an item from an order, no other person should
             if (getContext() instanceof OrderSummaryActivity && AppPrefs.getUseType() == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
@@ -195,11 +214,16 @@ public class EMenuItemView extends MaterialCardView {
                         dialogInterface.dismiss();
                         dialogInterface.cancel();
                         Globals.OrderPaymentStatus orderPaymentStatus = eMenuOrder.getOrderPaymentStatus();
-                        if (orderPaymentStatus == null) {
+                        /* get the progress status of the order */
+                        Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
+                        assert orderProgressStatus != null;
+
+                        if (orderPaymentStatus == null || orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)
+                                || orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)) {
                             //Let's confirm to make sure this customer hasn't already paid
                             performItemDeletionFromOrder(eMenuOrder, eMenuItem, customerKey);
                         } else {
-                            UiUtils.showSafeToast("Oops! Sorry can't delete an already paid for item");
+                            UiUtils.showSafeToast("Oops! Sorry can't delete an already paid for item or item that has been fulfilled");
                         }
                     }
                 });
