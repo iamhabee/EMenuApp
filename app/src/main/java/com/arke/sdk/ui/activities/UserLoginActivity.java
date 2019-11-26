@@ -122,6 +122,8 @@ public class UserLoginActivity extends AppCompatActivity {
                         // get user's permission level and designation (waiter, bar, etc)
                         int user_type = parseUser.getInt("user_type");
                         // grant user access WRT permission
+
+
                         switch (user_type) {
                             case Globals.KITCHEN:
                                 // kitchen

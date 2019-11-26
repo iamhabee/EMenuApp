@@ -65,7 +65,7 @@
                 tools:layout_editor_absoluteY="463dp" />
 
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btnForgotPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -78,10 +78,9 @@
                 android:textAllCaps="false"
                 android:layout_gravity="end"
                 android:layout_marginEnd="23dp"
-
                 tools:ignore="RtlSymmetry" />
 
-            <com.google.android.material.button.MaterialButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/signIn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
