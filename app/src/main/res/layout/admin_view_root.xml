@@ -98,7 +98,7 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/currency_indicator"
-                        android:layout_width="20dp"
+                        android:layout_width="19dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/naira_icon"
