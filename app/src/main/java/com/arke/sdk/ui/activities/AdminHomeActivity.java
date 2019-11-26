@@ -49,9 +49,9 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseUser;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -66,8 +66,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
-
-import static com.arke.sdk.utilities.UiUtils.dismissProgressDialog;
 
 
 public class AdminHomeActivity extends BaseActivity implements View.OnClickListener {
@@ -240,8 +238,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     SectionedEMenuItemRecyclerViewAdapter sectionedEMenuItemRecyclerViewAdapter = new SectionedEMenuItemRecyclerViewAdapter(this, totalDrinksServed, AdminHomeActivity.class.getSimpleName());
                     displayMoreInfo(totalDrinksServed.size() + " Drinks Served", sectionedEMenuItemRecyclerViewAdapter);
 
-                    // Get and display drinks served
-                    drinksServed(0);
 
                 }else if (indexOfSelection == 3) {
                     Intent restaurantInfo = new Intent(AdminHomeActivity.this, RestaurantOrBarProfileInformationActivity.class);
@@ -273,10 +269,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     switchOptionsBuilder.create().show();
                 } else if (indexOfSelection == 7) {
                     //Load all the waiters in this restaurant/bar
-                    UiUtils.showSafeToast("Please Wait...");
-
-//                    DataStoreClient.fetchWaiters(null);
-
+                    showOperationsDialog("Fetching waiters", "Please Wait");
                     DataStoreClient.fetchWaiters((e, waiters) -> {
                         if (e == null) {
                             androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
@@ -294,10 +287,8 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                             Timber.i("Not found");
                             UiUtils.showSafeToast(e.getMessage());
                         }
+                        dismissProgressDialog();
                     });
-                } else if (indexOfSelection == 8){
-                    // Initiate log out
-                    initLogOut();
                 }
             }
         });
@@ -351,6 +342,20 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         // Get and display drinks served
         drinksServed(0);
     }
+//    private void drinksServed(int skip) {
+//        DataStoreClient.fetchDrinksServed(skip, (results, e) ->{
+//            if (e == null){
+//
+//                Timber.i(results);
+//                sDrinksServed = results;
+//                Toast.makeText(getApplicationContext(), results, Toast.LENGTH_SHORT).show();
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//                });
+//
+//    }
 
     private void fetchSalesFromWaiter(CharSequence waiter) {
         Intent waiterIntent = new Intent(this, WaiterSalesActivity.class);
@@ -644,7 +649,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         adminSummaryItems.add(new AdminSummaryItem(5, "Add User", null, R.drawable.add));
         adminSummaryItems.add(new AdminSummaryItem(6, "Switch", null, R.drawable.admin_view_switcher));
         adminSummaryItems.add(new AdminSummaryItem(7, "Waiters", "Waiters' Sales", R.drawable.waiter_view));
-        adminSummaryItems.add(new AdminSummaryItem(8, "Log out", "Logout admin", R.drawable.log_out));
     }
 
     private void setupRecyclerView() {
