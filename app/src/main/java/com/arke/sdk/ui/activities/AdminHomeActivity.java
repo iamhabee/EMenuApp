@@ -236,8 +236,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     SectionedEMenuItemRecyclerViewAdapter sectionedEMenuItemRecyclerViewAdapter = new SectionedEMenuItemRecyclerViewAdapter(this, totalDrinksServed, AdminHomeActivity.class.getSimpleName());
                     displayMoreInfo(totalDrinksServed.size() + " Drinks Served", sectionedEMenuItemRecyclerViewAdapter);
 
-                    // Get and display drinks served
-                    drinksServed(0);
 
                 }else if (indexOfSelection == 3) {
                     Intent restaurantInfo = new Intent(AdminHomeActivity.this, RestaurantOrBarProfileInformationActivity.class);
@@ -296,27 +294,20 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         });
     }
 
-    private void drinksServed(int skip) {
-        DataStoreClient.fetchDrinksServed(skip, (results, e) ->{
-            if (e == null){
-
-                Timber.i(results);
-                sDrinksServed = results;
-                Toast.makeText(getApplicationContext(), results, Toast.LENGTH_SHORT).show();
-
-            }else {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-                });
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Get and display drinks served
-        drinksServed(0);
-    }
+//    private void drinksServed(int skip) {
+//        DataStoreClient.fetchDrinksServed(skip, (results, e) ->{
+//            if (e == null){
+//
+//                Timber.i(results);
+//                sDrinksServed = results;
+//                Toast.makeText(getApplicationContext(), results, Toast.LENGTH_SHORT).show();
+//
+//            }else {
+//                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//                });
+//
+//    }
 
     private void fetchSalesFromWaiter(CharSequence waiter) {
         Intent waiterIntent = new Intent(this, WaiterSalesActivity.class);
