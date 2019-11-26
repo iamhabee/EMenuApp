@@ -1,6 +1,7 @@
 package com.arke.sdk.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.DialogFragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -38,11 +39,13 @@ import com.arke.sdk.ui.views.ShimmerFrameLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -98,6 +101,7 @@ public class OrderSummaryActivity extends BaseActivity {
     TextView printOrders;
 
     Button print;
+    private LottieAlertDialog operationsDialog;
 
 
     @Override
@@ -276,7 +280,16 @@ public class OrderSummaryActivity extends BaseActivity {
                         dialogInterface.dismiss();
                         dialogInterface.cancel();
                         Globals.OrderProgressStatus orderProgressStatus = i == 0 ? Globals.OrderProgressStatus.ALMOST_DONE : Globals.OrderProgressStatus.DONE;
-                        DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus);
+                        showOperationsDialog("Updating order status", "Please wait...");
+                        DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus, (order, e) ->{
+                            dismissProgressDialog();
+                            if(e == null){
+                                // show success dialog
+                                showSuccessMessage("Order Status Updated", "You have successfully updated the order status to "+orderProgressStatus.toString());
+                            }else{
+                                // show error dialog
+                            }
+                        });
 
                     });
             progressOptionsBuilder.create().show();
@@ -394,4 +407,36 @@ public class OrderSummaryActivity extends BaseActivity {
         return preMessage;
     }
 
+
+    private void dismissProgressDialog() {
+        if (operationsDialog != null) {
+            operationsDialog.dismiss();
+            operationsDialog = null;
+        }
+    }
+
+
+    private void showSuccessMessage(String title, String description) {
+        operationsDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title)
+                .setPositiveText("Continue")
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        dismissProgressDialog();
+                    }
+                })
+                .setDescription(description).build();
+        operationsDialog.setCancelable(false);
+        operationsDialog.show();
+    }
+
+    private void showOperationsDialog(String title, String description) {
+        operationsDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        operationsDialog.setCancelable(false);
+        operationsDialog.show();
+    }
 }

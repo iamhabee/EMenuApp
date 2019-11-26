@@ -1803,7 +1803,7 @@ public class DataStoreClient {
         }.getType());
     }
 
-    public static void updateEMenuOrderProgress(String orderId, Globals.OrderProgressStatus orderProgressStatus) {
+    public static void updateEMenuOrderProgress(String orderId, Globals.OrderProgressStatus orderProgressStatus, OrderUpdateDoneCallback orderUpdateDoneCallback) {
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         ParseQuery<ParseObject> emenuOrdersQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
         emenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
@@ -1856,12 +1856,15 @@ public class DataStoreClient {
                         object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
                     }
                 } else {
-                    // show the signup or login screen
+                    orderUpdateDoneCallback.done(null, e);
                 }
                 object.saveInBackground(e1 -> {
                     if (e1 == null) {
                         EMenuOrder updatedOrder = loadParseObjectIntoEMenuOrder(object);
                         EventBus.getDefault().post(new OrderUpdatedEvent(updatedOrder, false));
+                        orderUpdateDoneCallback.done(updatedOrder, e);
+                    }else{
+                        orderUpdateDoneCallback.done(null, e1);
                     }
                 });
             }
