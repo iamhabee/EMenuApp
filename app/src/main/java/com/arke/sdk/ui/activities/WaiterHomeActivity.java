@@ -232,6 +232,11 @@ public class WaiterHomeActivity extends BaseActivity {
         });
     }
 
+
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -275,6 +280,19 @@ public class WaiterHomeActivity extends BaseActivity {
             }
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void initAppTour(String title, String description, View view, TargetDismissedCallback targetDismissedCallback) {
         new MaterialTapTargetPrompt.Builder(this)

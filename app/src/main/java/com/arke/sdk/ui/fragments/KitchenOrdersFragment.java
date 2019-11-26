@@ -27,6 +27,7 @@ import com.arke.sdk.eventbuses.DeviceConnectedToInternetEvent;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.eventbuses.RefreshEMenuOrder;
+import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
@@ -190,8 +191,33 @@ public class KitchenOrdersFragment extends BaseFragment {
         UiUtils.toggleViewVisibility(footerView, false);
     }
 
+//
+//    public List<EMenuOrder> filterOrderToSuitKitchen(){
+//        List<EMenuOrder> tempOrders = new ArrayList<>();
+//        for (EMenuOrder order : eMenuOrders){
+//            EMenuOrder newOrder  = new EMenuOrder();
+//            newOrder.setBarAttendantTag(order.getBarAttendantTag());
+//            newOrder.setBarAttendantDeviceId(order.getBarAttendantDeviceId());
+//            newOrder.setCustomerTag(order.getCustomerTag());
+//            newOrder.setEMenuOrderId(order.getEMenuOrderId());
+//            newOrder.setOrderId(order.getOrderId());
+//            newOrder.setRestaurantOrBarId(order.getRestaurantOrBarId());
+//
+//            List<EMenuItem> newItems = new ArrayList<>();
+//            for (EMenuItem item: order.getItems()){
+////                if (item.getParentCategory().equals("food")){
+//                    newItems.add(item);
+////                }
+//            }
+//            order.setItems(newItems);
+//            tempOrders.add(order);
+//        }
+//
+//        return tempOrders;
+//    }
     @SuppressWarnings("ConstantConditions")
     private void setupRecyclerView() {
+//        List<EMenuOrder> orderList = filterOrderToSuitKitchen();
         eMenuOrdersRecyclerAdapter = new EMenuOrdersRecyclerAdapter(getActivity(), getActivity().getClass().getSimpleName(), eMenuOrders);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
         contentRecyclerView.setLayoutManager(linearLayoutManager);

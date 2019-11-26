@@ -113,6 +113,7 @@ public class Globals {
     public static final String TAKE_AWAY_TABLE_TAG = "Take Away";
     public static final String IS_TAKE_AWAY = "is_take_away";
     public static final String RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED = "restaurant_or_bar_admin_password_revealed";
+    public static final String ORDER_TOTAL_PAYABLE = "order_total_payable";
     public static String APP_PREFS_NAME = "elitepath_emenu";
     public static String EMPTY_PLACEHOLDER_ERROR_MESSAGE = "Nothing Available";
     public static boolean newMenuItemCreated = false;
