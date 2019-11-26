@@ -2146,6 +2146,7 @@ public class DataStoreClient {
         int useType = AppPrefs.getUseType();
         String deviceId = AppPrefs.getDeviceId();
         eMenuOrdersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
+
         // fetch orders with has_drink == true if useType == 2 and has_food if useType == 3
         if (AppPrefs.getUseType() == Globals.KITCHEN) {
             eMenuOrdersQuery.whereEqualTo(Globals.HAS_FOOD, true);
@@ -2156,6 +2157,8 @@ public class DataStoreClient {
         }
         if (searchString != null) {
             eMenuOrdersQuery.whereContains(Globals.CUSTOMER_TAG, searchString);
+        }else {
+            eMenuOrdersQuery.whereNotEqualTo(Globals.BAR_REJECTED_ORDER, true);
         }
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.orderByDescending("createdAt");
