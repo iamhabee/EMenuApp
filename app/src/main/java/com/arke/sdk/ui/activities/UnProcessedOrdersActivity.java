@@ -227,9 +227,9 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
     @SuppressLint("SetTextI18n")
     private void sendAllUnProcessedOrdersToTheKitchen() {
         showOperationsDialog("Sending Orders to Kitchen/Bar", " Please wait...");
-//        sendAllUnProcessedOrdersToTheKitchen.setText("Sending Orders to Kitchen/Bar.Please wait...");
+        sendAllUnProcessedOrdersToTheKitchen.setText("Sending Orders to Kitchen/Bar.Please wait...");
         DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders,  (result, e) -> {
-            dismissProgressDialog();
+
         });
     }
 

@@ -773,10 +773,15 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 if (StringUtils.containsIgnoreCase(viewContent, "Edit")) {
                     initiateEMenuItemEdit();
                 } else {
-                    addToTable();
+                    confirmAddTOCart();
                 }
                 break;
         }
+
+
+
+
+
 //        if (view.getId() == R.id.close_activity) {
 //            UiUtils.blinkView(view);
 //            finish();
@@ -816,6 +821,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                     public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
                         dismissProgressDialog();
                         finish();
+                        Intent goToCart = new Intent(EMenuItemPreviewActivity.this, UnProcessedOrdersActivity.class);
+                        startActivity(goToCart);
                     }
                 })
                 .setDescription(description).build();
@@ -894,4 +901,17 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
 
 
+    private void confirmAddTOCart(){
+        LottieAlertDialog.Builder addToCartDialogBuilder = new LottieAlertDialog.Builder(EMenuItemPreviewActivity.this,
+                DialogTypes.TYPE_QUESTION)
+                .setTitle("Are you sure you want to add item to cart?")
+                .setPositiveText("YES")
+                .setNegativeText("NO")
+                .setPositiveListener(lottieAlertDialog -> {
+                    lottieAlertDialog.dismiss();
+                    addToTable();
+                }).setNegativeListener(Dialog::dismiss);
+        addToCartDialogBuilder.build().show();
+
+    }
 }

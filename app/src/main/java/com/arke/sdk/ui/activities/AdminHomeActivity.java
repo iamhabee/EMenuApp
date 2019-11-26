@@ -288,7 +288,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                             UiUtils.showSafeToast(e.getMessage());
                         }
                     });
-                } else if (indexOfSelection == 8){
+                }else if (indexOfSelection == 8){
                     // Initiate log out
                     initLogOut();
                 }
