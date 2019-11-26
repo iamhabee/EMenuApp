@@ -1536,12 +1536,13 @@ public class DataStoreClient {
         }
     }
 
-    public static void pushOrdersToKitchenOrBar(List<EMenuOrder> orders) {
+    public static void pushOrdersToKitchenOrBar(List<EMenuOrder> orders, EMenuOrdersFetchDoneCallBack eMenuOrdersFetchDoneCallBack) {
         for (EMenuOrder eMenuOrder : orders) {
             if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.NOT_YET_SENT) {
                 eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
             }
             checkAndPushOrder(eMenuOrder, (eMenuOrder1, exists, e) -> {
+                eMenuOrdersFetchDoneCallBack.done(null, null);
                 if (e == null) {
                     eMenuOrder.setDirty(false);
                     eMenuOrder.update();

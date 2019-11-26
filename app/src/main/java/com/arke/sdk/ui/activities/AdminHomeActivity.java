@@ -312,7 +312,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void attemptUserLogOut() {
-        showOperationsDialog("Logging You Out", "Please Wait");
+        showOperationsDialog("Sending Orders to Kitchen/Bar.", "Please Wait");
         ParseUser.logOut();
         AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
         new Handler().postDelayed(() -> {

@@ -1,6 +1,9 @@
 package com.arke.sdk.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,12 +26,15 @@ import com.arke.sdk.eventbuses.OrderPushErrorEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
+import com.arke.sdk.models.RestaurantOrBarInfo;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -45,6 +51,10 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
 
     @BindView(R.id.send_all_to_kitchen)
     TextView sendAllUnProcessedOrdersToTheKitchen;
+
+    private LottieAlertDialog operationsProgressDialog;
+    private AlertDialog dialog;
+    private Dialog closeDialog;
 
     @BindView(R.id.content_recycler_view)
     RecyclerView contentRecyclerView;
@@ -197,10 +207,30 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
     }
 
 
+
+    private void dismissProgressDialog() {
+        if (operationsProgressDialog != null) {
+            operationsProgressDialog.dismiss();
+            operationsProgressDialog = null;
+        }
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void showOperationsDialog(String title, String description) {
+        operationsProgressDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        operationsProgressDialog.setCancelable(false);
+        operationsProgressDialog.show();
+    }
+
     @SuppressLint("SetTextI18n")
     private void sendAllUnProcessedOrdersToTheKitchen() {
-        sendAllUnProcessedOrdersToTheKitchen.setText("Sending Orders to Kitchen/Bar.Please wait...");
-        DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders);
+        showOperationsDialog("Sending Orders to Kitchen/Bar", " Please wait...");
+//        sendAllUnProcessedOrdersToTheKitchen.setText("Sending Orders to Kitchen/Bar.Please wait...");
+        DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders,  (result, e) -> {
+            dismissProgressDialog();
+        });
     }
 
     @Override
