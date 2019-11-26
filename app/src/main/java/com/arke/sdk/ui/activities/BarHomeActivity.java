@@ -184,7 +184,6 @@ public class BarHomeActivity extends BaseActivity {
         });
         refreshViewIcon.setOnClickListener(view -> {
             EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
-
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);

@@ -604,7 +604,8 @@ public class WaiterHomeActivity extends BaseActivity {
                             bottomSheetDialog.cancel();
                             bottomSheetDialog = null;
                         } else {
-                            super.onBackPressed();
+                            dialog.dismiss();
+                            finish();
                         }
                     }
                 }
