@@ -136,9 +136,10 @@ public class EMenuItemView extends MaterialCardView {
             Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
 
             /* show and hide increment/decrement layout in waiter order only when the order is still pending */
-//            assert orderProgressStatus != null;
+            assert orderProgressStatus != null;
 
-            if(orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)){
+            if( orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)){
+
                 /* disable increment and decrement */
                 UiUtils.toggleViewVisibility(quantityView, true);
                 itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
