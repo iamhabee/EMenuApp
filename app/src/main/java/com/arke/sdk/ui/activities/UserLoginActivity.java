@@ -1,7 +1,10 @@
 package com.arke.sdk.ui.activities;
 
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -171,4 +174,24 @@ public class UserLoginActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            dialog.dismiss();
+            finish();
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+    }
 }

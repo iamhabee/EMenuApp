@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +49,7 @@ import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
@@ -64,6 +66,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static com.arke.sdk.utilities.UiUtils.dismissProgressDialog;
 
 
 public class AdminHomeActivity extends BaseActivity implements View.OnClickListener {
@@ -289,9 +293,40 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                         }
                         dismissProgressDialog();
                     });
+                } else if (indexOfSelection == 8){
+                    // Initiate log out
+                    initLogOut();
                 }
             }
         });
+    }
+
+    private void initLogOut() {
+        LottieAlertDialog.Builder logOutDialogBuilder = new LottieAlertDialog.Builder(AdminHomeActivity.this,
+                DialogTypes.TYPE_QUESTION)
+                .setTitle("Are you sure to Log Out?")
+                .setDescription("You would be logged out of "
+                        + AppPrefs.getRestaurantOrBarName() + " from this device.")
+                .setPositiveText("LOG OUT")
+                .setNegativeText("CANCEL")
+                .setPositiveListener(lottieAlertDialog -> {
+                    lottieAlertDialog.dismiss();
+                    attemptUserLogOut();
+                }).setNegativeListener(Dialog::dismiss);
+        logOutDialogBuilder.build().show();
+    }
+
+    private void attemptUserLogOut() {
+        showOperationsDialog("Logging You Out", "Please Wait");
+        ParseUser.logOut();
+        AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
+        new Handler().postDelayed(() -> {
+            dismissProgressDialog();
+            Intent splashIntent = new Intent(AdminHomeActivity.this, UserLoginActivity.class);
+            startActivity(splashIntent);
+            finish();
+        }, 2000);
+
     }
 
     private void drinksServed(int skip) {
@@ -608,6 +643,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         adminSummaryItems.add(new AdminSummaryItem(5, "Add User", null, R.drawable.add));
         adminSummaryItems.add(new AdminSummaryItem(6, "Switch", null, R.drawable.admin_view_switcher));
         adminSummaryItems.add(new AdminSummaryItem(7, "Waiters", "Waiters' Sales", R.drawable.waiter_view));
+        adminSummaryItems.add(new AdminSummaryItem(8, "Log out", "Logout admin", R.drawable.log_out));
     }
 
     private void setupRecyclerView() {
