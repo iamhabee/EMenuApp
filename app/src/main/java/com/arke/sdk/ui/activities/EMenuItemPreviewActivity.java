@@ -3,6 +3,7 @@ package com.arke.sdk.ui.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -223,6 +224,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
         setupDrinksAdapter();
         initEventHandlers();
+        sessionOrderCheck();
 
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         deviceId = AppPrefs.getDeviceId();
@@ -257,6 +259,31 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         });
     }
 
+    // confirm if waiter wants to proceed with existing order details
+    private void sessionOrderCheck(){
+        // check if table tag and customer tag have been saved in shared pref.
+        if(AppPrefs.getTableTag() == null && AppPrefs.getCustomerTag() == null){
+             LottieAlertDialog.Builder logOutDialogBuilder = new LottieAlertDialog.Builder(EMenuItemPreviewActivity.this,
+                        DialogTypes.TYPE_QUESTION)
+                        .setTitle("Resume Session")
+                        .setDescription("Do you wish to add this order to customer "+AppPrefs.getCustomerTag()+" cart?")
+                        .setPositiveText("Resume Session")
+                        .setNegativeText("Treat as new")
+                        .setPositiveListener(lottieAlertDialog -> {
+                            lottieAlertDialog.dismiss();
+                            tableTag.setText(AppPrefs.getTableTag());
+                            customerTag.setText(AppPrefs.getCustomerTag());
+                        }).setNegativeListener(lottieAlertDialog -> {
+                         lottieAlertDialog.dismiss();
+                         tableTag.setText(null);
+                         customerTag.setText(null);
+                         AppPrefs.setTableTag(null);
+                         AppPrefs.setCustomerTag(null);
+                     });
+                logOutDialogBuilder.build().show();
+        }
+    }
+
     /* this method will get all drinks in the database and populate it into drink adapter before any search is done */
     private void getAllDrinks() {
             DataStoreClient.getDrinks( (results, e) -> {
@@ -272,6 +299,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 }
             });
         }
+
     //onActivityResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
