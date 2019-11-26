@@ -98,11 +98,11 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/currency_indicator"
-                        android:layout_width="20dp"
+                        android:layout_width="19dp"
                         android:layout_height="20dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/naira_icon"
-                        app:tint="@color/colorGreen" />
+                        app:tint="@color/white" />
 
                     <com.arke.sdk.ui.views.EMenuTextView
                         android:id="@+id/total_sales_cost"
@@ -111,7 +111,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:text="0"
-                        android:textColor="@color/colorGreen"
+                        android:textColor="@color/white"
                         android:textSize="18sp"
                         app:textStyle="medium" />
 

@@ -137,9 +137,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
     private LottieAlertDialog operationsProgressDialog;
     private AlertDialog dialog;
-    private double total = 0;
-    private int processedOrdersCount = 0;
-
     private Dialog closeDialog;
 
 
@@ -423,7 +420,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
     @SuppressLint("SetTextI18n")
     public void fetchDataBetweenRanges() {
-        total = 0; processedOrdersCount = 0;
         if (canFetchData.get()) {
             UiUtils.toggleViewVisibility(progressUpdateContentFlipper, true);
             UiUtils.toggleViewFlipperChild(progressUpdateContentFlipper, 1);
@@ -457,30 +453,16 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                                     totalItemsCount.add(eMenuItem);
                                 }
                             }
-                            // check if order payment has been made
-                            if(eMenuOrder.getOrderPaymentStatus() != null){
-                                // calculate order total
-                                double amount = 0;
-                                for(EMenuItem item : eMenuOrder.getItems()){
-                                    amount = item.getOrderedQuantity() * Double.parseDouble(item.getMenuItemPrice());
-                                    total = total + amount;
-                                }
-                                // increment processed orders counter
-                                processedOrdersCount = processedOrdersCount + 1;
-                            }
                         }
                         totalOrdersSummaryItem.setSummaryTitle(EMenuGenUtils.getDecimalFormattedString(String.valueOf(totalOrdersSize)));
                         totalMealsSummaryItem.setSummaryTitle(EMenuGenUtils.getDecimalFormattedString(String.valueOf(totalMealsServed.size())));
                         totalDrinksSummaryItem.setSummaryTitle(EMenuGenUtils.getDecimalFormattedString(String.valueOf(totalDrinksServed.size())));
 
                         String totalItemsCountValue = EMenuGenUtils.getDecimalFormattedString(String.valueOf(totalDrinksServed.size() + totalMealsServed.size()));
-                        totalItemsCountView.setText(processedOrdersCount + " Items");
-
-
-//                        getPaidOrders();
+                        totalItemsCountView.setText(totalItemsCountValue + " Items");
 
                         String totalItemsPriceValue = EMenuGenUtils.getDecimalFormattedString(String.valueOf(getTotalPriceOf(this.totalItemsCount)));
-                        totalItemsCostView.setText(EMenuGenUtils.getDecimalFormattedString(Double.toString(total)));
+                        totalItemsCostView.setText(totalItemsPriceValue);
 
                         String totalMealsPrice = EMenuGenUtils.getDecimalFormattedString(String.valueOf(getTotalPriceOf(totalMealsServed)));
                         String totalDrinksPrice = EMenuGenUtils.getDecimalFormattedString(String.valueOf(getTotalPriceOf(totalDrinksServed)));
