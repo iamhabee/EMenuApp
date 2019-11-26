@@ -269,10 +269,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     switchOptionsBuilder.create().show();
                 } else if (indexOfSelection == 7) {
                     //Load all the waiters in this restaurant/bar
-                    UiUtils.showSafeToast("Please Wait...");
-
-//                    DataStoreClient.fetchWaiters(null);
-
+                    showOperationsDialog("Fetching waiters", "Please Wait");
                     DataStoreClient.fetchWaiters((e, waiters) -> {
                         if (e == null) {
                             androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
@@ -290,6 +287,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                             Timber.i("Not found");
                             UiUtils.showSafeToast(e.getMessage());
                         }
+                        dismissProgressDialog();
                     });
                 }
             }
