@@ -57,39 +57,36 @@ public class WaiterAlertWorker extends Worker {
         query.whereEqualTo("waiter_received_notify", false);
         query.whereEqualTo(Globals.FOOD_READY, true);
         query.whereEqualTo(Globals.WAITER_TAG, waiterUsername);
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null){
-                    //we found messages
-                    mMessages = objects;
-                    String username = String.valueOf(mMessages.size());
-                    Log.d("Waiter", String.valueOf(mMessages.size()));
+        query.findInBackground((objects, e) -> {
+            if (e == null){
+                //we found messages
+                mMessages = objects;
+                String username = String.valueOf(mMessages.size());
+                Log.d("Waiter", String.valueOf(mMessages.size()));
 
-                    // check if response contains objects
-                    if(mMessages.size() > 0) {
-                        // loop through the response to update
-                        // their notification_received_status
-                        String title = getInputData().getString(EXTRA_TITLE, "Order for food is ready");
-                        String text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
+                // check if response contains objects
+                if(mMessages.size() > 0) {
+                    // loop through the response to update
+                    // their notification_received_status
+                    String title = getInputData().getString(EXTRA_TITLE, "Order for food is ready");
+                    String text = getInputData().getString(EXTRA_TEXT, "Click to view food order");
 
-                        int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);
+                    int id = (int) getInputData().getLong(Constants.KITCHEN_ID, 0);
 
-                        sendNotification(title, text, id);
+                    sendNotification(title, text, id);
 
-                        for (ParseObject message : mMessages) {
-                            message.put("waiter_received_notify", true);
-                            message.saveEventually();
-                            Log.d("Waiter", String.valueOf(username));
-                        }
-
+                    for (ParseObject message : mMessages) {
+                        message.put("waiter_received_notify", true);
+                        message.saveEventually();
+                        Log.d("Waiter", String.valueOf(username));
                     }
 
-                }else{
-                    // error occurred
-                    Log.d("Waiter", e.getMessage());
-
                 }
+
+            }else{
+                // error occurred
+                Log.d("Waiter", e.getMessage());
+
             }
         });
     }
@@ -137,6 +134,12 @@ public class WaiterAlertWorker extends Worker {
                         sendNotificationOnDelete(title, text, id);
 
                         for (ParseObject message : mMessages) {
+                            if (AppPrefs.getUseType() == Globals.BAR){
+
+                            }
+                            if(AppPrefs.getUseType() == Globals.KITCHEN){
+                                //
+                            }
                             message.put("rejected_notifier", true);
                             message.saveEventually();
                             Log.d("Waiter", String.valueOf(username));
