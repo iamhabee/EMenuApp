@@ -28,6 +28,7 @@ import com.arke.sdk.contracts.PaymentDoneCallBack;
 import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.contracts.RestaurantUpdateDoneCallback;
 import com.arke.sdk.contracts.UnProcessedOrderPushCallBack;
+import com.arke.sdk.contracts.WaitersFetchDoneCallBack;
 import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
@@ -520,37 +521,6 @@ public class DataStoreClient {
         });
     }
 
-
-//    public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
-//        ParseQuery<ParseObject> waitersQuery = ParseQuery.getQuery(Globals.WAITERS);
-//        waitersQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
-//        waitersQuery.findInBackground((objects, e) -> {
-//            if (e == null) {
-//                if (!objects.isEmpty()) {
-//                    List<String> waitersTagList = new ArrayList<>();
-//                    for (ParseObject parseObject : objects) {
-//                        String waiterTag = parseObject.getString(Globals.WAITER_TAG);
-//                        if (!waitersTagList.contains(waiterTag)) {
-//                            waitersTagList.add(waiterTag);
-//                        }
-//                    }
-//                    CharSequence[] waiters = new CharSequence[waitersTagList.size()];
-//                    for (int i = 0; i < waiters.length; i++) {
-//                        waiters[i] = waitersTagList.get(i);
-//                    }
-//                    waitersFetchDoneCallBack.done(null, waiters);
-//                } else {
-//                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
-//                }
-//            } else {
-//                if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
-//                    waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
-//                } else {
-//                    waitersFetchDoneCallBack.done(e, (CharSequence) null);
-//                }
-//            }
-//        });
-//    }
 
     public static void fetchWaiters(WaitersFetchDoneCallBack waitersFetchDoneCallBack) {
         ParseQuery<ParseUser> query = ParseUser.getQuery();

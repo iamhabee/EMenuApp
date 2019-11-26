@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -299,7 +300,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
                 Timber.i(results);
                 sDrinksServed = results;
-//                Toast.makeText(getApplicationContext(), results, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), results, Toast.LENGTH_SHORT).show();
 
             }else {
                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
