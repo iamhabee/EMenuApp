@@ -224,6 +224,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
         setupDrinksAdapter();
         initEventHandlers();
+        sessionOrderCheck();
 
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         deviceId = AppPrefs.getDeviceId();
@@ -258,6 +259,29 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         });
     }
 
+    // confirm if waiter wants to proceed with existing order details
+    private void sessionOrderCheck(){
+        // check if table tag and customer tag have been saved in shared pref.
+        if(AppPrefs.getTableTag() != null && AppPrefs.getCustomerTag() != null){
+             LottieAlertDialog.Builder logOutDialogBuilder = new LottieAlertDialog.Builder(EMenuItemPreviewActivity.this,
+                        DialogTypes.TYPE_QUESTION)
+                        .setTitle("Resume Session")
+                        .setDescription("Do you wish to add this order to customer "+AppPrefs.getCustomerTag()+" cart?")
+                        .setPositiveText("Add Please")
+                        .setNegativeText("Treat as new")
+                        .setPositiveListener(lottieAlertDialog -> {
+                            lottieAlertDialog.dismiss();
+                            tableTag.setText(AppPrefs.getTableTag());
+                            customerTag.setText(AppPrefs.getCustomerTag());
+                        }).setNegativeListener(lottieAlertDialog -> {
+                         lottieAlertDialog.dismiss();
+                         AppPrefs.setTableTag(null);
+                         AppPrefs.setCustomerTag(null);
+                     });
+                logOutDialogBuilder.build().show();
+        }
+    }
+
     /* this method will get all drinks in the database and populate it into drink adapter before any search is done */
     private void getAllDrinks() {
             DataStoreClient.getDrinks( (results, e) -> {
@@ -273,6 +297,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 }
             });
         }
+
     //onActivityResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -814,6 +839,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
         String customerTagValue = customerTag.getText().toString().trim();
+        AppPrefs.setTableTag(tableTagValue);
+        AppPrefs.setCustomerTag(customerTagValue);
 //        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
         String waiterTagValue = waiterId;
         boolean isTakeAway = takeAway.isChecked();
