@@ -164,7 +164,7 @@ public class WaiterHomeActivity extends BaseActivity {
 
         /* trigger work manager every 30sec */
         PeriodicWorkRequest periodicWorkRequest =
-                new PeriodicWorkRequest.Builder(WaiterAlertWorker.class, 30, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(WaiterAlertWorker.class, 5, TimeUnit.SECONDS)
                         .addTag("periodic_work")
                         .build();
 
