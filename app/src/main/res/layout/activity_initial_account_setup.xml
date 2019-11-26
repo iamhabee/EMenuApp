@@ -171,7 +171,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:layout_editor_absoluteY="463dp" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/submit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
