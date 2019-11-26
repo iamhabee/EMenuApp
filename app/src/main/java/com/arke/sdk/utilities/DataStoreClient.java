@@ -610,6 +610,7 @@ public class DataStoreClient {
         itemQuery.getInBackground(itemId, (object, e) -> {
             if (e == null) {
                 object.put(Globals.QTY_IN_STOCK, qtyInStock);
+                object.put(Globals.DESTINATION_ID, object.get(Globals.DESTINATION_ID));
                 if (qtyInStock == 0) {
                     object.put(Globals.IN_STOCK, false);
                 } else {
