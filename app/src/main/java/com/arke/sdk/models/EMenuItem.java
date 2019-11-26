@@ -75,8 +75,6 @@ public class EMenuItem extends BaseModel implements Serializable {
     public String tableTag;
 
 
-
-
     @Column
     @Expose
     public String  customerTag;

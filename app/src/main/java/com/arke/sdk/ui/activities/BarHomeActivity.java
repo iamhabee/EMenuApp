@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -549,19 +551,34 @@ public class BarHomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START, true);
-        } else {
-            if (searchCardView.getVisibility() == View.VISIBLE) {
-                closeSearch();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START, true);
             } else {
-                if (mainViewPager.getCurrentItem() != 0) {
-                    mainViewPager.setCurrentItem(0);
+                if (searchCardView.getVisibility() == View.VISIBLE) {
+                    closeSearch();
                 } else {
-                    super.onBackPressed();
+                    if (mainViewPager.getCurrentItem() != 0) {
+                        mainViewPager.setCurrentItem(0);
+                    } else {
+                        dialog.dismiss();
+                        super.onBackPressed();
+                    }
                 }
             }
-        }
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
     }
 
 }

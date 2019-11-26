@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -146,6 +147,7 @@ public class EMenuOrderView extends MaterialCardView implements
         setupCustomerName(searchString, customerName);
         List<EMenuItem> orderedItems = eMenuOrder.getItems();
         String description = stringifyEMenuItems(orderedItems);
+        Log.d("sonsin", description);
         orderedItemsSummaryView.setText(UiUtils.fromHtml(description));
         totalPrice = getTotalPrice(orderedItems);
         tintCurrencyViews();
@@ -162,6 +164,10 @@ public class EMenuOrderView extends MaterialCardView implements
         setupOrderImageView(eMenuOrder);
         setOnClickListener(this);
         setOnLongClickListener(this);
+    }
+
+    private void removeOrderWithRejected(List<EMenuItem> orderedItems){
+//        List<EMenuItem> sortedOrderedItem = orderedItems.
     }
 
     private void setupCustomerName(String searchString, String customerName) {

@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material_design_icons/maps/ic_restaurant_menu_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_close_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,9 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="d95e0a" />
-                            <entry key="outputName" value="ic_menu_notify" />
-                            <entry key="sourceFile" value="$APPLICATION_HOME_DIR$/bin/C:\Users\Zheeno" />
+                            <entry key="color" value="ff0000" />
+                            <entry key="outputName" value="ic_close_red" />
+                            <entry key="sourceFile" value="C:\Program Files\Android\Android Studio\bin\C:\Users\Zheeno" />
                           </map>
                         </option>
                       </PersistentState>

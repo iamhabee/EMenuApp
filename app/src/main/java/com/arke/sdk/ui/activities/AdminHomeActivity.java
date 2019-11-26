@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
@@ -134,6 +135,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private LottieAlertDialog operationsProgressDialog;
     private AlertDialog dialog;
 
+    private Dialog closeDialog;
 
 
     @SuppressLint("SetTextI18n")
@@ -171,7 +173,22 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         if (mainViewContentFlipper.getDisplayedChild() == 0) {
-            finish();
+            closeDialog = new Dialog(this);
+            closeDialog.setContentView(R.layout.close_app_dialog);
+            closeDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            closeDialog.show();
+
+            Button yes = closeDialog.findViewById(R.id.yes);
+            Button no = closeDialog.findViewById(R.id.no);
+
+            yes.setOnClickListener(view -> {
+                closeDialog.dismiss();
+                finish();
+            });
+
+            no.setOnClickListener(view -> {
+                closeDialog.dismiss();
+            });
             return;
         }
         if (mainViewContentFlipper.getDisplayedChild() != 1) {
@@ -251,26 +268,26 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     //Load all the waiters in this restaurant/bar
                     UiUtils.showSafeToast("Please Wait...");
 
-                    DataStoreClient.fetchWaiters();
+//                    DataStoreClient.fetchWaiters(null);
 
-//                    DataStoreClient.fetchWaiters((e, waiters) -> {
-//                        if (e == null) {
-//                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
-//                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
-//                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
-//                                if (i == -1) {
-//                                    UiUtils.showSafeToast("No Selection Made");
-//                                    return;
-//                                }
-//                                CharSequence waiter = waiters[i];
-//                                fetchSalesFromWaiter(waiter);
-//                            });
-//                            waitersBuilder.create().show();
-//                        } else {
-//                            Timber.i("Not found");
-//                            UiUtils.showSafeToast(e.getMessage());
-//                        }
-//                    });
+                    DataStoreClient.fetchWaiters((e, waiters) -> {
+                        if (e == null) {
+                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
+                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
+                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
+                                if (i == -1) {
+                                    UiUtils.showSafeToast("No Selection Made");
+                                    return;
+                                }
+                                CharSequence waiter = waiters[i];
+                                fetchSalesFromWaiter(waiter);
+                            });
+                            waitersBuilder.create().show();
+                        } else {
+                            Timber.i("Not found");
+                            UiUtils.showSafeToast(e.getMessage());
+                        }
+                    });
                 }
             }
         });
