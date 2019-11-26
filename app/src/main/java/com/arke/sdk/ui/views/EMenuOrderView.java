@@ -501,7 +501,9 @@ public class EMenuOrderView extends MaterialCardView implements
             /* Only delete an order that doesn't contain a done or almost progress report */
             assert orderProgressStatus != null;
             if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
-                    orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING)){
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING) ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.KITCHEN_REJECTED) ||
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED)){
                 showOperationsDialog("Deleting Order", "Please wait...");
                 eMenuOrder.delete();
                 DataStoreClient.deleteEMenuOrderRemotely(eMenuOrder.getEMenuOrderId(), (done, e) -> {
