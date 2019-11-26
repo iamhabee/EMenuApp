@@ -9,10 +9,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import androidx.annotation.Nullable;
@@ -26,6 +26,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.arke.sdk.R;
 import com.arke.sdk.beans.AdminSummaryItem;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.contracts.GetDrinksServed;
 import com.arke.sdk.eventbuses.AdminSummaryItemClickedEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
@@ -43,10 +44,14 @@ import com.arke.sdk.ui.views.AutofitRecyclerView;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,6 +62,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
 
 public class AdminHomeActivity extends BaseActivity implements View.OnClickListener {
 
@@ -111,6 +117,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     @BindView(R.id.fetch_data_view)
     TextView fetchDataView;
 
+    String sDrinksServed;
 
     private List<AdminSummaryItem> adminSummaryItems = new ArrayList<>();
     private Calendar fromCalendar, toCalendar;
@@ -208,6 +215,10 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                 } else if (indexOfSelection == 2) {
                     SectionedEMenuItemRecyclerViewAdapter sectionedEMenuItemRecyclerViewAdapter = new SectionedEMenuItemRecyclerViewAdapter(this, totalDrinksServed, AdminHomeActivity.class.getSimpleName());
                     displayMoreInfo(totalDrinksServed.size() + " Drinks Served", sectionedEMenuItemRecyclerViewAdapter);
+
+                    // Get and display drinks served
+                    drinksServed(0);
+
                 }else if (indexOfSelection == 3) {
                     Intent restaurantInfo = new Intent(AdminHomeActivity.this, RestaurantOrBarProfileInformationActivity.class);
                     startActivity(restaurantInfo);
@@ -263,6 +274,28 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                 }
             }
         });
+    }
+
+    private void drinksServed(int skip) {
+        DataStoreClient.fetchDrinksServed(skip, (results, e) ->{
+            if (e == null){
+
+                Timber.i(results);
+                sDrinksServed = results;
+//                Toast.makeText(getApplicationContext(), results, Toast.LENGTH_SHORT).show();
+
+            }else {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+                });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Get and display drinks served
+        drinksServed(0);
     }
 
     private void fetchSalesFromWaiter(CharSequence waiter) {
@@ -536,7 +569,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     private void prepareSummaryItems() {
         adminSummaryItems.add(new AdminSummaryItem(0, "0", "Orders Fulfilled", R.drawable.ic_restaurant));
         adminSummaryItems.add(new AdminSummaryItem(1, "0", "Meals Served", R.drawable.kitchen_view));
-        adminSummaryItems.add(new AdminSummaryItem(2, "0", "Drinks Served", R.drawable.bar_view));
+        adminSummaryItems.add(new AdminSummaryItem(2, sDrinksServed, "Drinks Served", R.drawable.bar_view));
         adminSummaryItems.add(new AdminSummaryItem(3, "Info", null, R.drawable.admin_view));
         adminSummaryItems.add(new AdminSummaryItem(4, "Configs", null, R.drawable.settings));
         adminSummaryItems.add(new AdminSummaryItem(5, "Add User", null, R.drawable.add));

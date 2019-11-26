@@ -20,12 +20,12 @@ import com.arke.sdk.contracts.EMenuItemCategoriesFetchDoneCallback;
 import com.arke.sdk.contracts.EMenuItemUpdateDoneCallback;
 import com.arke.sdk.contracts.EMenuItemsFetchDoneCallBack;
 import com.arke.sdk.contracts.EMenuOrdersFetchDoneCallBack;
+import com.arke.sdk.contracts.GetDrinksServed;
 import com.arke.sdk.contracts.OrderUpdateDoneCallback;
 import com.arke.sdk.contracts.PaymentDoneCallBack;
 import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.contracts.RestaurantUpdateDoneCallback;
 import com.arke.sdk.contracts.UnProcessedOrderPushCallBack;
-import com.arke.sdk.contracts.WaitersFetchDoneCallBack;
 import com.arke.sdk.eventbuses.EMenuItemRemovedFromOrderEvent;
 import com.arke.sdk.eventbuses.OrderPaidForEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
@@ -61,8 +61,6 @@ import java.util.Locale;
 
 import timber.log.Timber;
 
-//import com.elitepath.android.emenu.R;
-//import com.elitepath.android.emenu.models.EMenuOrder_Table;
 
 @SuppressWarnings("ConstantConditions")
 public class DataStoreClient {
@@ -571,6 +569,50 @@ public class DataStoreClient {
             }
         });
     }
+
+    public static void fetchDrinksServed(int skip,
+                                         GetDrinksServed getDrinksServed){
+
+        ParseQuery<ParseObject> drinksServed = ParseQuery.getQuery(Globals.EMENU_ORDERS);
+        drinksServed.whereEqualTo(Globals.DRINK_READY, true);
+        drinksServed.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, AppPrefs.getRestaurantOrBarId());
+        drinksServed.whereEqualTo(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+        drinksServed.whereEqualTo(Globals.BAR_REJECTED_ORDER, false);
+        if (skip != 0) {
+            drinksServed.setSkip(skip);
+        }
+        drinksServed.findInBackground((objects, e) -> {
+            if (e == null){
+
+                int count = 0;
+                int drink = 0;
+
+                for (ParseObject orderObject : objects) {
+
+                    EMenuOrder order = loadParseObjectIntoEMenuOrder(orderObject);
+
+                    for (EMenuItem item : order.getItems()) {
+                        if (item.parentCategory.equals(Globals.DRINKS)) {
+
+                            drink = item.getOrderedQuantity();
+                        }
+
+                        count = count + drink;
+                    }
+
+                }
+
+//                Timber.i(String.valueOf(count));
+                getDrinksServed.done(String.valueOf(count), null);
+
+
+            }else {
+                 Timber.i(e);
+            }
+        });
+
+    }
+
 
     public static void setQuantityAvailableInStockForItem(int qtyInStock, String itemId, EMenuItemUpdateDoneCallback eMenuItemUpdateDoneCallback) {
         ParseQuery<ParseObject> itemQuery = ParseQuery.getQuery(Globals.EMenuItems);
@@ -1549,6 +1591,12 @@ public class DataStoreClient {
         newOrderObject.put(Globals.HAS_FOOD, has_food);
         newOrderObject.put(Globals.FOOD_READY, false);
         newOrderObject.put(Globals.DRINK_READY, false);
+
+        newOrderObject.put(Globals.BAR_REJECTED_ORDER, false);
+        newOrderObject.put(Globals.BAR_ACCEPTED_ORDER, false);
+        newOrderObject.put(Globals.KITCHEN_ACCEPTED_ORDER, false);
+        newOrderObject.put(Globals.KITCHEN_REJECTED_ORDER, false);
+
         if (ParseUser.getCurrentUser() != null) {
             if(AppPrefs.getUseType() == Globals.WAITER) {
                 newOrderObject.put(Globals.WAITER_DEVICE_ID, ParseUser.getCurrentUser().getObjectId());
