@@ -328,7 +328,6 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
             startActivity(splashIntent);
             finish();
         }, 2000);
-
     }
 
     private void drinksServed(int skip) {

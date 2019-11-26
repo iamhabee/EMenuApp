@@ -1950,8 +1950,8 @@ public class DataStoreClient {
         drinkOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         drinkOrdersQuery.whereEqualTo(Globals.HAS_DRINK, true);
         // Remove any order that has been rejected from the bar's table
-        drinkOrdersQuery.whereNotEqualTo(Globals.BAR_ACCEPTED_ORDER, false);
-        drinkOrdersQuery.orderByDescending("createdAt");
+        drinkOrdersQuery.whereNotEqualTo(Globals.BAR_REJECTED_ORDER, true);
+    drinkOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             drinkOrdersQuery.setSkip(skip);
         }
@@ -2043,7 +2043,7 @@ public class DataStoreClient {
         eMenuOrdersQuery.whereDoesNotExist(Globals.ORDER_PAYMENT_STATUS);
         eMenuOrdersQuery.whereEqualTo(Globals.HAS_FOOD, true);
         // Exclude orders that have been rejected
-        eMenuOrdersQuery.whereNotEqualTo(Globals.KITCHEN_ACCEPTED_ORDER, false);
+        eMenuOrdersQuery.whereNotEqualTo(Globals.KITCHEN_REJECTED_ORDER, true);
         eMenuOrdersQuery.orderByDescending("createdAt");
         if (skip != 0) {
             eMenuOrdersQuery.setSkip(skip);
