@@ -176,7 +176,6 @@ public class UserLoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.close_app_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -194,4 +193,5 @@ public class UserLoginActivity extends AppCompatActivity {
             dialog.dismiss();
         });
     }
+
 }
