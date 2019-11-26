@@ -262,12 +262,12 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     // confirm if waiter wants to proceed with existing order details
     private void sessionOrderCheck(){
         // check if table tag and customer tag have been saved in shared pref.
-        if(AppPrefs.getTableTag() == null && AppPrefs.getCustomerTag() == null){
+        if(AppPrefs.getTableTag() != null && AppPrefs.getCustomerTag() != null){
              LottieAlertDialog.Builder logOutDialogBuilder = new LottieAlertDialog.Builder(EMenuItemPreviewActivity.this,
                         DialogTypes.TYPE_QUESTION)
                         .setTitle("Resume Session")
                         .setDescription("Do you wish to add this order to customer "+AppPrefs.getCustomerTag()+" cart?")
-                        .setPositiveText("Resume Session")
+                        .setPositiveText("Add Please")
                         .setNegativeText("Treat as new")
                         .setPositiveListener(lottieAlertDialog -> {
                             lottieAlertDialog.dismiss();
@@ -275,8 +275,6 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                             customerTag.setText(AppPrefs.getCustomerTag());
                         }).setNegativeListener(lottieAlertDialog -> {
                          lottieAlertDialog.dismiss();
-                         tableTag.setText(null);
-                         customerTag.setText(null);
                          AppPrefs.setTableTag(null);
                          AppPrefs.setCustomerTag(null);
                      });
@@ -841,6 +839,8 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
         String customerTagValue = customerTag.getText().toString().trim();
+        AppPrefs.setTableTag(tableTagValue);
+        AppPrefs.setCustomerTag(customerTagValue);
 //        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
         String waiterTagValue = waiterId;
         boolean isTakeAway = takeAway.isChecked();
