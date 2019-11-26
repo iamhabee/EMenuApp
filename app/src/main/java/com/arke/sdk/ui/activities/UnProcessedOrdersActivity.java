@@ -33,10 +33,13 @@ import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.adapters.EMenuOrdersRecyclerAdapter;
 import com.arke.sdk.ui.views.MarginDecoration;
+import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +58,9 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
     private LottieAlertDialog operationsProgressDialog;
     private AlertDialog dialog;
     private Dialog closeDialog;
+
+    private LottieAlertDialog operationsDialog;
+
 
     @BindView(R.id.content_recycler_view)
     RecyclerView contentRecyclerView;
@@ -226,11 +232,8 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
 
     @SuppressLint("SetTextI18n")
     private void sendAllUnProcessedOrdersToTheKitchen() {
-        showOperationsDialog("Sending Orders to Kitchen/Bar", " Please wait...");
-        sendAllUnProcessedOrdersToTheKitchen.setText("Sending Orders to Kitchen/Bar.Please wait...");
-        DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders,  (result, e) -> {
+        processOrders();
 
-        });
     }
 
     @Override
@@ -239,6 +242,49 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
         newMessage.obj = event;
         uiHandler.sendMessage(newMessage);
     }
+
+
+
+    private void showSuccessMessage(String title, String description) {
+        operationsDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title)
+                .setPositiveText("Ok")
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        dismissProgressDialog();
+                        finish();
+                    }
+                })
+                .setDescription(description).build();
+        operationsDialog.setCancelable(false);
+        operationsDialog.show();
+    }
+
+
+
+    private void processOrders(){
+        LottieAlertDialog.Builder addToCartDialogBuilder = new LottieAlertDialog.Builder(UnProcessedOrdersActivity.this,
+                DialogTypes.TYPE_QUESTION)
+                .setTitle("Are you sure you want to send all orders?")
+                .setDescription("Orders will be processed")
+                        .setPositiveText("YES")
+                .setNegativeText("NO")
+                .setPositiveListener(lottieAlertDialog -> {
+                    lottieAlertDialog.dismiss();
+                    showOperationsDialog( "Sending Orders to kitchen and bar", "please wait");
+                    DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders,  (result, e) -> {
+                        dismissProgressDialog();
+                        showSuccessMessage("Success", "Orders have been sent");
+
+                    });
+
+                }).setNegativeListener(Dialog::dismiss);
+        addToCartDialogBuilder.build().show();
+
+    }
+
 
     private void handleIncomingEvent(Object event) {
         if (event instanceof OrderPushErrorEvent) {

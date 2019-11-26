@@ -186,7 +186,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d88c5f91-9817-4ca2-950d-f8dc14f78088" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -218,11 +218,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="795" column="33" selection-start-line="795" selection-start-column="33" selection-end-line="795" selection-end-column="33" />
+            <state relative-caret-position="211">
+              <caret line="876" column="33" selection-start-line="876" selection-start-column="17" selection-end-line="876" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="251" column="36" selection-start-line="251" selection-start-column="36" selection-end-line="251" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -240,8 +249,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/AdminHomeActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="354">
-              <caret line="240" column="50" selection-start-line="239" selection-start-column="18" selection-end-line="240" selection-end-column="50" />
+            <state relative-caret-position="145">
+              <caret line="302" column="41" selection-start-line="302" selection-end-line="303" />
             </state>
           </provider>
         </entry>
@@ -257,7 +266,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>settext</find>
       <find>quantityAvailableInStock</find>
       <find>stock</find>
       <find>in</find>
@@ -287,6 +295,7 @@
       <find>you would</find>
       <find>contin</find>
       <find>ad</find>
+      <find>send</find>
     </findStrings>
     <replaceStrings>
       <replace>In</replace>
@@ -338,9 +347,9 @@
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/companions/Globals.java" />
         <option value="$PROJECT_DIR$/src/main/res/layout/admin_view_root.xml" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/AdminHomeActivity.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/utilities/DataStoreClient.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java" />
       </list>
     </option>
   </component>
@@ -533,7 +542,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" side_tool="true" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.024291499" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.15303643" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info id="Build Variants" order="4" side_tool="true" />
@@ -545,10 +554,10 @@
       <window_info anchor="bottom" id="Logcat" order="1" weight="0.1993007" />
       <window_info anchor="bottom" id="TODO" order="2" />
       <window_info anchor="bottom" id="Debug" order="3" />
-      <window_info anchor="bottom" id="Terminal" order="4" weight="0.35314685" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="4" visible="true" weight="0.073426574" />
       <window_info anchor="bottom" id="Event Log" order="5" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="6" visible="true" weight="0.052447554" />
-      <window_info anchor="bottom" id="Build" order="7" weight="0.052447554" />
+      <window_info anchor="bottom" id="Version Control" order="6" weight="0.052447554" />
+      <window_info anchor="bottom" id="Build" order="7" weight="0.41433567" />
       <window_info anchor="bottom" id="Android Profiler" order="8" />
       <window_info anchor="bottom" id="Find" order="9" weight="0.32867134" />
       <window_info anchor="right" id="Device File Explorer" order="0" side_tool="true" />
@@ -872,24 +881,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="230" column="37" selection-start-line="230" selection-start-column="37" selection-end-line="230" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/AdminHomeActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="240" column="50" selection-start-line="239" selection-start-column="18" selection-end-line="240" selection-end-column="50" />
+        <state relative-caret-position="145">
+          <caret line="302" column="41" selection-start-line="302" selection-end-line="303" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/EMenuItemPreviewActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="795" column="33" selection-start-line="795" selection-start-column="33" selection-end-line="795" selection-end-column="33" />
+        <state relative-caret-position="211">
+          <caret line="876" column="33" selection-start-line="876" selection-start-column="17" selection-end-line="876" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/arke/sdk/ui/activities/UnProcessedOrdersActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="251" column="36" selection-start-line="251" selection-start-column="36" selection-end-line="251" selection-end-column="36" />
         </state>
       </provider>
     </entry>
