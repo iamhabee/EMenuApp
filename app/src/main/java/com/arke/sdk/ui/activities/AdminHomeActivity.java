@@ -289,6 +289,9 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                         }
                         dismissProgressDialog();
                     });
+                }else if(indexOfSelection == 8){
+                    //Initialize logout
+                    initLogOut();
                 }
             }
         });
@@ -649,6 +652,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
         adminSummaryItems.add(new AdminSummaryItem(5, "Add User", null, R.drawable.add));
         adminSummaryItems.add(new AdminSummaryItem(6, "Switch", null, R.drawable.admin_view_switcher));
         adminSummaryItems.add(new AdminSummaryItem(7, "Waiters", "Waiters' Sales", R.drawable.waiter_view));
+        adminSummaryItems.add(new AdminSummaryItem(8, "Logout", "Logout Admin", R.drawable.log_out));
     }
 
     private void setupRecyclerView() {
