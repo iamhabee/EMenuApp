@@ -709,18 +709,22 @@ public class DataStoreClient {
                         }
 //                        "[{\"createdAt\":1573663096118,\"customerTag\":\"de\",\"favouriteCount\":0,\"inStock\":true,\"menuItemDescription\":\"medium size\",\"menuItemDisplayPhotoUrl\":\"https://cdn.filestackcontent.com/6lonGsyTahAPr2v3SgAW\",\"menuItemId\":\"hckf0302oq\",\"menuItemName\":\"plastic coke\",\"menuItemPrice\":\"100\",\"metaDataIcon\":0,\"orderedQuantity\":1,\"parentCategory\":\"drinks\",\"quantityAvailableInStock\":18,\"restaurantOrBarId\":\"NstZkDTWhw\",\"reviewsCount\":0,\"tableTag\":\"de\",\"updatedAt\":1574254625947,\"waiterTag\":\"charles\"}]"
                         EMenuOrder order = loadParseObjectIntoEMenuOrder(object);
-                        for(EMenuItem item: order.getItems()){
-                            if (item.parentCategory.equals(Globals.DRINKS)){
-                                Log.d("sunsin", "Drink price: " + item.menuItemPrice + item.parentCategory);
-                                item.setOrderedQuantity(0);
-                                Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
-                            }
-                            if(item.parentCategory.equals(Globals.FOOD)){
-                                Log.d("sunsin", "FOOD PRICE: " + item.menuItemName);
-                                item.setOrderedQuantity(0);
-                                Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+
+                        if (order.getOrderId() == object.get(Globals.ORDER_ID)){
+                            for(EMenuItem item: order.getItems()){
+                                if (item.parentCategory.equals(Globals.DRINKS) && AppPrefs.getUseType() == Globals.BAR){
+                                    Log.d("sunsin", "Drink price: " + item.menuItemPrice + item.parentCategory);
+                                    item.setOrderedQuantity(0);
+                                    Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+                                }
+                                if(item.parentCategory.equals(Globals.FOOD) && AppPrefs.getUseType() == Globals.KITCHEN){
+                                    Log.d("sunsin", "FOOD PRICE: " + item.menuItemName);
+                                    item.setOrderedQuantity(0);
+                                    Log.d("sunsin", "New Drink price: " + item.getOrderedQuantity() + item.parentCategory);
+                                }
                             }
                         }
+
 
                         String newOrder = serializeEMenuItems(order.getItems());
                         Log.d("sunsin", newOrder);
@@ -1566,12 +1570,14 @@ public class DataStoreClient {
                 eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
             }
             checkAndPushOrder(eMenuOrder, (eMenuOrder1, exists, e) -> {
-                eMenuOrdersFetchDoneCallBack.done(null, null);
                 if (e == null) {
                     eMenuOrder.setDirty(false);
                     eMenuOrder.update();
                     sendOutNotification(orders.size(), Globals.EMENU_ORDER_NOTIFICATION, serializeEMenuOrder(eMenuOrder), exists ? Globals.UPDATE_TYPE_UPDATE : Globals.UPDATE_TYPE_NEW_INSERTION);
                     decreaseItemInStock(eMenuOrder);
+                    eMenuOrdersFetchDoneCallBack.done(orders, null);
+                }else{
+                    eMenuOrdersFetchDoneCallBack.done(null, e);
                 }
             });
         }

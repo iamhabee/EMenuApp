@@ -140,7 +140,7 @@ public class EMenuItemView extends MaterialCardView {
 
             if(orderProgressStatus.equals('"'+"PENDING"+'"')){
                 /* disable increment and decrement */
-                UiUtils.toggleViewVisibility(quantityView, true);
+                UiUtils.toggleViewVisibility(quantityView,true);
                 itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
                 eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
 

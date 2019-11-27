@@ -8,18 +8,13 @@ import android.content.SharedPreferences;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
-        import android.view.View;
+
         import android.widget.Toast;
 
 import com.arke.sdk.R;
-import com.arke.sdk.companions.Globals;
 import com.arke.sdk.models.EMenuItem;
-import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.util.printer.Printer;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.usdk.apiservice.aidl.printer.ASCScale;
         import com.usdk.apiservice.aidl.printer.ASCSize;
@@ -30,10 +25,9 @@ import com.usdk.apiservice.aidl.printer.ASCScale;
 
         import java.io.File;
         import java.io.FileInputStream;
-        import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
+
 
 public class OrderPrint {
 
@@ -159,21 +153,25 @@ public class OrderPrint {
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG:", "" + eMenuItem.getTableTag()));
                         setFontSpec(FONT_SIZE_NORMAL);
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG:", "" + ParseUser.getCurrentUser().getUsername()));
+
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.CENTER, divider);
+                        setFontSpec(FONT_SIZE_LARGE);
+                        Printer.getInstance().addText(AlignMode.CENTER, hasPaid?("PAID"):("NOT PAID"));
+
+                    }
+
+                    if (eMenuItem.getOrderedQuantity() > 0){
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.CENTER, divider);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM:", "" + eMenuItem.getMenuItemName()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
+                        count = count + 1;
                     }
 
 
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, divider);
-                    setFontSpec(FONT_SIZE_LARGE);
-                    Printer.getInstance().addText(AlignMode.CENTER, hasPaid?("PAID"):("NOT PAID"));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, divider);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM:", "" + eMenuItem.getMenuItemName()));
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
-                    count = count + 1;
                 }
 
                 Printer.getInstance().addText(AlignMode.CENTER, single_divider);
@@ -221,12 +219,13 @@ public class OrderPrint {
             }
         } catch (RemoteException e) {
             e.printStackTrace();
+
+            hideDialog();
+
+            // show alert for error while trying to print
+            showDialogError(e.getMessage(), true);
         }
     }
-
-
-
-
 
 
 
@@ -254,8 +253,6 @@ public class OrderPrint {
         String tformatted = NumberFormat.getCurrencyInstance().format(totalAuthAmount / 1.0D).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
         return tformatted;
     }
-
-
 
     /**
      * Hide dialog.
@@ -291,6 +288,15 @@ public class OrderPrint {
              该方法在2015.03.17号的烧片版本才有效。以后的应用屏蔽HOME键，请尽量使用此方法，不要再使用TYPE_KEYGUARD_DIALOG方式。
              **/
 //            dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+        }
+    }
+
+    private void showDialogError(String res, boolean cancelable) {
+        dialog.setMessage(res);
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(cancelable);
+        if (dialog.getWindow() != null) {
+
         }
     }
 

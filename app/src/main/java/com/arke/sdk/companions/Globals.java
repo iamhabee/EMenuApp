@@ -204,7 +204,8 @@ public class Globals {
         ALMOST_DONE,
         DONE,
         BAR_REJECTED,
-        KITCHEN_REJECTED
+        KITCHEN_REJECTED,
+        BAR_AND_KITCHEN_REJECTED
     }
 
 }
