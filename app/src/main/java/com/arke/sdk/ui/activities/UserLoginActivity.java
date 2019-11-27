@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,7 +15,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.arke.sdk.companions.Globals;
+import com.arke.sdk.contracts.BuildConfig;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.NetworkClient;
@@ -55,6 +64,7 @@ public class UserLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
+        checkOsVersion();
 
         username = findViewById(R.id.username);
         passwordd = findViewById(R.id.password);
@@ -68,7 +78,7 @@ public class UserLoginActivity extends AppCompatActivity {
             AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
             AppPrefs.persistRestaurantOrBarId(null);
             AppPrefs.persistRestaurantOrBarEmailAddress(null);
-            Intent switchA = new Intent(UserLoginActivity.this, OnBoardingActivity.class);
+            Intent switchA = new Intent(UserLoginActivity.this, UserLoginActivity.class);
             switchA.putExtra("overrideAppSetup", true);
             startActivity(switchA);
             finish();
@@ -83,6 +93,58 @@ public class UserLoginActivity extends AppCompatActivity {
 
         signIn.setOnClickListener(view -> logIn());
     }
+
+
+    public void checkOsVersion() {
+        String packageName =  BuildConfig.APPLICATION_ID;
+        String versionName = BuildConfig.VERSION_NAME;
+        String tid = "123456";
+        String url = "https://terminal.efulltech.com.ng/api/checkOsVersion?terminalId="+tid+"&package="+packageName+"&version="+versionName;
+
+        Log.d("Checking OS Version ", url);
+        RequestQueue requestQueue = Volley.newRequestQueue(UserLoginActivity.this);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Update Response", response);
+                        if(!response.equals("true")){
+//                            navigate to update page
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(response)));
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Cloud DB Error", error.toString());
+                        showErrorMessage("Error", error.getMessage());
+                    }
+                }
+        );
+//      set retry policy to determine how long volley should wait before resending a failed request
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                30000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//        add jsonObjectRequest to the queue
+        requestQueue.add(stringRequest);
+    }
+
+
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
+    }
+
 
     private void showOperationsDialog(String title, String description) {
         logInOperationProgressDialog = new LottieAlertDialog

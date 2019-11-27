@@ -1,22 +1,36 @@
 package com.arke.sdk.ui.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.arke.sdk.R;
+import com.arke.sdk.contracts.BuildConfig;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.views.EMenuTextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.ramotion.paperonboarding.PaperOnboardingFragment;
 import com.ramotion.paperonboarding.PaperOnboardingPage;
 import com.tayfuncesur.curvedbottomsheet.CurvedBottomSheet;
@@ -44,6 +58,9 @@ public class OnBoardingActivity extends BaseActivity {
 
     private SparseIntArray pageColorsMap = new SparseIntArray();
 
+    private LottieAlertDialog accountCreationProgressDialog;
+    private LottieAlertDialog accountCreationSuccessDialog;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +69,8 @@ public class OnBoardingActivity extends BaseActivity {
         //get intent extras
         Intent intent = getIntent();
         overrideAppSetup = intent.getBooleanExtra("overrideAppSetup", false);
+        // check for updates
+        checkOsVersion();
 
         WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         displayMetrics = new DisplayMetrics();
@@ -73,6 +92,89 @@ public class OnBoardingActivity extends BaseActivity {
         logInButton.setOnClickListener(onClickListener);
         skipOnBoarding.setOnClickListener(onClickListener);
     }
+
+    public void checkOsVersion() {
+        String packageName =  BuildConfig.APPLICATION_ID;
+        String versionName = BuildConfig.VERSION_NAME;
+        String tid = "123456";
+        String url = "https://terminal.efulltech.com.ng/api/checkOsVersion?terminalId="+tid+"&package="+packageName+"&version="+versionName;
+
+        Log.d("Checking OS Version ", url);
+        showOperationsDialog("Checking for updates", "Please wait...");
+        Toast.makeText(OnBoardingActivity.this, "Checking for updates", Toast.LENGTH_SHORT).show();
+
+        RequestQueue requestQueue = Volley.newRequestQueue(OnBoardingActivity.this);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Update Response", response);
+                        dismissProgressDialog();
+                        if(response.equals("true")){
+                            showSuccessMessage("Success", "Your app is up to date");
+                        }else{
+//                            navigate to update page
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(response)));
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Cloud DB Error", error.toString());
+                        dismissProgressDialog();
+                        showErrorMessage("Error", error.getMessage());
+                    }
+                }
+        );
+//      set retry policy to determine how long volley should wait before resending a failed request
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                30000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//        add jsonObjectRequest to the queue
+        requestQueue.add(stringRequest);
+    }
+
+
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (accountCreationProgressDialog != null) {
+            accountCreationProgressDialog.dismiss();
+            accountCreationProgressDialog = null;
+        }
+    }
+
+    private void showSuccessMessage(String title, String description) {
+        accountCreationSuccessDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        accountCreationSuccessDialog.setCancelable(false);
+        accountCreationSuccessDialog.show();
+    }
+
+    private void showOperationsDialog(String title, String description) {
+        accountCreationProgressDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        accountCreationProgressDialog.setCancelable(false);
+        accountCreationProgressDialog.show();
+    }
+
 
     @Override
     protected void onResume() {

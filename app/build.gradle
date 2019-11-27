@@ -22,7 +22,7 @@ android {
     defaultConfig {
 //        this should be changed when it
 //        is similar with another app on the same device
-        applicationId 'com.arke.sdk.demo'
+        applicationId 'com.efulltech.emenu'
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -133,6 +133,7 @@ dependencies {
     implementation 'kr.co.prnd:stepprogressbar:1.0.0-alpha1'
     implementation 'com.filestack:filestack-java:0.9.0'
     implementation 'com.karumi:dexter:6.0.0'
+    implementation 'com.android.volley:volley:1.1.0'
 
     // work manager
 //    implementation "android.arch.work:work-runtime:1.0.1"
