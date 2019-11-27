@@ -264,6 +264,16 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
 
 
 
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
+    }
+
     private void processOrders(){
         LottieAlertDialog.Builder addToCartDialogBuilder = new LottieAlertDialog.Builder(UnProcessedOrdersActivity.this,
                 DialogTypes.TYPE_QUESTION)
@@ -276,7 +286,11 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
                     showOperationsDialog( "Sending Orders to kitchen and bar", "please wait");
                     DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders,  (result, e) -> {
                         dismissProgressDialog();
-                        showSuccessMessage("Success", "Orders have been sent");
+                        if(e != null) {
+                            showSuccessMessage("Success", "Orders have been sent");
+                        }else{
+                            showErrorMessage("Error Connecting", "We've experienced some connectivity problems");
+                        }
 
                     });
 
