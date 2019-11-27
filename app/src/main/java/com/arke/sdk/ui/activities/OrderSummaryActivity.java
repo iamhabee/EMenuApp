@@ -1,6 +1,7 @@
 package com.arke.sdk.ui.activities;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -133,21 +134,33 @@ public class OrderSummaryActivity extends BaseActivity {
                     .setNegativeButton("Cancel", null)
                     .setCancelable(false)
                     .create();
-
-            OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
-            boolean hasPaid = false;
-
-            if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
-                    eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
-                    eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
-                hasPaid = true;
-            } else {
-                hasPaid = false;
+            if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+                OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
+                boolean hasPaid = false;
+                if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
+                        eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
+                        eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
+                    hasPaid = true;
+                } else {
+                    hasPaid = false;
+                }
+                orderPrint.validateSlipThenPrint(customerOrders, hasPaid);
+            }else{
+                showErrorMessage("Not Supported", "This device does not support this functionality");
             }
-            orderPrint.validateSlipThenPrint(customerOrders, hasPaid);
         });
     }
 
+
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
+    }
 
     @Override
     public void onEventMainThread(Object event) {

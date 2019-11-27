@@ -621,7 +621,10 @@ public class EMenuOrderView extends MaterialCardView implements
                             .setCancelable(false)
                             .create();
                     OrderPrint print = new OrderPrint(getContext(), dialog);
-                    print.validateSlipThenPrint(eMenuOrder.items, true);
+
+                    if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+                        print.validateSlipThenPrint(eMenuOrder.items, true);
+                    }
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + e.getMessage() + ")");
                 }
@@ -652,7 +655,10 @@ public class EMenuOrderView extends MaterialCardView implements
                             .setCancelable(false)
                             .create();
                     OrderPrint print = new OrderPrint(getContext(), dialog);
-                    print.validateSlipThenPrint(eMenuOrder.items, true);
+
+                    if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+                        print.validateSlipThenPrint(eMenuOrder.items, true);
+                    }
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + paymentException.getMessage() + ")");
                 }
@@ -667,12 +673,6 @@ public class EMenuOrderView extends MaterialCardView implements
 
     private void initiateSingleCardPaymentFlow(String customerKey) {
         EventBus.getDefault().post(new CardProcessorEvent(eMenuOrder, getTotalRawCost(eMenuOrder.getItems()), customerKey));
-        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(getContext())
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .create();
-        OrderPrint print = new OrderPrint(getContext(), dialog);
-        print.validateSlipThenPrint(eMenuOrder.items, true);
     }
 
 }

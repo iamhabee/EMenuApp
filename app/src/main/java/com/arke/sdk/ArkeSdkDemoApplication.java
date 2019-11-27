@@ -132,18 +132,18 @@ public class ArkeSdkDemoApplication extends MultiDexApplication {
      * Bind sdk service.
      */
     private void bindSdkDeviceService() {
-        Intent intent = new Intent();
-        intent.setAction(USDK_ACTION_NAME);
-        intent.setPackage(USDK_PACKAGE_NAME);
+            Intent intent = new Intent();
+            intent.setAction(USDK_ACTION_NAME);
+            intent.setPackage(USDK_PACKAGE_NAME);
 
-        Log.d(TAG, "binding sdk device service...");
-        boolean flag = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        if (!flag) {
-            Log.d(TAG, "SDK service binding failed.");
-            return;
-        }
+            Log.d(TAG, "binding sdk device service...");
+            boolean flag = bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+            if (!flag) {
+                Log.d(TAG, "SDK service binding failed.");
+                return;
+            }
 
-        Log.d(TAG, "SDK service binding successfully.");
+            Log.d(TAG, "SDK service binding successfully.");
     }
 
     /**

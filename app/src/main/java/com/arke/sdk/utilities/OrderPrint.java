@@ -62,6 +62,7 @@ public class OrderPrint {
     }
 
     public void printQRCode(String generateRandString) {
+
         // Show dialog
         showDialog(R.string.waiting_for_printing, false);
         try {
@@ -104,6 +105,8 @@ public class OrderPrint {
             });
         } catch (RemoteException e) {
             e.printStackTrace();
+            // show alert for error while trying to print
+            showDialogError(e.getMessage(), true);
         }
     }
 
