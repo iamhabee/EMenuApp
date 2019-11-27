@@ -1,5 +1,6 @@
 package com.arke.sdk.ui.views;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -17,6 +18,9 @@ import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuGenUtils;
 import com.arke.sdk.utilities.EMenuLogger;
 import com.arke.sdk.utilities.UiUtils;
+import com.labters.lottiealertdialoglibrary.DialogTypes;
+import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+import com.moos.library.Utils;
 //import com.elitepath.android.emenu.R;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +61,7 @@ public class DrinksOnlyView extends FrameLayout {
     private String customerTag;
     private String waiterTag;
 
-    private EMenuOrder drinkOrder;
+    private EMenuOrder drinkOrder, eMenuOrder;
 
     public DrinksOnlyView(Context context) {
         super(context);
@@ -124,26 +128,31 @@ public class DrinksOnlyView extends FrameLayout {
         removeDrinkView.setOnClickListener(view -> {
             if (drinkItem.isInStock()) {
                 UiUtils.blinkView(view);
-                if (StringUtils.isEmpty(tableTag)) {
-                    UiUtils.showSafeToast("Please provide a table tag to associate with this Item.");
+                eMenuOrder = DataStoreClient.getCustomerOrder(tableTag, customerTag);
+                if (eMenuOrder != null){
+                        DataStoreClient.decrementEMenuDrinksFromCustomerOrder(-1, drinkOrder, drinkItem, (eMenuOrder, eMenuItem, e) -> {
+                            if (e == null) {
+                                EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
+                            }
+                        });
+                }else{
+                    UiUtils.showSafeToast("Please press the add button to add drinks item");
                     return;
                 }
-                if (StringUtils.isEmpty(customerTag)) {
-                    UiUtils.showSafeToast("Please add a customer on table " + tableTag + " to this order.");
-                    return;
-                }
-                if (StringUtils.isEmpty(waiterTag)) {
-                    UiUtils.showSafeToast("Please add a waiter tag to this order.");
-                    return;
-                }
-                DataStoreClient.decrementEMenuDrinksFromCustomerOrder(-1, drinkOrder, drinkItem, (eMenuOrder, eMenuItem, e) -> {
-                    if (e == null) {
-                        EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
-                    }
-                });
             }
         });
     }
+
+//    private void showErrorMessage(String title, String description) {
+////        enableNextButton();
+//        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+//                .Builder(this, DialogTypes.TYPE_ERROR)
+//                .setTitle(title).setDescription(description)
+//                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+//                .build();
+//        errorCreationErrorDialog.setCancelable(true);
+//        errorCreationErrorDialog.show();
+//    }
 
     private void handleItemAddition() {
         addDrinkView.setOnClickListener(view -> {
