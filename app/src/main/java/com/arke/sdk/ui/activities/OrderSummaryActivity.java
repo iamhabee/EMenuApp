@@ -209,24 +209,25 @@ public class OrderSummaryActivity extends BaseActivity {
     private void loadEMenuItems(List<EMenuItem> result) {
         if (result != null && !result.isEmpty()) {
             for (EMenuItem eMenuItem : result) {
-                if (AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)) {
-                    // kitchen
-                    eMenuItem.setMenuItemDescription("Qty: <b>" + eMenuItem.getOrderedQuantity() + "</b>");
-                    if (!customerOrders.contains(eMenuItem)) {
-                        customerOrders.add(eMenuItem);
-                    }
-                }
-                else if (AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)) {
-                    // bar
-                    eMenuItem.setMenuItemDescription("Qty: <b>" + eMenuItem.getOrderedQuantity() + "</b>");
-                    if (!customerOrders.contains(eMenuItem)) {
-                        customerOrders.add(eMenuItem);
-                    }
-                }else{
-                    // waiter
-                    eMenuItem.setMenuItemDescription("Qty: <b>" + eMenuItem.getOrderedQuantity() + "</b>");
-                    if (!customerOrders.contains(eMenuItem)) {
-                        customerOrders.add(eMenuItem);
+                if(eMenuItem.getOrderedQuantity() > 0) {
+                    if (AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)) {
+                        // kitchen
+                        eMenuItem.setMenuItemDescription("Qty: <b>" + eMenuItem.getOrderedQuantity() + "</b>");
+                        if (!customerOrders.contains(eMenuItem)) {
+                            customerOrders.add(eMenuItem);
+                        }
+                    } else if (AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)) {
+                        // bar
+                        eMenuItem.setMenuItemDescription("Qty: <b>" + eMenuItem.getOrderedQuantity() + "</b>");
+                        if (!customerOrders.contains(eMenuItem)) {
+                            customerOrders.add(eMenuItem);
+                        }
+                    } else if (AppPrefs.getUseType() == Globals.WAITER){
+                        // waiter
+                        eMenuItem.setMenuItemDescription("Qty: <b>" + eMenuItem.getOrderedQuantity() + "</b>");
+                        if (!customerOrders.contains(eMenuItem)) {
+                            customerOrders.add(eMenuItem);
+                        }
                     }
                 }
             }
