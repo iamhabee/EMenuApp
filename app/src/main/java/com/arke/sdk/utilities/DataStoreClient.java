@@ -660,7 +660,8 @@ public class DataStoreClient {
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         if (AppPrefs.getUseType() == Globals.KITCHEN) {
             orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
-        } else if (AppPrefs.getUseType() == Globals.BAR) {
+        }
+        if (AppPrefs.getUseType() == Globals.BAR) {
             orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
         }
         orderQuery.getFirstInBackground((object, e) -> {
@@ -678,6 +679,10 @@ public class DataStoreClient {
                 } else {
                     if (deviceId != null) {
                         //
+                        if (object.get("has_drink") == Globals.HAS_DRINK && object.get("has_food") == Globals.HAS_FOOD){
+
+                        }
+
                         object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
                                         ? Globals.KITCHEN_ATTENDANT_ID
                                         : Globals.BAR_ATTENDANT_ID,
@@ -689,9 +694,11 @@ public class DataStoreClient {
                         if (AppPrefs.getUseType() == Globals.BAR) {
                             object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
                             object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
+                            //Add rejected_notifier
                         } else if (AppPrefs.getUseType() == Globals.KITCHEN) {
                             object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
                             object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
+                            // Add rejected_notifier
                         }
 
                         object.put(Globals.REJECTED_NOTIFIER, rejectedNotifier);
