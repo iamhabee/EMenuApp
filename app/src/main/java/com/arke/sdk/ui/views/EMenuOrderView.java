@@ -32,6 +32,7 @@ import com.arke.sdk.ui.activities.WaiterHomeActivity;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuGenUtils;
 import com.arke.sdk.utilities.EMenuLogger;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 //import com.elitepath.android.emenu.R;
 import com.google.android.material.card.MaterialCardView;
@@ -575,6 +576,20 @@ public class EMenuOrderView extends MaterialCardView implements
                 dismissProgressDialog();
                 if (e == null) {
                     UiUtils.showSafeToast("Payment successfully registered for Customer " + customerKey + "!!!");
+                    android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(getContext())
+                            .setNegativeButton("Cancel", null)
+                            .setCancelable(false)
+                            .create();
+                    OrderPrint print = new OrderPrint(getContext(), dialog);
+                    boolean hasPaid;
+                    if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
+                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
+                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
+                        hasPaid = true;
+                    }else {
+                        hasPaid = false;
+                    }
+                    print.validateSlipThenPrint(eMenuOrder.items, hasPaid);
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + e.getMessage() + ")");
                 }
@@ -599,6 +614,21 @@ public class EMenuOrderView extends MaterialCardView implements
                 dismissProgressDialog();
                 if (paymentException == null) {
                     UiUtils.showSafeToast("Payment successfully registered for Customer " + customerKey + "!!!");
+
+                    android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(getContext())
+                            .setNegativeButton("Cancel", null)
+                            .setCancelable(false)
+                            .create();
+                    OrderPrint print = new OrderPrint(getContext(), dialog);
+                    boolean hasPaid;
+                    if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
+                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
+                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
+                        hasPaid = true;
+                    }else {
+                        hasPaid = false;
+                    }
+                    print.validateSlipThenPrint(eMenuOrder.items, hasPaid);
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + paymentException.getMessage() + ")");
                 }
@@ -613,6 +643,20 @@ public class EMenuOrderView extends MaterialCardView implements
 
     private void initiateSingleCardPaymentFlow(String customerKey) {
         EventBus.getDefault().post(new CardProcessorEvent(eMenuOrder, getTotalRawCost(eMenuOrder.getItems()), customerKey));
+        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(getContext())
+                .setNegativeButton("Cancel", null)
+                .setCancelable(false)
+                .create();
+        OrderPrint print = new OrderPrint(getContext(), dialog);
+        boolean hasPaid;
+        if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
+                eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
+                eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
+            hasPaid = true;
+        }else {
+            hasPaid = false;
+        }
+        print.validateSlipThenPrint(eMenuOrder.items, hasPaid);
     }
 
 }
