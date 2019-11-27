@@ -449,7 +449,7 @@ public class KitchenHomeActivity extends BaseActivity {
 
     private void transitionToWaiterHome() {
         AppPrefs.setUseType(Globals.UseType.USE_TYPE_WAITER);
-        Intent waiterHomeIntent = new Intent(this, KitchenHomeActivity.class);
+        Intent waiterHomeIntent = new Intent(this, WaiterHomeActivity.class);
         startActivity(waiterHomeIntent);
         finish();
     }
