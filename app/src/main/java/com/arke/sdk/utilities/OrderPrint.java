@@ -62,6 +62,7 @@ public class OrderPrint {
     }
 
     public void printQRCode(String generateRandString) {
+
         // Show dialog
         showDialog(R.string.waiting_for_printing, false);
         try {

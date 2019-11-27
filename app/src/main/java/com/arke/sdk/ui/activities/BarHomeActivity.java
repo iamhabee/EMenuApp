@@ -525,14 +525,28 @@ public class BarHomeActivity extends BaseActivity {
 
 
     private void printQRCodeTag(){
-        dialog = new android.app.AlertDialog.Builder(BarHomeActivity.this)
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .create();
+        if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+            dialog = new android.app.AlertDialog.Builder(BarHomeActivity.this)
+                    .setNegativeButton("Cancel", null)
+                    .setCancelable(false)
+                    .create();
 
-        OrderPrint orderPrint = new OrderPrint(BarHomeActivity.this, dialog);
-        orderPrint.printQRCode(generateRandString(10));
+            OrderPrint orderPrint = new OrderPrint(BarHomeActivity.this, dialog);
+            orderPrint.printQRCode(generateRandString(10));
+        }else{
+            showErrorMessage("Not Supported", "This device does not support this functionality");
+        }
+    }
 
+
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
     }
 
 

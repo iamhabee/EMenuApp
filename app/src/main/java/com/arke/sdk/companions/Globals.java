@@ -135,7 +135,7 @@ public class Globals {
     public static final String IS_ACCOUNT_ACTIVE = "is_account_active";
     public static final String OTP_TOKEN = "otp_token";
     public static final String TOKEN_EXPIRING_DATE = "token_expiring_date";
-    public static final String SDK_TARGET_DEVICE_TYPE = "LANDIA822"; //Build.MANUFACTURER + Build.DEVICE + Build.VERSION.SDK_INT
+    public static final String SDK_TARGET_DEVICE_TYPE = "LANDIA822";
     public static final String CURRENT_DEVICE_TYPE = Build.MANUFACTURER + Build.DEVICE + Build.VERSION.SDK_INT;
 
     public enum StatusPage {
