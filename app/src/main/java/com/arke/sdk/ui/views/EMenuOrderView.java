@@ -314,22 +314,28 @@ public class EMenuOrderView extends MaterialCardView implements
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(View view)  {
         UiUtils.blinkView(view);
         if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
             String currentDeviceId = AppPrefs.getDeviceId();
+//            AppPrefs.getUseType() == Globals.KITCHEN;
 //            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
             if (currentDeviceId != null) {
                 String attendantDeviceId = getContext() instanceof KitchenHomeActivity
-                        ? eMenuOrder.getKitchenAttendantDeviceId()
-                        : eMenuOrder.getBarAttendantDeviceId();
+                        ? ParseUser.getCurrentUser().getString("destination_id")
+//                        : eMenuOrder.getBarAttendantDeviceId();
+                        : Integer.toString(AppPrefs.getUseType());
                 EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", " +
                         "TaggedDeviceId=" + attendantDeviceId);
                 if (attendantDeviceId != null) {
                     if (!attendantDeviceId.equals(currentDeviceId)) {
                         takeOrder();
                     } else {
-                        viewOrder();
+                        if (eMenuOrder.kitchen_rejected || eMenuOrder.bar_rejected){
+                            takeOrder();
+                        }else {
+                            viewOrder();
+                        }
                     }
                 } else {
                     takeOrder();
@@ -581,15 +587,7 @@ public class EMenuOrderView extends MaterialCardView implements
                             .setCancelable(false)
                             .create();
                     OrderPrint print = new OrderPrint(getContext(), dialog);
-                    boolean hasPaid;
-                    if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
-                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
-                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
-                        hasPaid = true;
-                    }else {
-                        hasPaid = false;
-                    }
-                    print.validateSlipThenPrint(eMenuOrder.items, hasPaid);
+                    print.validateSlipThenPrint(eMenuOrder.items, true);
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + e.getMessage() + ")");
                 }
@@ -620,15 +618,7 @@ public class EMenuOrderView extends MaterialCardView implements
                             .setCancelable(false)
                             .create();
                     OrderPrint print = new OrderPrint(getContext(), dialog);
-                    boolean hasPaid;
-                    if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
-                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
-                            eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
-                        hasPaid = true;
-                    }else {
-                        hasPaid = false;
-                    }
-                    print.validateSlipThenPrint(eMenuOrder.items, hasPaid);
+                    print.validateSlipThenPrint(eMenuOrder.items, true);
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + paymentException.getMessage() + ")");
                 }
@@ -648,15 +638,7 @@ public class EMenuOrderView extends MaterialCardView implements
                 .setCancelable(false)
                 .create();
         OrderPrint print = new OrderPrint(getContext(), dialog);
-        boolean hasPaid;
-        if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
-                eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
-                eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
-            hasPaid = true;
-        }else {
-            hasPaid = false;
-        }
-        print.validateSlipThenPrint(eMenuOrder.items, hasPaid);
+        print.validateSlipThenPrint(eMenuOrder.items, true);
     }
 
 }

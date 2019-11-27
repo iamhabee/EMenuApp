@@ -660,7 +660,8 @@ public class DataStoreClient {
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         if (AppPrefs.getUseType() == Globals.KITCHEN) {
             orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
-        } else if (AppPrefs.getUseType() == Globals.BAR) {
+        }
+        if (AppPrefs.getUseType() == Globals.BAR) {
             orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
         }
         orderQuery.getFirstInBackground((object, e) -> {
@@ -678,6 +679,10 @@ public class DataStoreClient {
                 } else {
                     if (deviceId != null) {
                         //
+                        if (object.get("has_drink") == Globals.HAS_DRINK && object.get("has_food") == Globals.HAS_FOOD){
+
+                        }
+
                         object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
                                         ? Globals.KITCHEN_ATTENDANT_ID
                                         : Globals.BAR_ATTENDANT_ID,
@@ -689,9 +694,11 @@ public class DataStoreClient {
                         if (AppPrefs.getUseType() == Globals.BAR) {
                             object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
                             object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
+                            //Add rejected_notifier
                         } else if (AppPrefs.getUseType() == Globals.KITCHEN) {
                             object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
                             object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
+                            // Add rejected_notifier
                         }
 
                         object.put(Globals.REJECTED_NOTIFIER, rejectedNotifier);
@@ -1435,33 +1442,56 @@ public class DataStoreClient {
             int newQuantity;
             if (forcedQuantity != -1) {
                 newQuantity = forcedQuantity;
-            } else {
+            } else if (existingQuantity ==0 ){
+                newQuantity = existingQuantity;
+            }else {
                 newQuantity = existingQuantity - 1;
             }
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-            if (newQuantity < 0) {
-                if (items.size() == 0) {
-//                    eMenuOrder.delete();
-                    UiUtils.showSafeToast("press add button to increase drink items");
-                } else {
-                    items.remove(eMenuItem);
-                    eMenuOrder.setItems(items);
-                    eMenuOrder.setDirty(true);
-                    eMenuOrder.update();
-                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-                }
-            }else if (newQuantity == 0){
-                UiUtils.showSafeToast("press add button to increase drink items");
-            } else{
+            if (newQuantity >= 0) {
                 eMenuItem.setOrderedQuantity(newQuantity);
                 items.set(indexOfItem, eMenuItem);
                 eMenuOrder.setItems(items);
                 eMenuOrder.setDirty(true);
                 eMenuOrder.update();
+                if (items.size() == 0) {
+                    eMenuOrder.delete();
+                    UiUtils.showSafeToast("All items deleted, press add button to increase drink items");
+                }
+            }
+//            else if (newQuantity == 0){
+//                if (items.size() == 0){
+//                    items.remove(eMenuItem);
+//                    eMenuOrder.setItems(items);
+//                    eMenuOrder.setDirty(true);
+//                    eMenuOrder.update();
+//                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+//                    UiUtils.showSafeToast("press add button to increase drink items");
+//                }else{
+//                    eMenuItem.setOrderedQuantity(newQuantity);
+//                    items.set(indexOfItem, eMenuItem);
+//                    eMenuOrder.setItems(items);
+//                    eMenuOrder.setDirty(true);
+//                    eMenuOrder.update();
+////                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+////                    UiUtils.showSafeToast("press add button to increase drink items");
+//                }
+//
+//            }
+            else{
+                    items.remove(eMenuItem);
+                    items.set(indexOfItem, eMenuItem);
+                    eMenuOrder.setItems(items);
+                    eMenuOrder.setDirty(true);
+                    eMenuOrder.update();
+                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+
             }
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
         }else {
-            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
+
+            UiUtils.showSafeToast("press add button to increase drink items");
+//            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }
     }
 
