@@ -159,21 +159,25 @@ public class OrderPrint {
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG:", "" + eMenuItem.getTableTag()));
                         setFontSpec(FONT_SIZE_NORMAL);
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG:", "" + ParseUser.getCurrentUser().getUsername()));
+
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.CENTER, divider);
+                        setFontSpec(FONT_SIZE_LARGE);
+                        Printer.getInstance().addText(AlignMode.CENTER, hasPaid?("PAID"):("NOT PAID"));
+
+                    }
+
+                    if (eMenuItem.getOrderedQuantity() > 0){
+                        setFontSpec(FONT_SIZE_NORMAL);
+                        Printer.getInstance().addText(AlignMode.CENTER, divider);
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM:", "" + eMenuItem.getMenuItemName()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
+                        count = count + 1;
                     }
 
 
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, divider);
-                    setFontSpec(FONT_SIZE_LARGE);
-                    Printer.getInstance().addText(AlignMode.CENTER, hasPaid?("PAID"):("NOT PAID"));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.CENTER, divider);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM:", "" + eMenuItem.getMenuItemName()));
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
-                    count = count + 1;
                 }
 
                 Printer.getInstance().addText(AlignMode.CENTER, single_divider);

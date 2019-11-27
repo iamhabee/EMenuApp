@@ -129,8 +129,6 @@ public class BarHomeActivity extends BaseActivity {
         assert WorkManager.getInstance() != null;
         WorkManager.getInstance().enqueue(periodicWorkRequest);
 
-        Log.d("Android Build", Build.MANUFACTURER + Build.DEVICE + Build.VERSION.SDK_INT);
-
     }
 
     @Override

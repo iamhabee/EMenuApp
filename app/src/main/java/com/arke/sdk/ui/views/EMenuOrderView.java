@@ -316,37 +316,59 @@ public class EMenuOrderView extends MaterialCardView implements
     @Override
     public void onClick(View view)  {
         UiUtils.blinkView(view);
-        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
-            String currentDeviceId = AppPrefs.getDeviceId();
+//        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
+//            String currentDeviceId = AppPrefs.getDeviceId();
 //            AppPrefs.getUseType() == Globals.KITCHEN;
 //            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
-            if (currentDeviceId != null) {
-                String attendantDeviceId = getContext() instanceof KitchenHomeActivity
-                        ? ParseUser.getCurrentUser().getString("destination_id")
-//                        : eMenuOrder.getBarAttendantDeviceId();
-                        : Integer.toString(AppPrefs.getUseType());
-                EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", " +
-                        "TaggedDeviceId=" + attendantDeviceId);
-                if (attendantDeviceId != null) {
-                    if (!attendantDeviceId.equals(currentDeviceId)) {
-                        takeOrder();
-                    } else {
-                        if (eMenuOrder.kitchen_rejected || eMenuOrder.bar_rejected){
-                            takeOrder();
-                        }else {
-                            viewOrder();
-                        }
-                    }
-                } else {
+            // checks if user is in Kitchen
+            if (AppPrefs.getUseType() == Globals.KITCHEN){
+
+                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED ||
+                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
                     takeOrder();
+                }else{
+                    viewOrder();
                 }
-            } else {
-                EMenuLogger.d("IDs", "CurrentDeviceId=null");
+
+            }else if (AppPrefs.getUseType() == Globals.BAR){
+
+                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED ||
+                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+                    takeOrder();
+                }else {
+                    viewOrder();
+                }
+            }else {
                 takeOrder();
             }
-        } else {
-            viewOrder();
-        }
+//            if (currentDeviceId != null) {
+//                String attendantDeviceId = getContext() instanceof KitchenHomeActivity
+//                        ? ParseUser.getCurrentUser().getString("destination_id")
+////                        : eMenuOrder.getBarAttendantDeviceId();
+//                        : Integer.toString(AppPrefs.getUseType());
+//                EMenuLogger.d("IDs", "CurrentDeviceId=" + currentDeviceId + ", " +
+//                        "TaggedDeviceId=" + attendantDeviceId);
+//                if (attendantDeviceId != null) {
+//                    if (!attendantDeviceId.equals(currentDeviceId)) {
+//                        takeOrder();
+//                    } else {
+////                        if (eMenuOrder.kitchen_rejected || eMenuOrder.bar_rejected){
+////                            takeOrder();
+////                        }else {
+////                            viewOrder();
+////                        }
+//                        viewOrder();
+//                    }
+//                } else {
+//                    takeOrder();
+//                }
+//            } else {
+//                EMenuLogger.d("IDs", "CurrentDeviceId=null");
+//                takeOrder();
+//            }
+//        } else {
+//            takeOrder();
+//        }
     }
 
     private void takeOrder() {
@@ -396,14 +418,19 @@ public class EMenuOrderView extends MaterialCardView implements
 
 
     private void rejectOrder(){
-        DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {}) );
-        if (AppPrefs.getUseType() == Globals.KITCHEN){
-            Toast.makeText(getContext(), "Order rejected by kitchen", Toast.LENGTH_SHORT).show();
-        }else if (AppPrefs.getUseType() == Globals.BAR) {
-            Toast.makeText(getContext(), "Order rejected by bar", Toast.LENGTH_SHORT).show();
-        }
-//        getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
-//        eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.REJECTED);
+        DataStoreClient.rejectEmenuOrder(eMenuOrder.getOrderId(), true, ((rejected, e) -> {
+            if (e == null){
+                if (AppPrefs.getUseType() == Globals.KITCHEN){
+                    getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_REJECTED);
+                    Toast.makeText(getContext(), "Order rejected by kitchen", Toast.LENGTH_SHORT).show();
+                }else if (AppPrefs.getUseType() == Globals.BAR) {
+                    getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_REJECTED);
+                    Toast.makeText(getContext(), "Order rejected by bar", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }));
     }
 
     private void acceptOrder(){

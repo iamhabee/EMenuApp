@@ -286,10 +286,10 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
                     showOperationsDialog( "Sending Orders to kitchen and bar", "please wait");
                     DataStoreClient.pushOrdersToKitchenOrBar(unProcessedOrders,  (result, e) -> {
                         dismissProgressDialog();
-                        if(e != null) {
+                        if(e == null) {
                             showSuccessMessage("Success", "Orders have been sent");
                         }else{
-                            showErrorMessage("Error Connecting", "We've experienced some connectivity problems");
+                            showErrorMessage("Error Connecting", e.getMessage());
                         }
 
                     });
