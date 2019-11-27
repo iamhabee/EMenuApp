@@ -221,15 +221,6 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
         }
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private void showOperationsDialog(String title, String description) {
-        operationsProgressDialog = new LottieAlertDialog
-                .Builder(this, DialogTypes.TYPE_LOADING)
-                .setTitle(title).setDescription(description).build();
-        operationsProgressDialog.setCancelable(false);
-        operationsProgressDialog.show();
-    }
-
     @SuppressLint("SetTextI18n")
     private void sendAllUnProcessedOrdersToTheKitchen() {
         processOrders();
@@ -243,6 +234,15 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
         uiHandler.sendMessage(newMessage);
     }
 
+
+    @SuppressWarnings("SameParameterValue")
+    private void showOperationsDialog(String title, String description) {
+        operationsProgressDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        operationsProgressDialog.setCancelable(false);
+        operationsProgressDialog.show();
+    }
 
 
     private void showSuccessMessage(String title, String description) {
@@ -274,12 +274,12 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
         errorCreationErrorDialog.show();
     }
 
-    private void processOrders(){
+    private void processOrders() {
         LottieAlertDialog.Builder addToCartDialogBuilder = new LottieAlertDialog.Builder(UnProcessedOrdersActivity.this,
                 DialogTypes.TYPE_QUESTION)
                 .setTitle("Are you sure you want to send all orders?")
                 .setDescription("Orders will be processed")
-                        .setPositiveText("YES")
+                .setPositiveText("YES")
                 .setNegativeText("NO")
                 .setPositiveListener(lottieAlertDialog -> {
                     lottieAlertDialog.dismiss();
@@ -291,12 +291,9 @@ public class UnProcessedOrdersActivity extends BaseActivity implements View.OnCl
                         }else{
                             showErrorMessage("Error Connecting", "We've experienced some connectivity problems");
                         }
-
                     });
-
                 }).setNegativeListener(Dialog::dismiss);
         addToCartDialogBuilder.build().show();
-
     }
 
 
