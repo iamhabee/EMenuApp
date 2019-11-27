@@ -105,6 +105,8 @@ public class OrderPrint {
             });
         } catch (RemoteException e) {
             e.printStackTrace();
+            // show alert for error while trying to print
+            showDialogError(e.getMessage(), true);
         }
     }
 
