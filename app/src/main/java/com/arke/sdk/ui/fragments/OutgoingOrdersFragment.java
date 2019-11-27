@@ -139,11 +139,6 @@ public class OutgoingOrdersFragment extends BaseFragment {
 //        swipeRefreshLayout.setOnRefreshListener(() -> fetchOutgoingOrders(0));
     }
 
-
-
-
-
-
     @SuppressLint("SetTextI18n")
     private void fetchOutgoingOrders(int skip) {
         DataStoreClient.fetchOutgoingOrders(skip, (results, e) -> {

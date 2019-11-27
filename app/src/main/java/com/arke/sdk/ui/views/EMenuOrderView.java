@@ -32,6 +32,7 @@ import com.arke.sdk.ui.activities.WaiterHomeActivity;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.EMenuGenUtils;
 import com.arke.sdk.utilities.EMenuLogger;
+import com.arke.sdk.utilities.OrderPrint;
 import com.arke.sdk.utilities.UiUtils;
 //import com.elitepath.android.emenu.R;
 import com.google.android.material.card.MaterialCardView;
@@ -599,6 +600,13 @@ public class EMenuOrderView extends MaterialCardView implements
                 dismissProgressDialog();
                 if (paymentException == null) {
                     UiUtils.showSafeToast("Payment successfully registered for Customer " + customerKey + "!!!");
+
+                    android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(getContext())
+                            .setNegativeButton("Cancel", null)
+                            .setCancelable(false)
+                            .create();
+                    OrderPrint print = new OrderPrint(getContext(), dialog);
+                    print.validateSlipThenPrint(eMenuOrder.items, true);
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + paymentException.getMessage() + ")");
                 }
