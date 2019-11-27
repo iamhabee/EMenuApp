@@ -150,9 +150,6 @@ public class OrderPrint {
                     total = unitPrice * itemQty;
                     sumTotal = sumTotal + total;
 
-
-
-
                     if (count == 1) {
                         customerTag = eMenuItem.getCustomerTag();
                         tableTag = eMenuItem.getTableTag();
