@@ -517,5 +517,6 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="password">Password</string>
     <string name="new_password_hint">Kindly provide a new password and confirmation of the new password</string>
+    <string name="exit_app">Are you sure you want to exit?</string>
 
 </resources>

@@ -49,8 +49,8 @@ public class WaiterSalesActivity extends BaseActivity {
     @BindView(R.id.content_flipper)
     ViewFlipper contentFlipper;
 
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
+//    @BindView(R.id.swipe_refresh_layout)
+//    SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.message_view)
     TextView messageView;
@@ -103,10 +103,10 @@ public class WaiterSalesActivity extends BaseActivity {
         footerView = View.inflate(this, R.layout.loading_footer, null);
         RecyclerViewUtils.setFooterView(salesRecyclerView, footerView);
         UiUtils.toggleViewVisibility(footerView, false);
-        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_1),
-                ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_2),
-                ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_3),
-                ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_4));
+//        swipeRefreshLayout.setColorSchemeColors(ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_1),
+//                ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_2),
+//                ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_3),
+//                ContextCompat.getColor(WaiterSalesActivity.this, R.color.gplus_color_4));
         salesRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int current_page) {
@@ -116,13 +116,13 @@ public class WaiterSalesActivity extends BaseActivity {
                 }
             }
         });
-        swipeRefreshLayout.setOnRefreshListener(() -> fetchSalesFromWaiter(waiterTag));
+//        swipeRefreshLayout.setOnRefreshListener(() -> fetchSalesFromWaiter(waiterTag));
     }
 
     @SuppressLint("SetTextI18n")
     private void fetchSalesFromWaiter(String waiterTag) {
         DataStoreClient.fetchOrdersFromWaiter(waiterTag, eMenuOrders.size(), (eMenuOrderList, e) -> {
-            swipeRefreshLayout.setRefreshing(false);
+//            swipeRefreshLayout.setRefreshing(false);
             if (e != null) {
                 String errorMessage = e.getMessage();
                 String ref = "glitch";

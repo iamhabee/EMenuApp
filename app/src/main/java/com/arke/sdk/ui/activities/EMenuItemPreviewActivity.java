@@ -3,6 +3,7 @@ package com.arke.sdk.ui.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,6 +49,7 @@ import com.arke.sdk.ui.views.AutofitRecyclerView;
 import com.arke.sdk.ui.views.MarginDecoration;
 import com.google.gson.Gson;
 import com.jkb.slidemenu.SlideMenuLayout;
+import com.labters.lottiealertdialoglibrary.ClickListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
 import com.liucanwen.app.headerfooterrecyclerview.HeaderAndFooterRecyclerViewAdapter;
@@ -58,6 +60,7 @@ import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,6 +224,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
 
         setupDrinksAdapter();
         initEventHandlers();
+        sessionOrderCheck();
 
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         deviceId = AppPrefs.getDeviceId();
@@ -255,6 +259,29 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         });
     }
 
+    // confirm if waiter wants to proceed with existing order details
+    private void sessionOrderCheck(){
+        // check if table tag and customer tag have been saved in shared pref.
+        if(AppPrefs.getTableTag() != null && AppPrefs.getCustomerTag() != null){
+             LottieAlertDialog.Builder logOutDialogBuilder = new LottieAlertDialog.Builder(EMenuItemPreviewActivity.this,
+                        DialogTypes.TYPE_QUESTION)
+                        .setTitle("Resume Session")
+                        .setDescription("Do you wish to add this order to customer "+AppPrefs.getCustomerTag()+" cart?")
+                        .setPositiveText("Add Please")
+                        .setNegativeText("Treat as new")
+                        .setPositiveListener(lottieAlertDialog -> {
+                            lottieAlertDialog.dismiss();
+                            tableTag.setText(AppPrefs.getTableTag());
+                            customerTag.setText(AppPrefs.getCustomerTag());
+                        }).setNegativeListener(lottieAlertDialog -> {
+                         lottieAlertDialog.dismiss();
+                         AppPrefs.setTableTag(null);
+                         AppPrefs.setCustomerTag(null);
+                     });
+                logOutDialogBuilder.build().show();
+        }
+    }
+
     /* this method will get all drinks in the database and populate it into drink adapter before any search is done */
     private void getAllDrinks() {
             DataStoreClient.getDrinks( (results, e) -> {
@@ -271,6 +298,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             });
         }
 
+    //onActivityResult
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -292,7 +320,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 //Write your code if there's no result
             }
         }
-    }//onActivityResult
+    }
 
     @Override
     public void onEventMainThread(Object event) {
@@ -743,10 +771,15 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                 if (StringUtils.containsIgnoreCase(viewContent, "Edit")) {
                     initiateEMenuItemEdit();
                 } else {
-                    addToTable();
+                    confirmAddTOCart();
                 }
                 break;
         }
+
+
+
+
+
 //        if (view.getId() == R.id.close_activity) {
 //            UiUtils.blinkView(view);
 //            finish();
@@ -775,6 +808,26 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         }
     }
 
+
+    private void showSuccessMessage(String title, String description) {
+        operationsDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title)
+                .setPositiveText("Continue")
+                .setPositiveListener(new ClickListener() {
+                    @Override
+                    public void onClick(@NotNull LottieAlertDialog lottieAlertDialog) {
+                        dismissProgressDialog();
+                        finish();
+                        Intent goToCart = new Intent(EMenuItemPreviewActivity.this, UnProcessedOrdersActivity.class);
+                        startActivity(goToCart);
+                    }
+                })
+                .setDescription(description).build();
+        operationsDialog.setCancelable(false);
+        operationsDialog.show();
+    }
+
     private void showOperationsDialog(String title, String description) {
         operationsDialog = new LottieAlertDialog
                 .Builder(this, DialogTypes.TYPE_LOADING)
@@ -786,9 +839,10 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
     private void addToTable() {
         String tableTagValue = tableTag.getText().toString().trim();
         String customerTagValue = customerTag.getText().toString().trim();
+        AppPrefs.setTableTag(tableTagValue);
+        AppPrefs.setCustomerTag(customerTagValue);
 //        String waiterTagValue = ParseUser.getCurrentUser().getObjectId();
         String waiterTagValue = waiterId;
-
         boolean isTakeAway = takeAway.isChecked();
         if (!isTakeAway && StringUtils.isEmpty(tableTagValue)) {
             tableTag.setError("Please provide a table tag to associate with this Item.");
@@ -834,14 +888,30 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         item.setCustomerTag(customerTagValue);
         item.setWaiterTag(waiterTagValue);
 
-        showOperationsDialog("Adding " + WordUtils.capitalize(eMenuItem.getMenuItemName()) + " Customer " + customerTagValue + " Orders", "Please wait...");
         DataStoreClient dataStoreClient = new DataStoreClient(this);
         dataStoreClient.addEMenuItemToCustomerCart(deviceId, tableTagValue, customerTagValue, waiterTagValue, quantityCount, item, (eMenuOrder, eMenuItem, e) -> {
-            dismissProgressDialog();
             if (e == null) {
-                UiUtils.showSafeToast(WordUtils.capitalize(eMenuItem.getMenuItemName()) + " was successfully added to Customer " + eMenuOrder.getCustomerTag() + " orders ");
+                showSuccessMessage("Success",WordUtils.capitalize(eMenuItem.getMenuItemName()) + " was successfully added to Customer " + eMenuOrder.getCustomerTag() + " orders ");
             }
+            tableTag.setText(null);
+            customerTag.setText(null);
+            quantityBox.setText(null);
         });
     }
 
+
+
+    private void confirmAddTOCart(){
+        LottieAlertDialog.Builder addToCartDialogBuilder = new LottieAlertDialog.Builder(EMenuItemPreviewActivity.this,
+                DialogTypes.TYPE_QUESTION)
+                .setTitle("Are you sure you want to add item to cart?")
+                .setPositiveText("YES")
+                .setNegativeText("NO")
+                .setPositiveListener(lottieAlertDialog -> {
+                    lottieAlertDialog.dismiss();
+                    addToTable();
+                }).setNegativeListener(Dialog::dismiss);
+        addToCartDialogBuilder.build().show();
+
+    }
 }

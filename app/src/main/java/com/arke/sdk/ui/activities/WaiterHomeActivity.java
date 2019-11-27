@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,6 +48,7 @@ import com.arke.sdk.eventbuses.EMenuItemUpdatedEvent;
 import com.arke.sdk.eventbuses.FetchCategoryContentsEvent;
 import com.arke.sdk.eventbuses.ItemSearchEvent;
 import com.arke.sdk.eventbuses.OrderUpdatedEvent;
+import com.arke.sdk.eventbuses.RefreshOrderEvent;
 import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.utilities.DataStoreClient;
@@ -161,7 +164,7 @@ public class WaiterHomeActivity extends BaseActivity {
 
         /* trigger work manager every 30sec */
         PeriodicWorkRequest periodicWorkRequest =
-                new PeriodicWorkRequest.Builder(WaiterAlertWorker.class, 30, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(WaiterAlertWorker.class, 5, TimeUnit.SECONDS)
                         .addTag("periodic_work")
                         .build();
 
@@ -234,6 +237,11 @@ public class WaiterHomeActivity extends BaseActivity {
         });
     }
 
+
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -285,8 +293,6 @@ public class WaiterHomeActivity extends BaseActivity {
             }
         }
     }
-
-
     private void initAppTour(String title, String description, View view, TargetDismissedCallback targetDismissedCallback) {
         new MaterialTapTargetPrompt.Builder(this)
                 .setTarget(view)
@@ -576,25 +582,40 @@ public class WaiterHomeActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START, true);
-        } else {
-            if (searchCardView.getVisibility() == View.VISIBLE) {
-                closeSearch();
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START, true);
             } else {
-                if (mainViewPager.getCurrentItem() != 0) {
-                    mainViewPager.setCurrentItem(0);
+                if (searchCardView.getVisibility() == View.VISIBLE) {
+                    closeSearch();
                 } else {
-                    if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
-                        bottomSheetDialog.dismiss();
-                        bottomSheetDialog.cancel();
-                        bottomSheetDialog = null;
+                    if (mainViewPager.getCurrentItem() != 0) {
+                        mainViewPager.setCurrentItem(0);
                     } else {
-                        super.onBackPressed();
+                        if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                            bottomSheetDialog.dismiss();
+                            bottomSheetDialog.cancel();
+                            bottomSheetDialog = null;
+                        } else {
+                            dialog.dismiss();
+                            finish();
+                        }
                     }
                 }
             }
-        }
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+
     }
 
     private void closeSearch() {
@@ -613,7 +634,7 @@ public class WaiterHomeActivity extends BaseActivity {
             forceShowSoftKeyBoard();
         });
         refreshiewIcon.setOnClickListener(view -> {
-            EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
+            EventBus.getDefault().post(new RefreshOrderEvent(this, AppPrefs.getUseType(), 0));
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
@@ -649,6 +670,7 @@ public class WaiterHomeActivity extends BaseActivity {
         });
         initTabLayout();
     }
+
 
     private void forceShowSoftKeyBoard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);

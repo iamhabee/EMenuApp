@@ -1,7 +1,10 @@
 package com.arke.sdk.ui.activities;
 
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,6 +19,7 @@ import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.NetworkClient;
 import com.arke.sdk.utilities.UiUtils;
+//import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.blogspot.atifsoftwares.animatoolib.Animatoo;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
@@ -24,6 +28,7 @@ import com.parse.LogInCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.arke.sdk.R;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -120,6 +125,8 @@ public class UserLoginActivity extends AppCompatActivity {
                         // get user's permission level and designation (waiter, bar, etc)
                         int user_type = parseUser.getInt("user_type");
                         // grant user access WRT permission
+
+
                         switch (user_type) {
                             case Globals.KITCHEN:
                                 // kitchen
@@ -165,6 +172,26 @@ public class UserLoginActivity extends AppCompatActivity {
             UiUtils.showErrorMessage(activity, "Network Error", DataStoreClient.getNetworkErrorMessage());
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.close_app_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        Button yes = dialog.findViewById(R.id.yes);
+        Button no = dialog.findViewById(R.id.no);
+
+        yes.setOnClickListener(view -> {
+            dialog.dismiss();
+            finish();
+        });
+
+        no.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
     }
 
 }

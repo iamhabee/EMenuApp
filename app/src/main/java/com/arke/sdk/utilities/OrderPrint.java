@@ -12,9 +12,14 @@ import android.util.Log;
         import android.widget.Toast;
 
 import com.arke.sdk.R;
+import com.arke.sdk.companions.Globals;
 import com.arke.sdk.models.EMenuItem;
+import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.util.printer.Printer;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.usdk.apiservice.aidl.printer.ASCScale;
         import com.usdk.apiservice.aidl.printer.ASCSize;
@@ -57,9 +62,9 @@ public class OrderPrint {
     }
 
 
-    public void validateSlipThenPrint(List<EMenuItem> orders) {
+    public void validateSlipThenPrint(List<EMenuItem> orders, boolean hasPaid) {
         // generate some other information
-        printSlip(orders);
+        printSlip(orders, hasPaid);
     }
 
     public void printQRCode(String generateRandString) {
@@ -109,7 +114,10 @@ public class OrderPrint {
     }
 
 
-    private void printSlip(List<EMenuItem> orders) {
+    private void printSlip(List<EMenuItem> orders, boolean hasPaid) {
+        String customerTag = null;
+        String tableTag = null;
+        int result = 0;
 
         // Show dialog
         showDialog(R.string.waiting_for_printing, false);
@@ -127,6 +135,8 @@ public class OrderPrint {
                 double total = 0, unitPrice = 0, sumTotal = 0;
 
                 setFontSpec(FONT_SIZE_NORMAL);
+                Printer.getInstance().addText(AlignMode.CENTER, AppPrefs.getRestaurantOrBarName());
+                Printer.getInstance().addText(AlignMode.CENTER, AppPrefs.getRestaurantOrBarEmailAddress());
                 Printer.getInstance().addText(AlignMode.CENTER, single_divider);
                 setFontSpec(FONT_SIZE_LARGE);
                 Printer.getInstance().addText(AlignMode.CENTER, "ORDER ITEMS");
@@ -141,27 +151,28 @@ public class OrderPrint {
                     sumTotal = sumTotal + total;
 
                     if (count == 1) {
+                        customerTag = eMenuItem.getCustomerTag();
+                        tableTag = eMenuItem.getTableTag();
                         setFontSpec(FONT_SIZE_NORMAL);
-                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("CUSTOMER TAG", "" + eMenuItem.getCustomerTag()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("CUSTOMER TAG:", "" + eMenuItem.getCustomerTag()));
                         setFontSpec(FONT_SIZE_NORMAL);
-                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG", "" + eMenuItem.getTableTag()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TABLE TAG:", "" + eMenuItem.getTableTag()));
                         setFontSpec(FONT_SIZE_NORMAL);
-                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG", "" + ParseUser.getCurrentUser().getUsername()));
+                        Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("WAITER TAG:", "" + ParseUser.getCurrentUser().getUsername()));
                     }
+
 
                     setFontSpec(FONT_SIZE_NORMAL);
                     Printer.getInstance().addText(AlignMode.CENTER, divider);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM", "" + eMenuItem.getMenuItemName()));
+                    setFontSpec(FONT_SIZE_LARGE);
+                    Printer.getInstance().addText(AlignMode.CENTER, hasPaid?("PAID"):("NOT PAID"));
 
                     setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY", "" + eMenuItem.getOrderedQuantity()));
-
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE", formatAmount(unitPrice, true)));
-
-                    setFontSpec(FONT_SIZE_NORMAL);
-                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL", formatAmount(total, true)));
+                    Printer.getInstance().addText(AlignMode.CENTER, divider);
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("ITEM:", "" + eMenuItem.getMenuItemName()));
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
+                    Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
                     count = count + 1;
                 }
 
@@ -171,8 +182,9 @@ public class OrderPrint {
                 setFontSpec(FONT_SIZE_LARGE);
                 Printer.getInstance().addText(AlignMode.CENTER, formatAmount(sumTotal, true));
                 setFontSpec(FONT_SIZE_NORMAL);
-                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
 
+                Printer.getInstance().addText(AlignMode.CENTER, single_divider);
+                Printer.getInstance().addQrCode(AlignMode.CENTER, 200, 0, customerTag);
 
                 // Add company details
                 setFontSpec(FONT_SIZE_NORMAL);

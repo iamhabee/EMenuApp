@@ -18,6 +18,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.hanks.htextview.base.HTextView;
+import com.parse.ParseUser;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,42 +66,27 @@ public class WelcomeActivity extends BaseActivity {
         welcomeView.animateText(welcomeMessage);
         welcomeView.setAnimationListener(hTextView -> {
             boolean setup = AppPrefs.isAppSetup();
-            int tag = AppPrefs.getUseType();
-
-            if (setup) {
-                if(tag == 1){
-                    Intent waiterHomeIntent = new Intent(this, WaiterHomeActivity.class);
-                    startActivity(waiterHomeIntent);
-                    finish();
-                }else if(tag == 2){
-                    Intent kitchenHomeIntent = new Intent(this, KitchenHomeActivity.class);
-                    startActivity(kitchenHomeIntent);
-                    finish();
-                }else if(tag == 3){
-                    Intent barHomeIntent = new Intent(this, BarHomeActivity.class);
-                    startActivity(barHomeIntent);
-                    finish();
-                }else if(tag == 263389){
-                    Intent adminHomeIntent = new Intent(this, AdminHomeActivity.class);
-                    startActivity(adminHomeIntent);
-                    finish();
-                }else{
-                    Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
-                    startActivity(userLoginIntent);
-                    finish();
-                }
-//                transitionWithPreferences(AppPrefs.getUseType());
+//            int tag = AppPrefs.getUseType();
+            ParseUser user = ParseUser.getCurrentUser();
+        if (setup){
+            if(user != null){
+                // grant access
+                transitionWithPreferences(AppPrefs.getUseType());
+            }else{
+                transitionToUserLogin();
             }
+        }
+
         });
     }
-
+//Globals.UseType.USE_TYPE_KITCHEN.ordinal()
     private void transitionWithPreferences(int useType) {
         new Handler().postDelayed(() -> {
-            if (useType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()) {
-                transitionToKitchenHome();
-            } else if (useType == Globals.UseType.USE_TYPE_WAITER.ordinal()) {
+            if (useType == 1) {
                 transitionToWaiterHome();
-            } else if (useType == Globals.UseType.USE_TYPE_BAR.ordinal()) {
+            } else if (useType == 2) {
+                transitionToKitchenHome();
+            } else if (useType == 3) {
                 transitionToBarHome();
             } else {
                 transitionToAdminHome();
@@ -131,5 +117,34 @@ public class WelcomeActivity extends BaseActivity {
         startActivity(kitchenHomeIntent);
         finish();
     }
+
+    private void transitionToUserLogin() {
+        Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+        startActivity(userLoginIntent);
+        finish();
+    }
+
+    //            if (setup) {
+//                if(tag == 1){
+//                    Intent waiterHomeIntent = new Intent(this, WaiterHomeActivity.class);
+//                    startActivity(waiterHomeIntent);
+//                    finish();
+//                }else if(tag == 2){
+//                    Intent kitchenHomeIntent = new Intent(this, KitchenHomeActivity.class);
+//                    startActivity(kitchenHomeIntent);
+//                    finish();
+//                }else if(tag == 3){
+//                    Intent barHomeIntent = new Intent(this, BarHomeActivity.class);
+//                    startActivity(barHomeIntent);
+//                    finish();
+//                }else if(tag == 263389){
+//                    Intent adminHomeIntent = new Intent(this, AdminHomeActivity.class);
+//                    startActivity(adminHomeIntent);
+//                    finish();
+//                }else{
+//                    Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+//                    startActivity(userLoginIntent);
+//                    finish();
+//                }
 
 }

@@ -65,7 +65,8 @@ public class EMenuItemRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         EMenuItemRecyclerViewHolder eMenuItemRecyclerViewHolder = (EMenuItemRecyclerViewHolder) holder;
         EMenuItem eMenuItem = eMenuItemList.get(position);
-        eMenuItemRecyclerViewHolder.bindData(context, eMenuOrder, host, eMenuItem, getSearchString(), getCustomerKey());
+        eMenuItemRecyclerViewHolder.bindData(context, eMenuOrder, host, eMenuItem,
+                getSearchString(), getCustomerKey());
     }
 
     @Override
