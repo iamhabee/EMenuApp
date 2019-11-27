@@ -278,7 +278,7 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
                          AppPrefs.setTableTag(null);
                          AppPrefs.setCustomerTag(null);
                      });
-                logOutDialogBuilder.build().show();
+            logOutDialogBuilder.build().show();
         }
     }
 
