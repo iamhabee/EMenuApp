@@ -271,8 +271,10 @@ public class LogInActivity extends BaseActivity implements StepperFormListener {
     @Override
     public void onCompletedForm() {
         UiUtils.dismissKeyboard(accountLogInView);
+        showOperationsDialog("Signing In", "Please wait...");
         DataStoreClient.logInAccount((result, e) -> {
             if (result != null) {
+                dismissProgressDialog();
                 if (result instanceof RestaurantOrBarInfo) {
                     RestaurantOrBarInfo restaurantOrBarInfo = (RestaurantOrBarInfo) result;
                     showSuccessMessage("Account login successful!", "You have successfully logged into " + restaurantOrBarInfo.getRestaurantOrBarName() + " EMenu services.");
