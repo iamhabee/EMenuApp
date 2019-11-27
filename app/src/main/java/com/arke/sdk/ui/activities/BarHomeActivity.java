@@ -120,7 +120,7 @@ public class BarHomeActivity extends BaseActivity {
 
         /* trigger work manager every 30sec */
         PeriodicWorkRequest periodicWorkRequest =
-                new PeriodicWorkRequest.Builder(BarAlertWorker.class, 30, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(BarAlertWorker.class, 10, TimeUnit.SECONDS)
                         .addTag("periodic_work")
                         .build();
 
@@ -184,7 +184,6 @@ public class BarHomeActivity extends BaseActivity {
         });
         refreshViewIcon.setOnClickListener(view -> {
             EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
-
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);

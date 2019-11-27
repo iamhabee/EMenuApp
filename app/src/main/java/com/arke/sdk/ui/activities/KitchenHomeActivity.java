@@ -119,7 +119,7 @@ public class KitchenHomeActivity extends BaseActivity {
 
         /* trigger work manager every 30sec periodically once the activity is active */
         PeriodicWorkRequest periodicWorkRequest =
-                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 30, TimeUnit.SECONDS)
+                new PeriodicWorkRequest.Builder(KitchenAlertWorker.class, 10, TimeUnit.SECONDS)
                 .addTag("periodic_work")
                 .build();
 

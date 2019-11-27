@@ -134,12 +134,12 @@ public class WaiterAlertWorker extends Worker {
                         sendNotificationOnDelete(title, text, id);
 
                         for (ParseObject message : mMessages) {
-                            if (AppPrefs.getUseType() == Globals.BAR){
-
-                            }
-                            if(AppPrefs.getUseType() == Globals.KITCHEN){
-                                //
-                            }
+//                            if (AppPrefs.getUseType() == Globals.BAR){
+//
+//                            }
+//                            if(AppPrefs.getUseType() == Globals.KITCHEN){
+//                                //
+//                            }
                             message.put("rejected_notifier", true);
                             message.saveEventually();
                             Log.d("Waiter", String.valueOf(username));

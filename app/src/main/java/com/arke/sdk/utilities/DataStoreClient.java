@@ -1319,7 +1319,7 @@ public class DataStoreClient {
     }
 
     private boolean checkItemInStock(EMenuItem eMenuItem, int previouslyOrderedQuantity) {
-        if (previouslyOrderedQuantity <= eMenuItem.getQuantityAvailableInStock()) {
+        if (previouslyOrderedQuantity < eMenuItem.getQuantityAvailableInStock()) {
             return true;
         } else {
             return false;
@@ -1342,15 +1342,14 @@ public class DataStoreClient {
             } else {
                 newQuantity = existingQuantity - 1; // -1
             }
-//            list array of items
-//            List<EMenuItem> ordered_items  = eMenuOrder.getItems();
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
             if (newQuantity <= 0) {
-//                for (EMenuItem item : ordered_items) {
-//
-//                }
                 if (items.size() == 1) {
-//                    eMenuOrder.delete();
+                    items.remove(eMenuItem);
+                    eMenuOrder.setItems(items);
+                    eMenuOrder.setDirty(true);
+                    eMenuOrder.update();
+                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
                     UiUtils.showSafeToast("You can not reduce beyond 1");
                 } else {
                     items.remove(eMenuItem);
@@ -1440,21 +1439,20 @@ public class DataStoreClient {
                 newQuantity = existingQuantity - 1;
             }
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-//            if (newQuantity >= 0) {
-////
-//                if (items.size() == 0) {
-////                    eMenuOrder.delete();
-//                    UiUtils.showSafeToast("You can not reduce beyond 1");
-            if (newQuantity <= 0) {
-                UiUtils.showSafeToast("You have not add any drinks");
-//                            eMenuOrder.delete();
-                items.remove(eMenuItem);
-                eMenuOrder.setItems(items);
-                eMenuOrder.setDirty(true);
-                eMenuOrder.update();
-                EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-
-            } else {
+            if (newQuantity < 0) {
+                if (items.size() == 0) {
+//                    eMenuOrder.delete();
+                    UiUtils.showSafeToast("press add button to increase drink items");
+                } else {
+                    items.remove(eMenuItem);
+                    eMenuOrder.setItems(items);
+                    eMenuOrder.setDirty(true);
+                    eMenuOrder.update();
+                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+                }
+            }else if (newQuantity == 0){
+                UiUtils.showSafeToast("press add button to increase drink items");
+            } else{
                 eMenuItem.setOrderedQuantity(newQuantity);
                 items.set(indexOfItem, eMenuItem);
                 eMenuOrder.setItems(items);
@@ -1462,13 +1460,8 @@ public class DataStoreClient {
                 eMenuOrder.update();
             }
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
-//            }
-//                } else {
-//                    eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
-//                }
-//            }else{
-//
-//            }
+        }else {
+            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }
     }
 
