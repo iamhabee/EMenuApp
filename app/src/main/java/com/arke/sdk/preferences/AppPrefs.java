@@ -26,6 +26,24 @@ public class AppPrefs {
         return appSharedPreferences;
     }
 
+    public static String getTableTag(){
+        return getAppPreferences().getString(Globals.TABLE_TAG, null);
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public static void setTableTag(String tableTag) {
+        getAppPreferences().edit().putString(Globals.TABLE_TAG, tableTag).commit();
+    }
+
+    public static String getCustomerTag(){
+        return getAppPreferences().getString(Globals.CUSTOMER_TAG, null);
+    }
+
+    @SuppressLint("ApplySharedPref")
+    public static void setCustomerTag(String tableTag) {
+        getAppPreferences().edit().putString(Globals.CUSTOMER_TAG, tableTag).commit();
+    }
+
     public static int getUseType() {
         return getAppPreferences().getInt(Globals.USE_TYPE, Globals.UseType.USE_TYPE_NONE.ordinal());
     }

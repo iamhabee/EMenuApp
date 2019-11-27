@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -126,6 +128,9 @@ public class BarHomeActivity extends BaseActivity {
 
         assert WorkManager.getInstance() != null;
         WorkManager.getInstance().enqueue(periodicWorkRequest);
+
+        Log.d("Android Build", Build.MANUFACTURER + Build.DEVICE + Build.VERSION.SDK_INT);
+
     }
 
     @Override
@@ -184,7 +189,6 @@ public class BarHomeActivity extends BaseActivity {
         });
         refreshViewIcon.setOnClickListener(view -> {
             EventBus.getDefault().post(new ItemSearchEvent(this, mainViewPager.getCurrentItem()));
-
         });
         closeSearchView.setOnClickListener(view -> {
             UiUtils.blinkView(view);

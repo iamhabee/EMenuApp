@@ -135,9 +135,16 @@ public class OrderSummaryActivity extends BaseActivity {
                     .create();
 
             OrderPrint orderPrint = new OrderPrint(OrderSummaryActivity.this, dialog);
-            orderPrint.validateSlipThenPrint(customerOrders);
+            boolean hasPaid = false;
 
-
+            if ((eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CARD ||
+                    eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_CASH ||
+                    eMenuOrder.getOrderPaymentStatus() == Globals.OrderPaymentStatus.PAID_BY_TRANSFER)) {
+                hasPaid = true;
+            } else {
+                hasPaid = false;
+            }
+            orderPrint.validateSlipThenPrint(customerOrders, hasPaid);
         });
     }
 
