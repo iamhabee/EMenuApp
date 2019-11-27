@@ -3,6 +3,7 @@ package com.arke.sdk.ui.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -610,7 +611,11 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
             openDrinksOrModifyItemView.setOnClickListener(view -> {
                 UiUtils.blinkView(view);
                 if (!slideMenuLayout.isRightSlideOpen()) {
-                    slideMenuLayout.openRightSlide();
+                    if (StringUtils.isEmpty(tableTag.getText().toString().trim() )&& StringUtils.isEmpty(customerTag.getText().toString().trim())){
+                        showErrorMessage("No Tags", "Please add customer tag and table tag");
+                    }else{
+                        slideMenuLayout.openRightSlide();
+                    }
                 }
             });
 //            slideMenuLayout.addOnSlideChangedListener((slideMenu, isLeftSlideOpen, isRightSlideOpen) ->
@@ -777,6 +782,16 @@ public class EMenuItemPreviewActivity extends BaseActivity implements View.OnCli
         }
     }
 
+    private void showErrorMessage(String title, String description) {
+//        enableNextButton();
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
+    }
 
     private void showSuccessMessage(String title, String description) {
         operationsDialog = new LottieAlertDialog
