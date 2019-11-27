@@ -316,7 +316,7 @@ public class EMenuOrderView extends MaterialCardView implements
     @Override
     public void onClick(View view)  {
         UiUtils.blinkView(view);
-//        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
+        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
 //            String currentDeviceId = AppPrefs.getDeviceId();
 //            AppPrefs.getUseType() == Globals.KITCHEN;
 //            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
@@ -326,20 +326,30 @@ public class EMenuOrderView extends MaterialCardView implements
                 if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED ||
                         eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
                     takeOrder();
+                    Log.d("SunSim", "In the Kitchen1");
                 }else{
                     viewOrder();
+                    Log.d("SunSim", "In the Kitchen2");
                 }
+
+                Log.d("SunSim", "In the Kitchen");
 
             }else if (AppPrefs.getUseType() == Globals.BAR){
 
                 if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED ||
                         eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
                     takeOrder();
+                    Log.d("SunSim", "In the Bar1");
                 }else {
                     viewOrder();
+                    Log.d("SunSim", "In the Bar2");
                 }
+
+                Log.d("SunSim", "In the Bar");
             }else {
-                takeOrder();
+                viewOrder();
+
+                Log.d("SunSim", "In the Waiter's room");
             }
 //            if (currentDeviceId != null) {
 //                String attendantDeviceId = getContext() instanceof KitchenHomeActivity
@@ -352,11 +362,6 @@ public class EMenuOrderView extends MaterialCardView implements
 //                    if (!attendantDeviceId.equals(currentDeviceId)) {
 //                        takeOrder();
 //                    } else {
-////                        if (eMenuOrder.kitchen_rejected || eMenuOrder.bar_rejected){
-////                            takeOrder();
-////                        }else {
-////                            viewOrder();
-////                        }
 //                        viewOrder();
 //                    }
 //                } else {
@@ -366,9 +371,9 @@ public class EMenuOrderView extends MaterialCardView implements
 //                EMenuLogger.d("IDs", "CurrentDeviceId=null");
 //                takeOrder();
 //            }
-//        } else {
-//            takeOrder();
-//        }
+        } else {
+            viewOrder();
+        }
     }
 
     private void takeOrder() {
@@ -388,11 +393,13 @@ public class EMenuOrderView extends MaterialCardView implements
         });
 
         /* show dialog only when order is pending */
-        if(eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
-            takeOrderConfirmationBuilder.build().show();
-        }else{
-            viewOrder();
-        }
+//        if(eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+//            takeOrderConfirmationBuilder.build().show();
+//        }else{
+//            viewOrder();
+//        }
+
+        takeOrderConfirmationBuilder.build().show();
 
     }
 
