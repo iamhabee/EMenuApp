@@ -758,7 +758,8 @@ public class DataStoreClient {
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);
         if (AppPrefs.getUseType() == Globals.KITCHEN) {
             orderQuery.whereEqualTo(Globals.HAS_FOOD, true);
-        } else if (AppPrefs.getUseType() == Globals.BAR) {
+        }
+        if (AppPrefs.getUseType() == Globals.BAR) {
             orderQuery.whereEqualTo(Globals.HAS_DRINK, true);
         }
         orderQuery.getFirstInBackground((object, e) -> {
@@ -817,7 +818,7 @@ public class DataStoreClient {
             EMenuOrder insertToAccepted = loadParseObjectIntoEMenuOrder(object);
             sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION,
                     serializeEMenuOrder(insertToAccepted),
-                    Globals.BAR_REJECTED_ORDER);
+                    Globals.BAR_ACCEPTED_ORDER);
         });
     }
 
