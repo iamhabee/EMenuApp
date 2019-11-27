@@ -123,7 +123,7 @@ public class EMenuOrderView extends MaterialCardView implements
     private EMenuOrder eMenuOrder;
     private String hostActivity;
     private LottieAlertDialog operationsDialog;
-    private long totalPrice;
+    private long totalPrice = 0;
 
     public EMenuOrderView(Context context) {
         super(context);

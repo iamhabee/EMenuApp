@@ -171,10 +171,9 @@ public class OrderPrint {
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
-                        count = count + 1;
                     }
 
-
+                    count = count + 1;
                 }
 
                 Printer.getInstance().addText(AlignMode.CENTER, single_divider);
