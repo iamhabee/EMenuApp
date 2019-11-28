@@ -324,18 +324,13 @@ public class EMenuOrderView extends MaterialCardView implements
             String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
             // checks if user is in Kitchen
             if (AppPrefs.getUseType() == Globals.KITCHEN){
-                if (!currentDeviceId.equals(eMenuOrder.getBarAttendantDeviceId())){
-                    if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
-                            eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
-                        takeOrder();
-                        Log.d("SunSim", "In the Kitchen1");
-                    }else{
-                        viewOrder();
-                        Log.d("SunSim", "In the Kitchen2");
-                    }
-                }else {
+                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
+                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING || eMenuOrder.getOrderProgressStatus() ==  null ){
+                    takeOrder();
+                    Log.d("SunSim", "In the Kitchen1");
+                }else{
                     viewOrder();
-                    Log.d("SunSim", "Outside");
+                    Log.d("SunSim", "In the Kitchen2");
                 }
 
                 Log.d("SunSim", "In the Kitchen");
@@ -343,7 +338,7 @@ public class EMenuOrderView extends MaterialCardView implements
             }else if (AppPrefs.getUseType() == Globals.BAR){
 
                 if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED || eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING ||
-                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING || eMenuOrder.getOrderProgressStatus() == null ){
                     takeOrder();
                     Log.d("SunSim", "In the Bar1");
                 }else {
@@ -390,7 +385,7 @@ public class EMenuOrderView extends MaterialCardView implements
         takeOrderConfirmationBuilder.setNegativeText("NO");
         takeOrderConfirmationBuilder.setPositiveListener(lottieAlertDialog -> {
             dismissConsentDialog(lottieAlertDialog);
-            acceptOrder();
+//            acceptOrder();
             markOrderAsTaken();
         });
         takeOrderConfirmationBuilder.setNegativeListener(lottieAlertDialog -> {
@@ -469,9 +464,11 @@ public class EMenuOrderView extends MaterialCardView implements
             } else {
                 if (getContext() instanceof KitchenHomeActivity) {
                     eMenuOrder.setKitchenAttendantDeviceId(AppPrefs.getDeviceId());
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
                 }
                 if (getContext() instanceof BarHomeActivity) {
                     eMenuOrder.setBarAttendantDeviceId(AppPrefs.getDeviceId());
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
                 }
                 eMenuOrder.update();
                 new Handler().postDelayed(this::viewOrder, 1000);
@@ -554,8 +551,9 @@ public class EMenuOrderView extends MaterialCardView implements
             if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING) ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.KITCHEN_REJECTED) ||
-                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED)){
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED) || AppPrefs.getUseType() == Globals.ADMIN_TAG_ID){
                 showOperationsDialog("Deleting Order", "Please wait...");
+                Log.d("AppAdmin", ""+AppPrefs.getUseType());
                 eMenuOrder.delete();
                 DataStoreClient.deleteEMenuOrderRemotely(eMenuOrder.getEMenuOrderId(), (done, e) -> {
                     dismissProgressDialog();

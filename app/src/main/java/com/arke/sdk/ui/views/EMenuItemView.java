@@ -226,7 +226,11 @@ public class EMenuItemView extends MaterialCardView {
                             //Let's confirm to make sure this customer hasn't already paid
                             performItemDeletionFromOrder(eMenuOrder, eMenuItem, customerKey);
                         } else {
-                            UiUtils.showSafeToast("Oops! Sorry can't delete an already paid for item or item that has been fulfilled");
+                            if (AppPrefs.getUseType() == Globals.ADMIN_TAG_ID){
+                                performItemDeletionFromOrder(eMenuOrder, eMenuItem, customerKey);
+                            }else {
+                                UiUtils.showSafeToast("Oops! Sorry can't delete an already paid for item or item that has been fulfilled");
+                            }
                         }
                     }
                 });
