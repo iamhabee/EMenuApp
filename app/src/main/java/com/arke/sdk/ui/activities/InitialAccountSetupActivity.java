@@ -1,6 +1,7 @@
 package com.arke.sdk.ui.activities;
 
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,9 +19,14 @@ import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+
+import java.util.List;
 
 
 public class InitialAccountSetupActivity extends AppCompatActivity {
@@ -90,56 +96,113 @@ public class InitialAccountSetupActivity extends AppCompatActivity {
     }
 
     private void onSignUp(){
-
-
-        String aName = mUsername.getText().toString();
-        String aEmail = mEmail.getText().toString();
         String aPassword = mPassword.getText().toString().trim();
         String aRetypePassword = mRetypePassword.getText().toString().trim();
         if(Validate()){
             // check if passwords match
             if(aPassword.equals(aRetypePassword)){
                 showOperationsDialog("Registration in Progress " + AppPrefs.getRestaurantOrBarName(), "Please Wait");
-                ParseUser user = new ParseUser();
-                // Set the user's username and password, which can be obtained by a forms
-                user.setUsername(aName);
-                user.setEmail(aEmail);
-                user.setPassword(aPassword);
-                user.signUpInBackground(new SignUpCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        dismissProgressDialog();
-
-                        if (e == null) {
-                            try {
-//                                Toast.makeText(InitialAccountSetupActivity.this, AppPrefs.getRestaurantOrBarId(), Toast.LENGTH_LONG).show();
-
-                                user.put("res_id", AppPrefs.getRestaurantOrBarId()); // restaurant ID
-                                user.put("account_type", account_type);
-                                user.put("user_type", user_type);
-                                user.save();
-                            } catch (ParseException e1) {
-                                e1.printStackTrace();
+                // check if the number of user accounts tied to the license has not been exceeded
+                // get license key data
+                ParseQuery<ParseObject> licenseKeyData = ParseQuery.getQuery(Globals.LICENSE_KEYS);
+                licenseKeyData.whereEqualTo(Globals.LICENSE_KEY, AppPrefs.getLicenseKey());
+                licenseKeyData.getFirstInBackground((object, e) -> {
+                    if (e == null) {
+                        // check the number of user accounts with the license key
+                        int allowedAccounts = object.getInt(Globals.USER_ACCOUNTS_ALLOWED);
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        query.whereEqualTo("res_id", object.getString("restaurant_id"));
+                        query.findInBackground(new FindCallback<ParseUser>() {
+                            public void done(List<ParseUser> users, ParseException e) {
+                                if (e == null) {
+                                    if (!users.isEmpty()) {
+                                        if(users.size() < allowedAccounts){
+                                            createAccount();
+                                        }else{
+                                            // show error message
+                                            dismissProgressDialog();
+                                            showErrorMessage("Account Creation Error", "You have exceeded the number of user accounts for your license");
+                                        }
+                                    }
+                                }else{
+                                    dismissProgressDialog();
+                                    showErrorMessage("Account Creation Error", e.getMessage());
+                                }
                             }
-                            Intent intent = new Intent(InitialAccountSetupActivity.this, AdminHomeActivity.class);
-                            finish();
-                            Toast.makeText(InitialAccountSetupActivity.this, "User Created", Toast.LENGTH_LONG).show();
-
-                        } else {
-                            ParseUser.logOut();
-                            Toast.makeText(InitialAccountSetupActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+                        });
+                    }
+                    else {
+                        dismissProgressDialog();
+                        showErrorMessage("Account Creation Error", e.getMessage());
                     }
                 });
             }else{
                 // password mis-match
+                dismissProgressDialog();
+                showErrorMessage("Account Creation Error", "Password mismatch");
             }
         }
     }
 
 
+    public void createAccount(){
+        String aName = mUsername.getText().toString();
+        String aEmail = mEmail.getText().toString();
+        String aPassword = mPassword.getText().toString().trim();
+        String aRetypePassword = mRetypePassword.getText().toString().trim();
+        ParseUser user = new ParseUser();
+        // Set the user's username and password, which can be obtained by a forms
+        user.setUsername(aName);
+        user.setEmail(aEmail);
+        user.setPassword(aPassword);
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                dismissProgressDialog();
+                if (e == null) {
+                    try {
+                        user.put("res_id", AppPrefs.getRestaurantOrBarId()); // restaurant ID
+                        user.put("account_type", account_type);
+                        user.put("user_type", user_type);
+                        user.save();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                    showSuccessMessage("Success", "Account created successfully");
+                } else {
+                    ParseUser.logOut();
+                    showErrorMessage("Account creation Error", e.getMessage());
+                }
+            }
+        });
+    }
 
 
+    private void showSuccessMessage(String title, String description) {
+        LottieAlertDialog operationsSuccessDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("Done")
+                .setPositiveListener((dialog) -> {
+                    dialog.dismiss();
+                    finish();
+                    Intent intent = new Intent(InitialAccountSetupActivity.this, AdminHomeActivity.class);
+                    startActivity(intent);
+                }).build();
+        operationsSuccessDialog.setCancelable(false);
+        operationsSuccessDialog.show();
+    }
+
+
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("OK").setPositiveListener(Dialog::dismiss)
+                .build();
+        errorCreationErrorDialog.setCancelable(true);
+        errorCreationErrorDialog.show();
+    }
 
 
 

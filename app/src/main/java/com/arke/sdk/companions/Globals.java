@@ -121,6 +121,11 @@ public class Globals {
     public static final String USERS = "User";
     public static final String USER_TYPE = "user_type";
     public static final String RES_ID = "res_id";
+    public static final String LICENSE_KEYS = "emenu_license_keys";
+    public static final String LICENSE_KEY = "license_key";
+    public static final String LICENSE_KEY_ID = "license_key_id";
+    public static final String USER_ACCOUNTS_ALLOWED = "user_accounts_allowed";
+    public static final String LICENSE_ACTIVE = "license_active";
     public static String APP_PREFS_NAME = "elitepath_emenu";
     public static String EMPTY_PLACEHOLDER_ERROR_MESSAGE = "Nothing Available";
     public static boolean newMenuItemCreated = false;

@@ -270,17 +270,21 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
                     DataStoreClient.fetchWaiters((e, waiters) -> {
                         dismissProgressDialog();
                         if (e == null) {
-                            androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
-                            waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
-                            waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
-                                if (i == -1) {
-                                    UiUtils.showSafeToast("No Selection Made");
-                                    return;
-                                }
-                                CharSequence waiter = waiters[i];
-                                fetchSalesFromWaiter(waiter);
-                            });
-                            waitersBuilder.create().show();
+                            if(waiters.length > 0) {
+                                androidx.appcompat.app.AlertDialog.Builder waitersBuilder = new androidx.appcompat.app.AlertDialog.Builder(AdminHomeActivity.this);
+                                waitersBuilder.setTitle("Pick a waiter to view sales from him/her");
+                                waitersBuilder.setSingleChoiceItems(waiters, -1, (dialogInterface, i) -> {
+                                    if (i == -1) {
+                                        UiUtils.showSafeToast("No Selection Made");
+                                        return;
+                                    }
+                                    CharSequence waiter = waiters[i];
+                                    fetchSalesFromWaiter(waiter);
+                                });
+                                waitersBuilder.create().show();
+                            }else{
+                                showErrorMessage("Error Encountered", "No waiters found");
+                            }
                         } else {
                             showErrorMessage("Error Encountered", e.getMessage());
                         }
@@ -309,7 +313,7 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
     }
 
     private void attemptUserLogOut() {
-        showOperationsDialog("Sending Orders to Kitchen/Bar.", "Please Wait");
+        showOperationsDialog("Logging you out", "Please Wait");
         ParseUser.logOut();
         AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
         new Handler().postDelayed(() -> {
@@ -351,18 +355,17 @@ public class AdminHomeActivity extends BaseActivity implements View.OnClickListe
 
     @SuppressLint("SetTextI18n")
     private void initEventHandlers() {
-
         feedBackView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             canFetchData.set(true);
             fetchDataBetweenRanges();
         });
+
         fetchDataView.setOnClickListener(view -> {
             UiUtils.blinkView(view);
             canFetchData.set(true);
             fetchDataBetweenRanges();
         });
-
     }
 
     @SuppressWarnings("SameParameterValue")

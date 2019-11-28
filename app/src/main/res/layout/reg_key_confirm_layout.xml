@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="30dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="98dp"
+            android:layout_marginEnd="98dp"
+            android:src="@mipmap/ic_launcher"
+            android:textAlignment="center" />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:textAlignment="center"
+        android:justificationMode="inter_word"
+        android:text="Welcome to EMenu\nIn order to use this service, kindly input the license key in the field below"
+        />
+    <EditText
+        android:id="@+id/reg_key_editText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="License Key"
+        android:padding="10dp"
+        android:layout_margin="20dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textAlignment="center">
+
+        <Button
+            android:id="@+id/confirm_btn"
+            android:layout_width="135dp"
+            android:layout_height="60dp"
+            android:drawableRight="@drawable/ic_check_24_black"
+            android:drawablePadding="20dp"
+            android:textColor="@color/black"
+            android:text="Verify"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:layout_margin="5dp"/>
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="135dp"
+            android:layout_height="60dp"
+            android:drawableRight="@drawable/ic_close_24_black"
+            android:drawablePadding="20dp"
+            android:text="Cancel"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:layout_margin="5dp"/>
+    </LinearLayout>
+</LinearLayout>

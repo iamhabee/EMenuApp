@@ -2,6 +2,7 @@ package com.arke.sdk.ui.activities;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -18,8 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.arke.sdk.R;
+import com.arke.sdk.companions.Globals;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.util.printer.Printer;
+import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -28,10 +31,14 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.labters.lottiealertdialoglibrary.DialogTypes;
 import com.labters.lottiealertdialoglibrary.LottieAlertDialog;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.List;
 
 public class SplashActivity extends BaseActivity {
+
+    private LottieAlertDialog logInOperationProgressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -147,6 +154,34 @@ public class SplashActivity extends BaseActivity {
     }
 
     private void proceedWithTransition() {
+        String licenseKey = AppPrefs.getLicenseKey();
+        if(licenseKey != null){
+            showOperationsDialog("We're validating your license", "Please wait...");
+            // check if license key is valid
+            ParseQuery<ParseObject> restaurantsAndBars = ParseQuery.getQuery(Globals.LICENSE_KEYS);
+            restaurantsAndBars.whereEqualTo(Globals.LICENSE_KEY, licenseKey);
+            restaurantsAndBars.getFirstInBackground((object, e) -> {
+                dismissProgressDialog();
+                if(e == null){
+                    if(object != null){
+                        if(object.getBoolean("license_active")){
+                            navigate();
+                        }else{
+                            showErrorMessage("Error validating license", "Your license has been de-activated");
+                        }
+                    }else{
+                        showErrorMessage("Error validating license", "You do not have a valid license");
+                    }
+                }else{
+                    showErrorMessage("Error validating license", e.getMessage());
+                }
+            });
+        }else{
+            navigate();
+        }
+    }
+
+    private void navigate(){
         boolean setup = AppPrefs.isAppSetup();
         if (!setup) {
             navigateToOnBoardingScreen();
@@ -167,4 +202,30 @@ public class SplashActivity extends BaseActivity {
         finish();
     }
 
+
+
+    private void showErrorMessage(String title, String description) {
+        LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_ERROR)
+                .setTitle(title).setDescription(description)
+                .build();
+        errorCreationErrorDialog.setCancelable(false);
+        errorCreationErrorDialog.show();
+    }
+
+
+    private void showOperationsDialog(String title, String description) {
+        logInOperationProgressDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_LOADING)
+                .setTitle(title).setDescription(description).build();
+        logInOperationProgressDialog.setCancelable(false);
+        logInOperationProgressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (logInOperationProgressDialog != null) {
+            logInOperationProgressDialog.dismiss();
+            logInOperationProgressDialog = null;
+        }
+    }
 }

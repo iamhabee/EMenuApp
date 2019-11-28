@@ -16,25 +16,26 @@
     <application
         android:name=".ArkeSdkDemoApplication"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/Theme.AppCompat.Light"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <activity android:name=".ui.activities.PasswordReset"
+        <activity
+            android:name=".ui.activities.PasswordReset"
             android:label="Password Reset"
-            android:parentActivityName=".ui.activities.UserLoginActivity"/>
-
+            android:parentActivityName=".ui.activities.UserLoginActivity" />
         <activity android:name=".ui.activities.TokenActivity" />
-        <activity android:name=".ui.activities.ScanActivity"
-            android:label="Scan To Reveal"/>
+        <activity
+            android:name=".ui.activities.ScanActivity"
+            android:label="Scan To Reveal" />
         <activity
             android:name=".ui.activities.InitialAccountSetupActivity"
             android:label="Add User"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.UserLoginActivity"
-            android:label="SIGN IN" /> <!-- <activity android:name=".demo.UserLoginActivity" /> -->
+            android:label="SIGN IN"
+            android:theme="@style/AppTheme" />
         <uses-library
             android:name="android.epay.dataacq"
             android:required="false" />
@@ -44,8 +45,6 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.arke.sdk.vas" />
-
-                <!-- <category android:name="android.intent.category.DEFAULT" /> -->
             </intent-filter>
         </service>
 
@@ -76,15 +75,15 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.SignUpActivity"
+            android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:label="Restaurant/Bar Setup"
             android:parentActivityName=".ui.activities.WelcomeActivity"
-            android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.LogInActivity"
+            android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:label="Restaurant/Bar Sign In"
             android:parentActivityName=".ui.activities.WelcomeActivity"
-            android:configChanges="orientation|keyboard|screenLayout|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ui.activities.CreateNewOrEditEMenuItemActivity"
