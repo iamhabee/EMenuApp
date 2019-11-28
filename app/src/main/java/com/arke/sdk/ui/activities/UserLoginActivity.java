@@ -39,6 +39,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.arke.sdk.R;
 import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.Objects;
@@ -78,6 +80,9 @@ public class UserLoginActivity extends AppCompatActivity {
             AppPrefs.setUseType(Globals.UseType.USE_TYPE_NONE);
             AppPrefs.persistRestaurantOrBarId(null);
             AppPrefs.persistRestaurantOrBarEmailAddress(null);
+            AppPrefs.persistLicenseKey(null);
+            AppPrefs.persistLicenseAllowedUserAccounts(0);
+            AppPrefs.persistLicenseKeyId(null);
             Intent switchA = new Intent(UserLoginActivity.this, UserLoginActivity.class);
             switchA.putExtra("overrideAppSetup", true);
             startActivity(switchA);
@@ -180,50 +185,68 @@ public class UserLoginActivity extends AppCompatActivity {
             ParseUser.logInInBackground(editUsername, editPassword, (parseUser, e) -> {
                 dismissProgressDialog();
                 if (parseUser != null) {
-                    // check if the current user is registered under the current restaurant
-                    Log.d("App RES ID", AppPrefs.getRestaurantOrBarId());
-                    Log.d("Server RES ID", Objects.requireNonNull(parseUser.get("res_id")).toString());
-                    if (Objects.requireNonNull(parseUser.get("res_id")).toString().equals(AppPrefs.getRestaurantOrBarId())) {
-                        // get user's permission level and designation (waiter, bar, etc)
-                        int user_type = parseUser.getInt("user_type");
-                        // grant user access WRT permission
+                    // check if the restaurant's license is still active
+                    String resId = parseUser.getString("res_id");
+                    ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.LICENSE_KEYS);
+                    orderQuery.whereEqualTo(Globals.LICENSE_KEY, AppPrefs.getLicenseKey());
+                    orderQuery.getFirstInBackground((object, ex) -> {
+                        if(ex == null){
+                            if(object != null){
+                                // check if the license is active
+                                if(object.getBoolean("license_active")){
+                                    // check if the current user is registered under the current restaurant
+                                    Log.d("App RES ID", AppPrefs.getRestaurantOrBarId());
+                                    Log.d("Server RES ID", Objects.requireNonNull(parseUser.get("res_id")).toString());
+                                    if (Objects.requireNonNull(parseUser.get("res_id")).toString().equals(AppPrefs.getRestaurantOrBarId())) {
+                                        // get user's permission level and designation (waiter, bar, etc)
+                                        int user_type = parseUser.getInt("user_type");
+                                        // grant user access WRT permission
 
-
-                        switch (user_type) {
-                            case Globals.KITCHEN:
-                                // kitchen
-                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_KITCHEN);
-                                Intent kitchenHomeIntent = new Intent(UserLoginActivity.this, KitchenHomeActivity.class);
-                                startActivity(kitchenHomeIntent);
-                                finish();
-                                break;
-                            case Globals.BAR:
-                                // bar
-                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_BAR);
-                                Intent barHomeIntent = new Intent(UserLoginActivity.this, BarHomeActivity.class);
-                                startActivity(barHomeIntent);
-                                finish();
-                                break;
-                            case Globals.ADMIN_TAG_ID:
-                                // admin
-                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_ADMIN);
-                                Intent adminHomeIntent = new Intent(UserLoginActivity.this, AdminHomeActivity.class);
-                                startActivity(adminHomeIntent);
-                                finish();
-                                break;
-                            default:
-                                // waiter
-                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_WAITER);
-                                Intent waiterHomeIntent = new Intent(UserLoginActivity.this, WaiterHomeActivity.class);
-                                startActivity(waiterHomeIntent);
-                                finish();
-                                break;
+                                        switch (user_type) {
+                                            case Globals.KITCHEN:
+                                                // kitchen
+                                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_KITCHEN);
+                                                Intent kitchenHomeIntent = new Intent(UserLoginActivity.this, KitchenHomeActivity.class);
+                                                startActivity(kitchenHomeIntent);
+                                                finish();
+                                                break;
+                                            case Globals.BAR:
+                                                // bar
+                                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_BAR);
+                                                Intent barHomeIntent = new Intent(UserLoginActivity.this, BarHomeActivity.class);
+                                                startActivity(barHomeIntent);
+                                                finish();
+                                                break;
+                                            case Globals.ADMIN_TAG_ID:
+                                                // admin
+                                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_ADMIN);
+                                                Intent adminHomeIntent = new Intent(UserLoginActivity.this, AdminHomeActivity.class);
+                                                startActivity(adminHomeIntent);
+                                                finish();
+                                                break;
+                                            default:
+                                                // waiter
+                                                AppPrefs.setUseType(Globals.UseType.USE_TYPE_WAITER);
+                                                Intent waiterHomeIntent = new Intent(UserLoginActivity.this, WaiterHomeActivity.class);
+                                                startActivity(waiterHomeIntent);
+                                                finish();
+                                                break;
+                                        }
+                                    } else {
+                                        // else log user out and notify the user
+                                        ParseUser.logOut();
+                                        Toast.makeText(UserLoginActivity.this, "Sorry, you are not assigned to " + AppPrefs.getRestaurantOrBarName(), Toast.LENGTH_LONG).show();
+                                    }
+                                }else{
+                                 showErrorMessage("Login Error", "Your restaurant's license key is invalid");
+                                }
+                            }else{
+                                showErrorMessage("Login Error", "This account is not tied to a valid License key");
+                            }
+                        }else{
+                            showErrorMessage("Login Error", ex.getMessage());
                         }
-                    } else {
-                        // else log user out and notify the user
-                        ParseUser.logOut();
-                        Toast.makeText(UserLoginActivity.this, "Sorry, you are not assigned to " + AppPrefs.getRestaurantOrBarName(), Toast.LENGTH_LONG).show();
-                    }
+                    });
                 } else {
                     ParseUser.logOut();
                     Toast.makeText(UserLoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();

@@ -39,6 +39,10 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
     private LottieAlertDialog accountCreationProgressDialog;
     private LottieAlertDialog accountCreationSuccessDialog;
 
+    private String licenseKey = null;
+    private String regEmail = null;
+    private String regName = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +50,10 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
         AppPrefs.persistRestaurantOrBarEmailAddress(null);
         ButterKnife.bind(this);
         tintToolbarAndTabLayout(ContextCompat.getColor(this, R.color.ease_gray));
-
+        Intent extras = getIntent();
+        licenseKey = extras.getStringExtra(Globals.LICENSE_KEY);
+        regName = extras.getStringExtra(Globals.RESTAURANT_OR_BAR_NAME);
+        regEmail = extras.getStringExtra(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS);
         setupForm();
     }
 
@@ -56,6 +63,8 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
         AuthFormStep restaurantNewPassword = new AuthFormStep("Restaurant New Password", "Set a New Password", Globals.AuthFormStepType.STEP_TYPE_PASSWORD, accountCreationFormView);
         AuthFormStep restaurantRepeatPassword = new AuthFormStep("Repeat Password", "Repeat Restaurant Password", Globals.AuthFormStepType.STEP_TYPE_REPEAT_PASSWORD, accountCreationFormView);
         accountCreationFormView.setup(this, restaurantNameStep, restaurantEmailAddressStep, restaurantNewPassword, restaurantRepeatPassword).init();
+        restaurantNameStep.restoreStepData(regName);
+        restaurantEmailAddressStep.restoreStepData(regEmail);
     }
 
     private void transitionWithPreferences(int useType) {
@@ -98,17 +107,35 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
     public void onCompletedForm() {
         UiUtils.dismissKeyboard(accountCreationFormView);
         showOperationsDialog("Setting Up Your Account", "Please wait...");
-        DataStoreClient.registerAccount((result, e) -> {
-            if (result != null) {
-                showSuccessMessage("Account creation successful!", "Your Restaurant/Bar was successfully setup for EMenu services.");
-                new Handler().postDelayed(() -> {
-                    dismissSuccessDialog();
-                    configureDeviceUser();
-                }, 2000);
-            } else {
+        // check if a restaurant account has been created using that license key
+        DataStoreClient.checkIfLicenseHasBeenUsed((result, e) -> {
+            if(e == null){
+                if(result == null){
+                    // no result returned implies that no restaurant has been registered using the
+                    // provided license key
+                    DataStoreClient.registerAccount((_result, ex) -> {
+                        if (_result != null) {
+                            showSuccessMessage("Account creation successful!", "Your Restaurant/Bar was successfully setup for EMenu services.");
+                            new Handler().postDelayed(() -> {
+                                dismissSuccessDialog();
+                                configureDeviceUser();
+                            }, 2000);
+                        } else {
+                            dismissProgressDialog();
+                            showErrorMessage("Oops!", ex.getMessage());
+                        }
+                    });
+                }else{
+                    // invalid license key
+                    dismissProgressDialog();
+                    showErrorMessage("Invalid License key", "It appears the license key has been used");
+                }
+            }else{
+                //
                 dismissProgressDialog();
                 showErrorMessage("Oops!", e.getMessage());
             }
+
         });
     }
 

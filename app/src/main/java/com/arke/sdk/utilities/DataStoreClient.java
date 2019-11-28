@@ -25,6 +25,7 @@ import com.arke.sdk.contracts.EMenuOrdersFetchDoneCallBack;
 import com.arke.sdk.contracts.GetDrinksServed;
 import com.arke.sdk.contracts.OrderUpdateDoneCallback;
 import com.arke.sdk.contracts.PaymentDoneCallBack;
+import com.arke.sdk.contracts.RegistrationKeyCallback;
 import com.arke.sdk.contracts.RejectedOrder;
 import com.arke.sdk.contracts.RestaurantUpdateDoneCallback;
 import com.arke.sdk.contracts.UnProcessedOrderPushCallBack;
@@ -36,6 +37,7 @@ import com.arke.sdk.models.EMenuItem;
 import com.arke.sdk.models.EMenuItemCategory;
 import com.arke.sdk.models.EMenuOrder;
 import com.arke.sdk.models.EMenuOrder_Table;
+import com.arke.sdk.models.RegistrationKey;
 import com.arke.sdk.models.RestaurantOrBarInfo;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.activities.TokenActivity;
@@ -110,6 +112,8 @@ public class DataStoreClient {
                     baseModelOperationDoneCallback.done(null, getException("Sorry, account may no longer be active"));
                 } else if (CryptoUtils.getSha256Digest(passCode).equals(existingPassCode)) {
                     RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(object);
+                    // save the license key in shared pref
+                    AppPrefs.persistLicenseKey(object.getString(Globals.LICENSE_KEY));
                     baseModelOperationDoneCallback.done(result, null);
                 } else {
                     baseModelOperationDoneCallback.done(null, getException("Sorry, The password you provided does not match the password for your Restaurant/Bar"));
@@ -223,6 +227,7 @@ public class DataStoreClient {
         return new Exception(message);
     }
 
+
     public void passwordReset(String restaurantOrBarName, String restaurantEmailAddress,
                               BaseModelOperationDoneCallback doneCallback) {
         final long ONE_MINUTE_IN_MILLIS = 60000;
@@ -300,6 +305,53 @@ public class DataStoreClient {
         return returnValue;
     }
 
+
+    public static void validateKey(String key, RegistrationKeyCallback registrationKeyCallback) {
+        ParseQuery<ParseObject> restaurantBars = ParseQuery.getQuery(Globals.LICENSE_KEYS);
+        restaurantBars.whereEqualTo(Globals.LICENSE_KEY, key.trim());
+        restaurantBars.whereEqualTo(Globals.LICENSE_ACTIVE, true);
+        restaurantBars.getFirstInBackground((object, e) -> {
+            if(e == null){
+                // check if a restaurant has used the licenseKey
+                ParseQuery<ParseObject> restaurantsAndBars = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
+                restaurantsAndBars.whereEqualTo(Globals.LICENSE_KEY, key);
+                restaurantsAndBars.getFirstInBackground((_object, _e) -> {
+                    if (_object != null) {
+                        // license key has been used
+                        registrationKeyCallback.done(null, getException("A Restaurant/Bar has already been registered using the license key provided"));
+                    } else {
+                        RegistrationKey regKey = new RegistrationKey();
+                        regKey.setId(object.getObjectId());
+                        regKey.setLicense_key(object.getString(Globals.LICENSE_KEY));
+                        regKey.setRestaurant_name(object.getString("restaurant_name"));
+                        regKey.setRestaurant_email_add(object.getString("restaurant_email_address"));
+                        regKey.setUser_accounts_allowed(object.getInt(Globals.USER_ACCOUNTS_ALLOWED));
+                        AppPrefs.persistLicenseKey(object.getString(Globals.LICENSE_KEY));
+                        registrationKeyCallback.done(regKey, null);
+                    }
+                });
+            }else{
+                registrationKeyCallback.done(null, e);
+            }
+        });
+    }
+
+
+    public static void checkIfLicenseHasBeenUsed(BaseModelOperationDoneCallback baseModelOperationDoneCallback) {
+        String licenseKey = AppPrefs.getLicenseKey();
+        ParseQuery<ParseObject> restaurantsAndBars = ParseQuery.getQuery(Globals.RESTAURANTS_AND_BARS);
+        restaurantsAndBars.whereEqualTo(Globals.LICENSE_KEY, licenseKey);
+        restaurantsAndBars.getFirstInBackground((object, e) -> {
+            if (object != null) {
+                // license key has been used
+                baseModelOperationDoneCallback.done(null, getException("A Restaurant/Bar has already been registered using the license key provided"));
+            } else {
+                baseModelOperationDoneCallback.done(null, null);
+            }
+        });
+    }
+
+
     public static void registerAccount(BaseModelOperationDoneCallback baseModelOperationDoneCallback) {
         String restaurantOrBarName = AppPrefs.getRestaurantOrBarName();
         String emailAddress = AppPrefs.getRestaurantOrBarEmailAddress();
@@ -320,31 +372,47 @@ public class DataStoreClient {
     }
 
     private static void createNewRestaurantOrBar(BaseModelOperationDoneCallback baseModelOperationDoneCallback, String restaurantOrBarName, String emailAddress, String passCode) {
-        ParseObject newRestaurantOrBar = new ParseObject(Globals.RESTAURANTS_AND_BARS);
-        if (StringUtils.isNotEmpty(restaurantOrBarName)) {
-            newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_NAME, restaurantOrBarName);
-        }
-        newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emailAddress);
-        newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_PASSWORD, CryptoUtils.getSha256Digest(passCode));
-        newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_REVEALED_PASSWORD, passCode);
-        newRestaurantOrBar.put(Globals.IS_ACCOUNT_ACTIVE, true); // Sets is_account_active to true
-        newRestaurantOrBar.saveInBackground(e -> {
-            if (e == null) {
-                RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(newRestaurantOrBar);
-                // create a default admin account using the provided details
-                createNewAdminAccount(result, newRestaurantOrBar);
-                baseModelOperationDoneCallback.done(result, null);
-            } else {
-                if (e.getCode() == ParseException.CONNECTION_FAILED) {
-                    baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
-                } else {
-                    baseModelOperationDoneCallback.done(null, getException("Error creating new Restaurant/Bar. Please try again"));
-                }
+        if(AppPrefs.getLicenseKey() != null) {
+            ParseObject newRestaurantOrBar = new ParseObject(Globals.RESTAURANTS_AND_BARS);
+            if (StringUtils.isNotEmpty(restaurantOrBarName)) {
+                newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_NAME, restaurantOrBarName);
             }
-        });
+            newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emailAddress);
+            newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_PASSWORD, CryptoUtils.getSha256Digest(passCode));
+            newRestaurantOrBar.put(Globals.RESTAURANT_OR_BAR_REVEALED_PASSWORD, passCode);
+            newRestaurantOrBar.put(Globals.IS_ACCOUNT_ACTIVE, true); // Sets is_account_active to true
+            newRestaurantOrBar.put(Globals.LICENSE_KEY, AppPrefs.getLicenseKey());
+            newRestaurantOrBar.saveInBackground(e -> {
+                if (e == null) {
+                    RestaurantOrBarInfo result = loadParseObjectIntoRestaurantOrBarModel(newRestaurantOrBar);
+                    // modify the license key class on the server and bind the restaurant account to the key
+                    ParseQuery<ParseObject> updateResLicense = ParseQuery.getQuery(Globals.LICENSE_KEYS);
+                    updateResLicense.whereEqualTo(Globals.LICENSE_KEY, AppPrefs.getLicenseKey());
+                    updateResLicense.getFirstInBackground((_object, ex) -> {
+                        if(ex == null){
+                            _object.put("restaurant_id", newRestaurantOrBar.getObjectId());
+                            _object.saveInBackground((e1) -> {
+                                // create a default admin account using the provided details
+                                createNewAdminAccount(result, newRestaurantOrBar, (response, e2) -> {
+                                    baseModelOperationDoneCallback.done(result, null);
+                                });
+                            });
+                        }
+                    });
+                } else {
+                    if (e.getCode() == ParseException.CONNECTION_FAILED) {
+                        baseModelOperationDoneCallback.done(null, getException(getNetworkErrorMessage()));
+                    } else {
+                        baseModelOperationDoneCallback.done(null, getException("Error creating new Restaurant/Bar. Please try again"));
+                    }
+                }
+            });
+        }else{
+            baseModelOperationDoneCallback.done(null, getException("Error creating new Restaurant/Bar. Please try again"));
+        }
     }
 
-    private static void createNewAdminAccount(RestaurantOrBarInfo restaurantOrBarInfo, ParseObject restaurant) {
+    private static void createNewAdminAccount(RestaurantOrBarInfo restaurantOrBarInfo, ParseObject restaurant, BaseModelOperationDoneCallback baseModelOperationDoneCallback) {
         String passCode = restaurant.getString(Globals.RESTAURANT_OR_BAR_ADMIN_PASSWORD_REVEALED);
 
         ParseUser user = new ParseUser();
@@ -364,6 +432,9 @@ public class DataStoreClient {
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }
+                    baseModelOperationDoneCallback.done(null, null);
+                }else{
+                    baseModelOperationDoneCallback.done(null, e);
                 }
             }
         });
@@ -547,15 +618,16 @@ public class DataStoreClient {
                         }
                         waitersFetchDoneCallBack.done(null, waiters);
                     }else{
-                        if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
-                            waitersFetchDoneCallBack.done(getException("No waiters recorded found"), (CharSequence) null);
-                        } else {
-                            waitersFetchDoneCallBack.done(e, (CharSequence) null);
-                        }
+                        waitersFetchDoneCallBack.done(getException("No waiter record found"), (CharSequence) null);
                     }
                 } else {
                     // Something went wrong.
                     Timber.i("No user found!");
+                    if (e.getCode() == ParseException.OBJECT_NOT_FOUND) {
+                        waitersFetchDoneCallBack.done(getException("No waiter record found"), (CharSequence) null);
+                    } else {
+                        waitersFetchDoneCallBack.done(e, (CharSequence) null);
+                    }
                 }
             }
         });
