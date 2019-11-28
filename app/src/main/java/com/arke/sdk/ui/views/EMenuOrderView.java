@@ -214,10 +214,31 @@ public class EMenuOrderView extends MaterialCardView implements
         List<EMenuItem> eMenuItems = eMenuOrder.getItems();
         if (eMenuItems != null) {
             for (EMenuItem eMenuItem : eMenuItems) {
-                if (photoUrls.size() < 4) {
-                    String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
-                    if (!photoUrls.contains(photoUrl)) {
-                        photoUrls.add(photoUrl);
+                if(AppPrefs.getUseType() != Globals.WAITER){
+                    if(AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)){
+                        // kitchen
+                        if (photoUrls.size() < 4) {
+                            String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
+                            if (!photoUrls.contains(photoUrl)) {
+                                photoUrls.add(photoUrl);
+                            }
+                        }
+                    }else if(AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)){
+                        // bar
+                        if (photoUrls.size() < 4) {
+                            String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
+                            if (!photoUrls.contains(photoUrl)) {
+                                photoUrls.add(photoUrl);
+                            }
+                        }
+                    }
+                }else {
+                    // waiter
+                    if (photoUrls.size() < 4) {
+                        String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
+                        if (!photoUrls.contains(photoUrl)) {
+                            photoUrls.add(photoUrl);
+                        }
                     }
                 }
             }
@@ -286,8 +307,21 @@ public class EMenuOrderView extends MaterialCardView implements
     private long getTotalPrice(List<EMenuItem> eMenuItems) {
         long totalPrice = 0;
         for (EMenuItem eMenuItem : eMenuItems) {
-            String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
-            totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+            if(AppPrefs.getUseType() != Globals.WAITER){
+                if(AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)) {
+                    // kitchen
+                    String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
+                    totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+                }else if(AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)) {
+                    // bar
+                    String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
+                    totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+                }
+                }else{
+                // waiter
+                String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
+                totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+            }
         }
         return totalPrice;
     }
@@ -295,12 +329,36 @@ public class EMenuOrderView extends MaterialCardView implements
     private String stringifyEMenuItems(List<EMenuItem> orderedItems) {
         StringBuilder stringBuilder = new StringBuilder();
         for (EMenuItem eMenuItem : orderedItems) {
-            int quantity = eMenuItem.getOrderedQuantity();
-            String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
-            if (quantity > 0) {
-                String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
-                stringBuilder.append(nameTag);
-                stringBuilder.append(", ");
+            if(AppPrefs.getUseType() != Globals.WAITER) {
+                if(AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)) {
+                    // kitchen
+                    int quantity = eMenuItem.getOrderedQuantity();
+                    String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
+                    if (quantity > 0) {
+                        String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
+                        stringBuilder.append(nameTag);
+                        stringBuilder.append(", ");
+                    }
+                }
+                else if(AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)) {
+                    // bar
+                    int quantity = eMenuItem.getOrderedQuantity();
+                    String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
+                    if (quantity > 0) {
+                        String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
+                        stringBuilder.append(nameTag);
+                        stringBuilder.append(", ");
+                    }
+                }
+            }else{
+                // waiter
+                int quantity = eMenuItem.getOrderedQuantity();
+                String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
+                if (quantity > 0) {
+                    String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
+                    stringBuilder.append(nameTag);
+                    stringBuilder.append(", ");
+                }
             }
         }
         String totalString = stringBuilder.toString();
