@@ -123,7 +123,7 @@ public class EMenuOrderView extends MaterialCardView implements
     private EMenuOrder eMenuOrder;
     private String hostActivity;
     private LottieAlertDialog operationsDialog;
-    private long totalPrice;
+    private long totalPrice = 0;
 
     public EMenuOrderView(Context context) {
         super(context);
@@ -443,8 +443,12 @@ public class EMenuOrderView extends MaterialCardView implements
     private void acceptOrder(){
         DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {}) );
         if (AppPrefs.getUseType() == Globals.KITCHEN){
+            getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_ACCEPTED);
             Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
         }else if (AppPrefs.getUseType() == Globals.BAR) {
+            getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
+            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_ACCEPTED);
             Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
         }
     }

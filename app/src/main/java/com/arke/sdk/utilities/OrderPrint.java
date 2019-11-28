@@ -105,6 +105,8 @@ public class OrderPrint {
             });
         } catch (RemoteException e) {
             e.printStackTrace();
+            // show alert for error while trying to print
+            showDialogError(e.getMessage(), true);
         }
     }
 
@@ -169,10 +171,9 @@ public class OrderPrint {
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("QUANTITY:", "" + eMenuItem.getOrderedQuantity()));
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("UNIT PRICE:", formatAmount(unitPrice, true)));
                         Printer.getInstance().addText(AlignMode.LEFT, formatAlignedJustified("TOTAL:", formatAmount(total, true)));
-                        count = count + 1;
                     }
 
-
+                    count = count + 1;
                 }
 
                 Printer.getInstance().addText(AlignMode.CENTER, single_divider);
