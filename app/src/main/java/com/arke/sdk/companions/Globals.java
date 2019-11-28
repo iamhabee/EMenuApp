@@ -132,6 +132,8 @@ public class Globals {
     public static final String KITCHEN_REJECTED_ORDER = "kitchen_order_rejected";
     public static final String KITCHEN_ACCEPTED_ORDER = "kitchen_order_accepted";
     public static final String REJECTED_NOTIFIER = "rejected_notifier";
+    public static final String BAR_ACCEPTED = "bar_accepted";
+    public static final String KITCHEN_ACCEPTED = "kitchen_accepted";
     public static final String IS_ACCOUNT_ACTIVE = "is_account_active";
     public static final String OTP_TOKEN = "otp_token";
     public static final String TOKEN_EXPIRING_DATE = "token_expiring_date";
@@ -207,6 +209,12 @@ public class Globals {
         BAR_ACCEPTED,
         KITCHEN_REJECTED,
         KITCHEN_ACCEPTED,
+        KITCHEN_PROCESSING,
+        BAR_PROCESSING,
+        BAR_DONE,
+        KITCHEN_DONE,
+        BAR_ALMOST_DONE,
+        KITCHEN_ALMOST_DONE,
         BAR_AND_KITCHEN_REJECTED
     }
 

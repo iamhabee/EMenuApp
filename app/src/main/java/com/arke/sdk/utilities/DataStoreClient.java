@@ -679,9 +679,9 @@ public class DataStoreClient {
                 } else {
                     if (deviceId != null) {
                         //
-                        if (object.get("has_drink") == Globals.HAS_DRINK && object.get("has_food") == Globals.HAS_FOOD){
-
-                        }
+//                        if (object.get("has_drink") == Globals.HAS_DRINK && object.get("has_food") == Globals.HAS_FOOD){
+//
+//                        }
 
                         object.put(appUseType == Globals.UseType.USE_TYPE_KITCHEN.ordinal()
                                         ? Globals.KITCHEN_ATTENDANT_ID
@@ -783,17 +783,18 @@ public class DataStoreClient {
                     if (AppPrefs.getUseType() == Globals.BAR) {
                         object.put(Globals.BAR_REJECTED_ORDER, orderRejectionState);
                         object.put(Globals.BAR_ACCEPTED_ORDER, orderAcceptedState);
-                    } else if (AppPrefs.getUseType() == Globals.KITCHEN) {
+                    }
+                    if (AppPrefs.getUseType() == Globals.KITCHEN) {
                         object.put(Globals.KITCHEN_REJECTED_ORDER, orderRejectionState);
                         object.put(Globals.KITCHEN_ACCEPTED_ORDER, orderAcceptedState);
                     }
 
                     object.put(Globals.REJECTED_NOTIFIER, acceptedNotifier);
-                    if (AppPrefs.getUseType() == Globals.KITCHEN) {
-                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_ACCEPTED" + '"');
-                    } else if (AppPrefs.getUseType() == Globals.BAR) {
-                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_ACCEPTED" + '"');
-                    }
+//                    if (AppPrefs.getUseType() == Globals.KITCHEN) {
+//                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_ACCEPTED" + '"');
+//                    } else if (AppPrefs.getUseType() == Globals.BAR) {
+//                        object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_ACCEPTED" + '"');
+//                    }
 
                     object.saveInBackground(e1 -> {
                         if (e1 == null) {
@@ -818,7 +819,12 @@ public class DataStoreClient {
             EMenuOrder insertToAccepted = loadParseObjectIntoEMenuOrder(object);
             sendOutNotification(1, Globals.EMENU_ORDER_NOTIFICATION,
                     serializeEMenuOrder(insertToAccepted),
-                    Globals.BAR_ACCEPTED_ORDER);
+                    (AppPrefs.getUseType() == Globals.BAR)
+                            ? Globals.BAR_ACCEPTED_ORDER
+                            : (AppPrefs.getUseType() == Globals.KITCHEN)
+                            ? Globals.KITCHEN_ACCEPTED_ORDER
+                            : null
+                    );
         });
     }
 
@@ -1912,10 +1918,23 @@ public class DataStoreClient {
                             // bar attendant or admin
                             if (foodReady) {
                                 // set status to done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                                if (object.get(Globals.ORDER_PROGRESS_STATUS).equals(Globals.OrderProgressStatus.KITCHEN_ACCEPTED)){
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "BAR_DONE");
+                                }else {
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "BAR_DONE_ALT");
+                                }
+
                             } else {
                                 // set status to almost done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
+                                if (object.get(Globals.ORDER_PROGRESS_STATUS).equals(Globals.OrderProgressStatus.KITCHEN_ALMOST_DONE)){
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_ALMOST_DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "BAR_ALMOST_DONE");
+                                }else {
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "BAR_ALMOST_DONE_ALT");
+                                }
                             }
                             object.put(Globals.DRINK_READY, true);
                         }
@@ -1923,10 +1942,24 @@ public class DataStoreClient {
                             // kitchen attendant or admin
                             if (drinkReady) {
                                 // set status to done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                                if (object.get(Globals.ORDER_PROGRESS_STATUS).equals(Globals.OrderProgressStatus.BAR_ACCEPTED)){
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "KITCHEN_DONE");
+                                }else{
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "KITCHEN_DONE_ALT");
+                                }
+
                             } else {
                                 // set status to almost done
-                                object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
+                                if (object.get(Globals.ORDER_PROGRESS_STATUS).equals(Globals.OrderProgressStatus.KITCHEN_ALMOST_DONE)){
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_ALMOST_DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "KITCHEN_ALOMST_DONE");
+                                }else{
+                                    object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
+                                    Log.d("ORDER_SUNSIN", "KITCHEN_ALOMST_DONE_ALT");
+                                }
+
                             }
                             object.put(Globals.FOOD_READY, true);
                         }
@@ -2386,6 +2419,12 @@ public class DataStoreClient {
                                 deviceId);
                         String orderProgressString = serializeOrderProgress(Globals.OrderProgressStatus.PROCESSING);
                         object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
+
+//                        if (AppPrefs.getUseType() == Globals.KITCHEN) {
+//                            object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "KITCHEN_PROCESSING" + '"');
+//                        } else if (AppPrefs.getUseType() == Globals.BAR) {
+//                            object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "BAR_PROCESSING" + '"');
+//                        }
                     }
                     object.saveInBackground(e1 -> {
                         if (e1 == null) {

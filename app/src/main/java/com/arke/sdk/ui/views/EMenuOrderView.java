@@ -318,25 +318,31 @@ public class EMenuOrderView extends MaterialCardView implements
         UiUtils.blinkView(view);
         if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
 //            String currentDeviceId = AppPrefs.getDeviceId();
+            String barTag = AppPrefs.getBarTag();
+            String kitchenTag = AppPrefs.getKitchenTag();
 //            AppPrefs.getUseType() == Globals.KITCHEN;
-//            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
+            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
             // checks if user is in Kitchen
             if (AppPrefs.getUseType() == Globals.KITCHEN){
-
-                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED ||
-                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
-                    takeOrder();
-                    Log.d("SunSim", "In the Kitchen1");
-                }else{
+                if (!currentDeviceId.equals(eMenuOrder.getBarAttendantDeviceId())){
+                    if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
+                            eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+                        takeOrder();
+                        Log.d("SunSim", "In the Kitchen1");
+                    }else{
+                        viewOrder();
+                        Log.d("SunSim", "In the Kitchen2");
+                    }
+                }else {
                     viewOrder();
-                    Log.d("SunSim", "In the Kitchen2");
+                    Log.d("SunSim", "Outside");
                 }
 
                 Log.d("SunSim", "In the Kitchen");
 
             }else if (AppPrefs.getUseType() == Globals.BAR){
 
-                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED ||
+                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED || eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING ||
                         eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
                     takeOrder();
                     Log.d("SunSim", "In the Bar1");
@@ -444,11 +450,11 @@ public class EMenuOrderView extends MaterialCardView implements
         DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {}) );
         if (AppPrefs.getUseType() == Globals.KITCHEN){
             getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
-            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_ACCEPTED);
+//            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_PROCESSING);
             Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
         }else if (AppPrefs.getUseType() == Globals.BAR) {
             getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
-            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_ACCEPTED);
+//            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_PROCESSING);
             Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
         }
     }
