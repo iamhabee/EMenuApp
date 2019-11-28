@@ -138,37 +138,41 @@ public class EMenuItemView extends MaterialCardView {
             /* show and hide increment/decrement layout in waiter order only when the order is still pending */
 //            assert orderProgressStatus != null;
 
-            if(orderProgressStatus.equals('"'+"PENDING"+'"')){
-                /* disable increment and decrement */
-                UiUtils.toggleViewVisibility(quantityView,true);
-                itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
-                eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
+            if (orderProgressStatus != null) {
+                if (orderProgressStatus.equals('"' + "PENDING" + '"')) {
+                    /* disable increment and decrement */
+                    UiUtils.toggleViewVisibility(quantityView, true);
+                    itemQuantityCounterView.setText(String.valueOf(eMenuItem.getOrderedQuantity()));
+                    eMenuItemDescriptionView.setText("Qty: " + eMenuItem.getOrderedQuantity());
 
 
-                incrementItem.setOnClickListener(view -> {
-                    UiUtils.blinkView(view);
-                    assert eMenuOrder != null;
-                    DataStoreClient dataStoreClient = new DataStoreClient(context);
-                    dataStoreClient.addEMenuItemToCustomerCart(AppPrefs.getDeviceId(), eMenuOrder.getTableTag(), eMenuOrder.getCustomerTag(), eMenuOrder.getWaiterTag(), 1, eMenuItem, (eMenuOrder1, eMenuItem1, e) -> {
-                        if (e == null) {
-                            EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem1));
-                        }
+                    incrementItem.setOnClickListener(view -> {
+                        UiUtils.blinkView(view);
+                        assert eMenuOrder != null;
+                        DataStoreClient dataStoreClient = new DataStoreClient(context);
+                        dataStoreClient.addEMenuItemToCustomerCart(AppPrefs.getDeviceId(), eMenuOrder.getTableTag(), eMenuOrder.getCustomerTag(), eMenuOrder.getWaiterTag(), 1, eMenuItem, (eMenuOrder1, eMenuItem1, e) -> {
+                            if (e == null) {
+                                EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem1));
+                            }
+                        });
                     });
-                });
 
-                decrementItem.setOnClickListener(view -> {
-                    UiUtils.blinkView(view);
-                    assert eMenuOrder != null;
-                    EMenuLogger.d("QuantityLogger", "Existing Quantity Of Item=" + eMenuItem.getOrderedQuantity());
-                    DataStoreClient.decrementEMenuItemFromCustomerOrder(-1, eMenuOrder, eMenuItem, (eMenuOrder12, eMenuItem12, e) -> {
-                        if (e == null) {
-                            EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem12));
-                        }
+                    decrementItem.setOnClickListener(view -> {
+                        UiUtils.blinkView(view);
+                        assert eMenuOrder != null;
+                        EMenuLogger.d("QuantityLogger", "Existing Quantity Of Item=" + eMenuItem.getOrderedQuantity());
+                        DataStoreClient.decrementEMenuItemFromCustomerOrder(-1, eMenuOrder, eMenuItem, (eMenuOrder12, eMenuItem12, e) -> {
+                            if (e == null) {
+                                EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem12));
+                            }
+                        });
                     });
-                });
 
+                } else {
+                    /* show increment and decrement */
+                    UiUtils.toggleViewVisibility(quantityView, false);
+                }
             }else {
-                /* show increment and decrement */
                 UiUtils.toggleViewVisibility(quantityView, false);
             }
         }

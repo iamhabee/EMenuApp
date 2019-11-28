@@ -72,6 +72,9 @@ public class OrderSummaryActivity extends BaseActivity {
     @BindView(R.id.progress_update)
     TextView progressUpdateView;
 
+    @BindView(R.id.order_progress_status)
+    TextView orderProgressStatus;
+
     @BindView(R.id.appbar)
     AppBarLayout appBarLayout;
 
@@ -127,6 +130,8 @@ public class OrderSummaryActivity extends BaseActivity {
         }
         initEventHandlers();
 
+        //Sets order progress status when order is clicked
+        UiUtils.toggleViewVisibility(orderProgressStatus, true);
 
         printOrders.setOnClickListener(view -> {
 
@@ -151,6 +156,10 @@ public class OrderSummaryActivity extends BaseActivity {
         });
     }
 
+    private static String serializeOrderProgress(Globals.OrderProgressStatus orderProgressStatus) {
+        return new Gson().toJson(orderProgressStatus, new TypeToken<Globals.OrderProgressStatus>() {
+        }.getType());
+    }
 
     private void showErrorMessage(String title, String description) {
         LottieAlertDialog errorCreationErrorDialog = new LottieAlertDialog
@@ -300,7 +309,9 @@ public class OrderSummaryActivity extends BaseActivity {
                         //Update current customer orders progress
                         dialogInterface.dismiss();
                         dialogInterface.cancel();
-                        Globals.OrderProgressStatus orderProgressStatus = i == 0 ? Globals.OrderProgressStatus.ALMOST_DONE : Globals.OrderProgressStatus.DONE;
+                        Globals.OrderProgressStatus orderProgressStatus = i == 0 ?
+                                Globals.OrderProgressStatus.ALMOST_DONE :
+                                Globals.OrderProgressStatus.DONE;
                         showOperationsDialog("Updating order status", "Please wait...");
                         DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus, (order, e) ->{
                             dismissProgressDialog();
@@ -316,6 +327,40 @@ public class OrderSummaryActivity extends BaseActivity {
             progressOptionsBuilder.create().show();
         });
     }
+//    private void initEventHandlers() {
+//        closeActivityView.setOnClickListener(view -> finish());
+//        if (AppPrefs.getUseType() == Globals.BAR) {
+//            progressUpdateView.setOnClickListener(view -> {
+//                CharSequence[] progressOptions = new CharSequence[]{"Almost Done", "Done"};
+//                AlertDialog.Builder progressOptionsBuilder = new AlertDialog.Builder(OrderSummaryActivity.this);
+//                progressOptionsBuilder.setTitle(getProgressMessage("Where are you"));
+//                progressOptionsBuilder.setSingleChoiceItems(progressOptions,
+//                        eMenuOrder.getOrderProgressStatus() != null
+//                                ? (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_ALMOST_DONE
+//                                ? 0 : (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_DONE ? 1 : -1))
+//                                : -1, (dialogInterface, i) -> {
+//                            //Update current customer orders progress
+//                            dialogInterface.dismiss();
+//                            dialogInterface.cancel();
+//                            Globals.OrderProgressStatus orderProgressStatus = i == 0 ?
+//                                    Globals.OrderProgressStatus.BAR_ALMOST_DONE :
+//                                    Globals.OrderProgressStatus.BAR_DONE;
+//                            showOperationsDialog("Updating order status", "Please wait...");
+//                            DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus, (order, e) -> {
+//                                dismissProgressDialog();
+//                                if (e == null) {
+//                                    // show success dialog
+//                                    showSuccessMessage("Order Status Updated", "You have successfully updated the order status to " + orderProgressStatus.toString());
+//                                } else {
+//                                    // show error dialog
+//                                }
+//                            });
+//
+//                        });
+//                progressOptionsBuilder.create().show();
+//            });
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -345,6 +390,12 @@ public class OrderSummaryActivity extends BaseActivity {
         loadEMenuItems(eMenuOrder.getItems());
         toggleProgressUpdateClickability();
         displayCustomerOrderProgress();
+
+        //method to convert order progress status to string
+        if(serializeOrderProgress(eMenuOrder.getOrderProgressStatus())!= null)
+            orderProgressStatus.setText(serializeOrderProgress(eMenuOrder.getOrderProgressStatus()));
+        else
+            orderProgressStatus.setText("");
     }
 
     private void colorizeNecessaryComponents() {
@@ -373,6 +424,7 @@ public class OrderSummaryActivity extends BaseActivity {
     private void displayCustomerOrderProgress() {
         if (orderHost.equals(KitchenHomeActivity.class.getSimpleName())
                 || orderHost.equals(BarHomeActivity.class.getSimpleName())) {
+
             List<EMenuItem> eMenuItems = eMenuOrder.getItems();
             if (orderHost.equals(BarHomeActivity.class.getSimpleName())) {
                 if (ArkeSdkDemoApplication.isAllDrinks(eMenuItems)) {
@@ -399,7 +451,6 @@ public class OrderSummaryActivity extends BaseActivity {
             String progressMessage = customerOrderProgressStatus.name().replace("_", " ").toLowerCase();
             if (progressMessage.equals("done")) {
                 progressMessage = "Fully Served!";
-
             }
             progressUpdateView.setText(WordUtils.capitalize(progressMessage));
             if (orderPaymentStatus != null) {

@@ -12,54 +12,67 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <androidx.appcompat.widget.Toolbar
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:animateLayoutChanges="true"
-            app:contentInsetEnd="0dp"
-            app:contentInsetStart="0dp"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title=" ">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/top_panel"
+            <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:clickable="false"
-                android:focusable="false"
-                android:orientation="horizontal">
+                android:layout_height="?attr/actionBarSize"
+                android:animateLayoutChanges="true"
+                app:contentInsetEnd="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title=" ">
+                <LinearLayout
+                    android:id="@+id/top_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:orientation="horizontal">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/close_activity"
-                    android:layout_width="30dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="5dp"
-                    android:gravity="center_vertical"
-                    app:srcCompat="@drawable/ic_arrow_back_black_24dp"
-                    tools:ignore="ContentDescription" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/close_activity"
+                        android:layout_width="30dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="5dp"
+                        android:gravity="center_vertical"
+                        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+                        tools:ignore="ContentDescription" />
 
-                <com.arke.sdk.ui.views.EMenuTextView
-                    android:id="@+id/action_header"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:paddingStart="16dp"
-                    android:paddingLeft="16dp"
-                    android:paddingEnd="16dp"
-                    android:paddingRight="16dp"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    app:textStyle="medium" />
+                    <com.arke.sdk.ui.views.EMenuTextView
+                        android:id="@+id/action_header"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:paddingStart="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingEnd="16dp"
+                        android:paddingRight="16dp"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        app:textStyle="medium" />
 
-            </LinearLayout>
+                </LinearLayout>
 
-        </androidx.appcompat.widget.Toolbar>
+            </androidx.appcompat.widget.Toolbar>
+
+            <TextView
+                android:id="@+id/order_progress_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:gravity="center"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 

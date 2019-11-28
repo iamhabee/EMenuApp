@@ -31,6 +31,10 @@ public class EMenuOrder extends BaseModel implements Serializable {
 
     public boolean bar_rejected;
 
+    public boolean kitchen_accepted;
+
+    public boolean bar_accepted;
+
     /**
      * A unique id for this order
      **/
