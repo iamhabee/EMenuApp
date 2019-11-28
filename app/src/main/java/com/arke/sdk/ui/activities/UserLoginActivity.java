@@ -83,10 +83,10 @@ public class UserLoginActivity extends AppCompatActivity {
             AppPrefs.persistLicenseKey(null);
             AppPrefs.persistLicenseAllowedUserAccounts(0);
             AppPrefs.persistLicenseKeyId(null);
-            Intent switchA = new Intent(UserLoginActivity.this, UserLoginActivity.class);
+            finish();
+            Intent switchA = new Intent(UserLoginActivity.this, OnBoardingActivity.class);
             switchA.putExtra("overrideAppSetup", true);
             startActivity(switchA);
-            finish();
         });
 
         btnForgotPassword.setOnClickListener(view -> {
@@ -94,7 +94,7 @@ public class UserLoginActivity extends AppCompatActivity {
             Animatoo.animateSlideLeft(activity);
         });
 
-        welcomeText.setText(getString(R.string.welcome_to).concat(AppPrefs.getRestaurantOrBarName()).concat("!"));
+        welcomeText.setText(AppPrefs.getRestaurantOrBarName());
 
         signIn.setOnClickListener(view -> logIn());
     }
