@@ -546,12 +546,14 @@ public class EMenuOrderView extends MaterialCardView implements
             /* get the progress status of the order */
             Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
 
+
+
             /* Only delete an order that doesn't contain a done or almost progress report */
             assert orderProgressStatus != null;
             if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING) ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.KITCHEN_REJECTED) ||
-                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED) || AppPrefs.getUseType() == Globals.ADMIN_TAG_ID){
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED) || ParseUser.getCurrentUser().getInt("user_type") == Globals.ADMIN_TAG_ID){
                 showOperationsDialog("Deleting Order", "Please wait...");
                 Log.d("AppAdmin", ""+AppPrefs.getUseType());
                 eMenuOrder.delete();
