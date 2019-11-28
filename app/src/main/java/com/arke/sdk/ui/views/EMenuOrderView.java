@@ -123,7 +123,7 @@ public class EMenuOrderView extends MaterialCardView implements
     private EMenuOrder eMenuOrder;
     private String hostActivity;
     private LottieAlertDialog operationsDialog;
-    private long totalPrice;
+    private long totalPrice = 0;
 
     public EMenuOrderView(Context context) {
         super(context);
@@ -316,7 +316,7 @@ public class EMenuOrderView extends MaterialCardView implements
     @Override
     public void onClick(View view)  {
         UiUtils.blinkView(view);
-//        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
+        if (getContext() instanceof KitchenHomeActivity || getContext() instanceof BarHomeActivity){
 //            String currentDeviceId = AppPrefs.getDeviceId();
 //            AppPrefs.getUseType() == Globals.KITCHEN;
 //            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
@@ -326,20 +326,30 @@ public class EMenuOrderView extends MaterialCardView implements
                 if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED ||
                         eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
                     takeOrder();
+                    Log.d("SunSim", "In the Kitchen1");
                 }else{
                     viewOrder();
+                    Log.d("SunSim", "In the Kitchen2");
                 }
+
+                Log.d("SunSim", "In the Kitchen");
 
             }else if (AppPrefs.getUseType() == Globals.BAR){
 
                 if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED ||
                         eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
                     takeOrder();
+                    Log.d("SunSim", "In the Bar1");
                 }else {
                     viewOrder();
+                    Log.d("SunSim", "In the Bar2");
                 }
+
+                Log.d("SunSim", "In the Bar");
             }else {
-                takeOrder();
+                viewOrder();
+
+                Log.d("SunSim", "In the Waiter's room");
             }
 //            if (currentDeviceId != null) {
 //                String attendantDeviceId = getContext() instanceof KitchenHomeActivity
@@ -352,11 +362,6 @@ public class EMenuOrderView extends MaterialCardView implements
 //                    if (!attendantDeviceId.equals(currentDeviceId)) {
 //                        takeOrder();
 //                    } else {
-////                        if (eMenuOrder.kitchen_rejected || eMenuOrder.bar_rejected){
-////                            takeOrder();
-////                        }else {
-////                            viewOrder();
-////                        }
 //                        viewOrder();
 //                    }
 //                } else {
@@ -366,9 +371,9 @@ public class EMenuOrderView extends MaterialCardView implements
 //                EMenuLogger.d("IDs", "CurrentDeviceId=null");
 //                takeOrder();
 //            }
-//        } else {
-//            takeOrder();
-//        }
+        } else {
+            viewOrder();
+        }
     }
 
     private void takeOrder() {
@@ -388,11 +393,13 @@ public class EMenuOrderView extends MaterialCardView implements
         });
 
         /* show dialog only when order is pending */
-        if(eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
-            takeOrderConfirmationBuilder.build().show();
-        }else{
-            viewOrder();
-        }
+//        if(eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+//            takeOrderConfirmationBuilder.build().show();
+//        }else{
+//            viewOrder();
+//        }
+
+        takeOrderConfirmationBuilder.build().show();
 
     }
 
@@ -436,8 +443,12 @@ public class EMenuOrderView extends MaterialCardView implements
     private void acceptOrder(){
         DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {}) );
         if (AppPrefs.getUseType() == Globals.KITCHEN){
+            getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_ACCEPTED);
             Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
         }else if (AppPrefs.getUseType() == Globals.BAR) {
+            getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
+            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_ACCEPTED);
             Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
         }
     }
@@ -614,7 +625,10 @@ public class EMenuOrderView extends MaterialCardView implements
                             .setCancelable(false)
                             .create();
                     OrderPrint print = new OrderPrint(getContext(), dialog);
-                    print.validateSlipThenPrint(eMenuOrder.items, true);
+
+                    if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+                        print.validateSlipThenPrint(eMenuOrder.items, true);
+                    }
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + e.getMessage() + ")");
                 }
@@ -645,7 +659,10 @@ public class EMenuOrderView extends MaterialCardView implements
                             .setCancelable(false)
                             .create();
                     OrderPrint print = new OrderPrint(getContext(), dialog);
-                    print.validateSlipThenPrint(eMenuOrder.items, true);
+
+                    if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+                        print.validateSlipThenPrint(eMenuOrder.items, true);
+                    }
                 } else {
                     UiUtils.showSafeToast("Sorry, an error occurred while registering payment for this customer.Please try again.(" + paymentException.getMessage() + ")");
                 }
@@ -660,12 +677,6 @@ public class EMenuOrderView extends MaterialCardView implements
 
     private void initiateSingleCardPaymentFlow(String customerKey) {
         EventBus.getDefault().post(new CardProcessorEvent(eMenuOrder, getTotalRawCost(eMenuOrder.getItems()), customerKey));
-        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(getContext())
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .create();
-        OrderPrint print = new OrderPrint(getContext(), dialog);
-        print.validateSlipThenPrint(eMenuOrder.items, true);
     }
 
 }

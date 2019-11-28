@@ -279,6 +279,14 @@ public class WaiterHomeActivity extends BaseActivity {
                                 dismissProgressDialog();
                                 if (paymentException == null) {
                                     showSuccessMessage("Transaction Complete!", "Payment successfully registered for  " + (customerKeys.length == 1 ? " Customer " + customerKeys[0] : " Customers " + Arrays.toString(customerKeys)) + "!!!");
+                                    android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
+                                            .setNegativeButton("Cancel", null)
+                                            .setCancelable(false)
+                                            .create();
+                                    OrderPrint print = new OrderPrint(this, dialog);
+                                    if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+                                        print.validateSlipThenPrint(eMenuOrder.items, true);
+                                    }
                                 } else {
                                     showSuccessMessage("Transaction Complete!", "Sorry, an error occurred while registering payment for this customer(s).\nPlease try again.(" + paymentException.getMessage() + ")");
                                 }
@@ -840,14 +848,17 @@ public class WaiterHomeActivity extends BaseActivity {
     }
 
     private void printQRCodeTag(){
-        dialog = new android.app.AlertDialog.Builder(WaiterHomeActivity.this)
-                .setNegativeButton("Cancel", null)
-                .setCancelable(false)
-                .create();
+        if(Globals.CURRENT_DEVICE_TYPE.equals(Globals.SDK_TARGET_DEVICE_TYPE)) {
+            dialog = new android.app.AlertDialog.Builder(WaiterHomeActivity.this)
+                    .setNegativeButton("Cancel", null)
+                    .setCancelable(false)
+                    .create();
 
-        OrderPrint orderPrint = new OrderPrint(WaiterHomeActivity.this, dialog);
-        orderPrint.printQRCode(generateRandString(10));
-
+            OrderPrint orderPrint = new OrderPrint(WaiterHomeActivity.this, dialog);
+            orderPrint.printQRCode(generateRandString(10));
+        }else{
+            showErrorMessage("Not Supported", "This device does not support this functionality");
+        }
     }
 
 
