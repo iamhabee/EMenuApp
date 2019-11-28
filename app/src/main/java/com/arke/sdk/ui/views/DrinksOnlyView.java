@@ -130,13 +130,22 @@ public class DrinksOnlyView extends FrameLayout {
                 UiUtils.blinkView(view);
                 eMenuOrder = DataStoreClient.getCustomerOrder(tableTag, customerTag);
                 if (eMenuOrder != null){
-                        DataStoreClient.decrementEMenuDrinksFromCustomerOrder(-1, drinkOrder, drinkItem, (eMenuOrder, eMenuItem, e) -> {
-                            if (e == null) {
-                                EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
-                            }
-                        });
+                    List<EMenuItem> orderedItems = drinkOrder.getItems();
+                    if (orderedItems != null && !orderedItems.isEmpty()) {
+                        if (orderedItems.contains(drinkItem)) {
+                            DataStoreClient.decrementEMenuDrinksFromCustomerOrder(-1, drinkOrder, drinkItem, (eMenuOrder, eMenuItem, e) -> {
+                                if (e == null) {
+                                    EventBus.getDefault().post(new EMenuItemUpdatedEvent(eMenuItem));
+                                }
+                            });
+                        }else{
+                            UiUtils.showSafeToast(" drinks order is empty");
+                            return;
+                        }
+                    }
+
                 }else{
-                    UiUtils.showSafeToast("Please press the add button to add drinks item");
+                    UiUtils.showSafeToast("Please press the add button to add drinks item here");
                     return;
                 }
             }
