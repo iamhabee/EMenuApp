@@ -1381,124 +1381,65 @@ public class DataStoreClient {
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }
     }
-//
-//    public static void decrementEMenuDrinksFromCustomerOrder(int forcedQuantity,
-//                                                           EMenuOrder eMenuOrder,
-//                                                           EMenuItem eMenuItem,
-//                                                           EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
-//        List<EMenuItem> items = eMenuOrder.getItems();
-//        if (items.contains(eMenuItem)) {
-//            int indexOfItem = items.indexOf(eMenuItem);
-//            EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
-//            int existingQuantity = eMenuItem.getOrderedQuantity();
-//            EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
-//            int newQuantity;
-//            if (forcedQuantity != -1) {
-//                newQuantity = forcedQuantity;
-//            } else {
-//                newQuantity = existingQuantity - 1;
-//            }
-//            EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-//            if (newQuantity <= 0) {
-////
-//                if (items.size() == 0) {
-////                    eMenuOrder.delete();
-//                    UiUtils.showSafeToast("You can not reduce beyond 1");
-//=======
-////            if (newQuantity >= eMenuItem.getQuantityAvailableInStock()){
-////                UiUtils.showSafeToast("Sorry the stock is empty");
-////            }
-////            else {
-//                if (newQuantity <= 0) {
-//                    if (items.size() == 1) {
-//                        eMenuOrder.delete();
-//                    } else {
-//                        items.remove(eMenuItem);
-//                        eMenuOrder.setItems(items);
-//                        eMenuOrder.setDirty(true);
-//                        eMenuOrder.update();
-//                        EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-//                    }
-//                } else {
-//                    eMenuItem.setOrderedQuantity(newQuantity);
-//                    items.set(indexOfItem, eMenuItem);
-//                    eMenuOrder.setItems(items);
-//                    eMenuOrder.setDirty(true);
-//                    eMenuOrder.update();
-//                }
-//                eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
-////            }
-//        } else {
-//            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
-//        }
-//    }
+
+
 
     public static void decrementEMenuDrinksFromCustomerOrder(int forcedQuantity,
-                                                             EMenuOrder eMenuOrder,
-                                                             EMenuItem eMenuItem,
-                                                             EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
+                                                           EMenuOrder eMenuOrder,
+                                                           EMenuItem eMenuItem,
+                                                           EMenuCustomerOrderCallBack eMenuCustomerOrderCallBack) {
         List<EMenuItem> items = eMenuOrder.getItems();
         if (items.contains(eMenuItem)) {
             int indexOfItem = items.indexOf(eMenuItem);
             EMenuLogger.d("QuantityLogger", "Item Index =" + indexOfItem);
-            int existingQuantity = eMenuItem.getOrderedQuantity();
+            int existingQuantity = eMenuItem.getOrderedQuantity();  // order quantity
             EMenuLogger.d("QuantityLogger", "Existing Quantity=" + existingQuantity);
             int newQuantity;
             if (forcedQuantity != -1) {
-                newQuantity = forcedQuantity;
-            } else if (existingQuantity ==0 ){
-                newQuantity = existingQuantity;
-            }else {
-                newQuantity = existingQuantity - 1;
+                newQuantity = forcedQuantity; // 0
+            } else {
+                newQuantity = existingQuantity - 1; // -1
             }
             EMenuLogger.d("QuantityLogger", "New Quantity=" + newQuantity);
-            if (newQuantity >= 0) {
-                eMenuItem.setOrderedQuantity(newQuantity);
-                items.set(indexOfItem, eMenuItem);
-                eMenuOrder.setItems(items);
-                eMenuOrder.setDirty(true);
-                eMenuOrder.update();
-                if (items.size() == 0) {
+//            if (!items.isEmpty()){
+                if (newQuantity < 0) {
                     eMenuOrder.delete();
-                    UiUtils.showSafeToast("All items deleted, press add button to increase drink items");
-                }
-            }
-//            else if (newQuantity == 0){
-//                if (items.size() == 0){
-//                    items.remove(eMenuItem);
-//                    eMenuOrder.setItems(items);
-//                    eMenuOrder.setDirty(true);
-//                    eMenuOrder.update();
-//                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-//                    UiUtils.showSafeToast("press add button to increase drink items");
-//                }else{
-//                    eMenuItem.setOrderedQuantity(newQuantity);
-//                    items.set(indexOfItem, eMenuItem);
-//                    eMenuOrder.setItems(items);
-//                    eMenuOrder.setDirty(true);
-//                    eMenuOrder.update();
-////                    EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
-////                    UiUtils.showSafeToast("press add button to increase drink items");
-//                }
-//
-//            }
-            else{
                     items.remove(eMenuItem);
-                    items.set(indexOfItem, eMenuItem);
                     eMenuOrder.setItems(items);
                     eMenuOrder.setDirty(true);
                     eMenuOrder.update();
                     EventBus.getDefault().post(new EMenuItemRemovedFromOrderEvent(eMenuOrder, eMenuItem, eMenuOrder.getCustomerTag()));
+                    UiUtils.showSafeToast("Please press the add button to add drinks item");
+                } else if (newQuantity == 0){
+                    if (items.isEmpty()){
+                        eMenuItem.setOrderedQuantity(newQuantity);
+                        items.set(indexOfItem, eMenuItem);
+                        eMenuOrder.setItems(items);
+                        eMenuOrder.setDirty(true);
+                        eMenuOrder.update();
+                        eMenuOrder.delete();
 
-            }
+                    }else {
+                        eMenuItem.setOrderedQuantity(newQuantity);
+                        items.set(indexOfItem, eMenuItem);
+                        eMenuOrder.setItems(items);
+                        eMenuOrder.setDirty(true);
+                        eMenuOrder.update();
+                    }
+
+                }else{
+                    eMenuItem.setOrderedQuantity(newQuantity);
+                    items.set(indexOfItem, eMenuItem);
+                    eMenuOrder.setItems(items);
+                    eMenuOrder.setDirty(true);
+                    eMenuOrder.update();
+                }
+
             eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, null);
-        }else {
-
-            UiUtils.showSafeToast("press add button to increase drink items");
-//            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
+        } else {
+            eMenuCustomerOrderCallBack.done(eMenuOrder, eMenuItem, getException("Not found for delete"));
         }
     }
-
 
     public static EMenuOrder getCustomerOrder(String tableTagValue, String customerTagValue) {
         return SQLite
