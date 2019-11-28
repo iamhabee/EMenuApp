@@ -71,6 +71,9 @@ public class OrderSummaryActivity extends BaseActivity {
     @BindView(R.id.progress_update)
     TextView progressUpdateView;
 
+    @BindView(R.id.order_progress_status)
+    TextView orderProgressStatus;
+
     @BindView(R.id.appbar)
     AppBarLayout appBarLayout;
 
@@ -126,6 +129,8 @@ public class OrderSummaryActivity extends BaseActivity {
         }
         initEventHandlers();
 
+        //Sets order progress status when order is clicked
+        UiUtils.toggleViewVisibility(orderProgressStatus, true);
 
         printOrders.setOnClickListener(view -> {
 
@@ -148,6 +153,10 @@ public class OrderSummaryActivity extends BaseActivity {
         });
     }
 
+    private static String serializeOrderProgress(Globals.OrderProgressStatus orderProgressStatus) {
+        return new Gson().toJson(orderProgressStatus, new TypeToken<Globals.OrderProgressStatus>() {
+        }.getType());
+    }
 
     @Override
     public void onEventMainThread(Object event) {
@@ -332,6 +341,9 @@ public class OrderSummaryActivity extends BaseActivity {
         loadEMenuItems(eMenuOrder.getItems());
         toggleProgressUpdateClickability();
         displayCustomerOrderProgress();
+
+        //method to convert order progress status to string
+        orderProgressStatus.setText(serializeOrderProgress(eMenuOrder.getOrderProgressStatus()));
     }
 
     private void colorizeNecessaryComponents() {
@@ -360,6 +372,7 @@ public class OrderSummaryActivity extends BaseActivity {
     private void displayCustomerOrderProgress() {
         if (orderHost.equals(KitchenHomeActivity.class.getSimpleName())
                 || orderHost.equals(BarHomeActivity.class.getSimpleName())) {
+
             List<EMenuItem> eMenuItems = eMenuOrder.getItems();
             if (orderHost.equals(BarHomeActivity.class.getSimpleName())) {
                 if (ArkeSdkDemoApplication.isAllDrinks(eMenuItems)) {
