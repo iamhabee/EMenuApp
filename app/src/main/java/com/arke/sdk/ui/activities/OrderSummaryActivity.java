@@ -356,7 +356,10 @@ public class OrderSummaryActivity extends BaseActivity {
         displayCustomerOrderProgress();
 
         //method to convert order progress status to string
-        orderProgressStatus.setText(serializeOrderProgress(eMenuOrder.getOrderProgressStatus()));
+        if(serializeOrderProgress(eMenuOrder.getOrderProgressStatus())!= null)
+            orderProgressStatus.setText(serializeOrderProgress(eMenuOrder.getOrderProgressStatus()));
+        else
+            orderProgressStatus.setText("");
     }
 
     private void colorizeNecessaryComponents() {
