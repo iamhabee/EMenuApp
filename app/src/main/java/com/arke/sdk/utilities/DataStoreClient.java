@@ -1945,11 +1945,15 @@ public class DataStoreClient {
 
                     if (hasDrink && hasFood) {
                         // check if the user is a bar or kitchen attendant
-                        if (currentUser.getInt("user_type") == 3 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID) {
+                        if(AppPrefs.getUseType() == Globals.BAR){
+//                        if (currentUser.getInt("user_type") == Globals.BAR || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID) {
                             // bar attendant or admin
-                            if (foodReady) {
-                                // set status to done
+                            if(foodReady && orderProgressStatus == Globals.OrderProgressStatus.DONE){
                                 object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                            }
+                            else if (foodReady) {
+                                // set status to done
+                                object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
                                 Log.d("ORDER_SUNSIN", "BAR_DONE_ALT");
                             } else {
                                 // set status to almost done
@@ -1958,19 +1962,25 @@ public class DataStoreClient {
                             }
                             object.put(Globals.DRINK_READY, true);
                         }
-                        if (currentUser.getInt("user_type") == 2 || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID) {
-                            // kitchen attendant or admin
-                            if (drinkReady) {
-                                // set status to done
+                        else if(AppPrefs.getUseType() == Globals.KITCHEN){
+//                            if (currentUser.getInt("user_type") == Globals.KITCHEN || currentUser.getInt("user_type") == Globals.ADMIN_TAG_ID) {
+                            if (drinkReady && orderProgressStatus == Globals.OrderProgressStatus.DONE){
                                 object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "DONE" + '"');
+                            }
+                            // kitchen attendant or admin
+                            else if (drinkReady) {
+                                // set status to done
+                                object.put(Globals.ORDER_PROGRESS_STATUS, orderProgressString);
                                 Log.d("ORDER_SUNSIN", "KITCHEN_DONE_ALT");
-
                             } else {
                                 // set status to almost done
                                 object.put(Globals.ORDER_PROGRESS_STATUS, '"' + "ALMOST DONE" + '"');
                                 Log.d("ORDER_SUNSIN", "KITCHEN_ALOMST_DONE_ALT");
                             }
                             object.put(Globals.FOOD_READY, true);
+                        }
+                        else{
+                            // do nothing
                         }
                     } else if (hasDrink) {
                         if (orderProgressString.equals('"' + "DONE" + '"')) {

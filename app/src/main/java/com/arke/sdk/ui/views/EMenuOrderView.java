@@ -516,11 +516,11 @@ public class EMenuOrderView extends MaterialCardView implements
             if (e == null){
                 if (AppPrefs.getUseType() == Globals.KITCHEN){
                     eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
-//                    getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+                    getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
                     Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
                 }else if (AppPrefs.getUseType() == Globals.BAR) {
                     eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
-//                    getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
+                    getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
                     Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
                 }
                 eMenuOrder.update();

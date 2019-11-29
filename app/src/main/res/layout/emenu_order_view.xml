@@ -166,7 +166,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="5dp"
-            android:text="@string/not_yet_sent_to_kitchen"
+            android:text=""
             android:textColor="@color/blue_grey_active"
             android:textSize="14sp"
             app:textStyle="light" />
