@@ -129,8 +129,6 @@ public class WaiterAlertWorker extends Worker {
                             id = (int) getInputData().getLong(Constants.KITCHEN_REJECT, 0);
                         }
 
-
-
                         sendNotificationOnDelete(title, text, id);
 
                         for (ParseObject message : mMessages) {

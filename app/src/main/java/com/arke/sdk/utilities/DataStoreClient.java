@@ -2403,7 +2403,7 @@ public class DataStoreClient {
     public static void markItemAsTaken(String orderId,
                                        OrderUpdateDoneCallback orderUpdateDoneCallback) {
         ParseQuery<ParseObject> orderQuery = ParseQuery.getQuery(Globals.EMENU_ORDERS);
-        String deviceId = AppPrefs.getDeviceId();
+        String deviceId = ParseUser.getCurrentUser().getObjectId();//AppPrefs.getDeviceId();
         String restaurantOrBarId = AppPrefs.getRestaurantOrBarId();
         orderQuery.whereEqualTo(Globals.ORDER_ID, orderId);
         orderQuery.whereEqualTo(Globals.RESTAURANT_OR_BAR_ID, restaurantOrBarId);

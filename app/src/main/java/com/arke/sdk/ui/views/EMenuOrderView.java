@@ -379,37 +379,49 @@ public class EMenuOrderView extends MaterialCardView implements
             String barTag = AppPrefs.getBarTag();
             String kitchenTag = AppPrefs.getKitchenTag();
 //            AppPrefs.getUseType() == Globals.KITCHEN;
-            String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
+            int currentUserId = ParseUser.getCurrentUser().getInt("res_id");
+            Log.d("CurrentUser", ""+currentUserId);
+            Log.d("CurrentUser2", eMenuOrder.getKitchenAttendantDeviceId() + "");
+
             // checks if user is in Kitchen
-            if (AppPrefs.getUseType() == Globals.KITCHEN){
-                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
-                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING || eMenuOrder.getOrderProgressStatus() ==  null ){
-                    takeOrder();
-                    Log.d("SunSim", "In the Kitchen1");
-                }else{
-                    viewOrder();
-                    Log.d("SunSim", "In the Kitchen2");
-                }
 
-                Log.d("SunSim", "In the Kitchen");
+//            if (currentUserId != AppPrefs.getUserId() && ParseUser.getCurrentUser().getInt("use_Type") != AppPrefs.getUseType())
+                if (AppPrefs.getUseType() == Globals.KITCHEN){
+                    if (eMenuOrder.getKitchenAttendantDeviceId() != null){
+                        viewOrder();
+                    }else if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
+                            eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING ){
+                        takeOrder();
+                        Log.d("SunSim", "In the Kitchen1");
+                    }else{
+                        viewOrder();
+                        Log.d("SunSim", "In the Kitchen2");
+                    }
 
-            }else if (AppPrefs.getUseType() == Globals.BAR){
+                    Log.d("SunSim", "In the Kitchen");
 
-                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED || eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING ||
-                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING || eMenuOrder.getOrderProgressStatus() == null ){
-                    takeOrder();
-                    Log.d("SunSim", "In the Bar1");
+                }else if (AppPrefs.getUseType() == Globals.BAR){
+                    if (eMenuOrder.getKitchenAttendantDeviceId() != null){
+                        viewOrder();
+                    }else if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED || eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING ||
+                            eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING ){
+                        takeOrder();
+                        Log.d("SunSim", "In the Bar1");
+                    }else {
+                        viewOrder();
+                        Log.d("SunSim", "In the Bar2");
+                    }
+
+                    Log.d("SunSim", "In the Bar");
                 }else {
                     viewOrder();
-                    Log.d("SunSim", "In the Bar2");
+
+                    Log.d("SunSim", "In the Waiter's room");
                 }
+//            }else{
+//                viewOrder();
+//            }
 
-                Log.d("SunSim", "In the Bar");
-            }else {
-                viewOrder();
-
-                Log.d("SunSim", "In the Waiter's room");
-            }
 //            if (currentDeviceId != null) {
 //                String attendantDeviceId = getContext() instanceof KitchenHomeActivity
 //                        ? ParseUser.getCurrentUser().getString("destination_id")
@@ -443,7 +455,7 @@ public class EMenuOrderView extends MaterialCardView implements
         takeOrderConfirmationBuilder.setNegativeText("NO");
         takeOrderConfirmationBuilder.setPositiveListener(lottieAlertDialog -> {
             dismissConsentDialog(lottieAlertDialog);
-//            acceptOrder();
+            acceptOrder();
             markOrderAsTaken();
         });
         takeOrderConfirmationBuilder.setNegativeListener(lottieAlertDialog -> {
@@ -500,16 +512,23 @@ public class EMenuOrderView extends MaterialCardView implements
     }
 
     private void acceptOrder(){
-        DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {}) );
-        if (AppPrefs.getUseType() == Globals.KITCHEN){
-            getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
-//            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_PROCESSING);
-            Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
-        }else if (AppPrefs.getUseType() == Globals.BAR) {
-            getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
-//            eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_PROCESSING);
-            Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
-        }
+        DataStoreClient.acceptEmenuOrder(eMenuOrder.getOrderId(), true, ((accepted, e) -> {
+            if (e == null){
+                if (AppPrefs.getUseType() == Globals.KITCHEN){
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
+//                    getContext().startActivity(new Intent(getContext(), KitchenHomeActivity.class));
+                    Toast.makeText(getContext(), "Order accepted by kitchen", Toast.LENGTH_SHORT).show();
+                }else if (AppPrefs.getUseType() == Globals.BAR) {
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
+//                    getContext().startActivity(new Intent(getContext(), BarHomeActivity.class));
+                    Toast.makeText(getContext(), "Order accepted by bar", Toast.LENGTH_SHORT).show();
+                }
+                eMenuOrder.update();
+                viewOrder();
+
+
+            }
+        }) );
     }
 
     private void markOrderAsTaken() {

@@ -12,6 +12,7 @@ import com.arke.sdk.R;
 import com.arke.sdk.utilities.CryptoUtils;
 //import com.elitepath.android.emenu.R;
 import com.arke.sdk.companions.Globals;
+import com.parse.ParseUser;
 
 @SuppressWarnings("unused")
 public class AppPrefs {
@@ -293,5 +294,9 @@ public class AppPrefs {
 
     public static int getLicenseAllowedUserAccounts() {
         return getAppPreferences().getInt(Globals.USER_ACCOUNTS_ALLOWED, 0);
+    }
+
+    public static int getUserId(){
+        return ParseUser.getCurrentUser().getInt("res_id");
     }
 }

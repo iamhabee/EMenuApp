@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -114,7 +115,6 @@ public class OrderSummaryActivity extends BaseActivity {
         setContentView(R.layout.order_summary_layout);
         ButterKnife.bind(this);
         Bundle intentExtras = getIntent().getExtras();
-
 
         if (intentExtras != null) {
             eMenuOrderString = intentExtras.getString(Globals.EMENU_ORDER);
@@ -297,35 +297,52 @@ public class OrderSummaryActivity extends BaseActivity {
 
     private void initEventHandlers() {
         closeActivityView.setOnClickListener(view -> finish());
-        progressUpdateView.setOnClickListener(view -> {
-            CharSequence[] progressOptions = new CharSequence[]{"Almost Done", "Done"};
-            AlertDialog.Builder progressOptionsBuilder = new AlertDialog.Builder(OrderSummaryActivity.this);
-            progressOptionsBuilder.setTitle(getProgressMessage("Where are you"));
-            progressOptionsBuilder.setSingleChoiceItems(progressOptions,
-                    eMenuOrder.getOrderProgressStatus() != null
-                            ? (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.ALMOST_DONE
-                            ? 0 : (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.DONE ? 1 : -1))
-                            : -1, (dialogInterface, i) -> {
-                        //Update current customer orders progress
-                        dialogInterface.dismiss();
-                        dialogInterface.cancel();
-                        Globals.OrderProgressStatus orderProgressStatus = i == 0 ?
-                                Globals.OrderProgressStatus.ALMOST_DONE :
-                                Globals.OrderProgressStatus.DONE;
-                        showOperationsDialog("Updating order status", "Please wait...");
-                        DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus, (order, e) ->{
-                            dismissProgressDialog();
-                            if(e == null){
-                                // show success dialog
-                                showSuccessMessage("Order Status Updated", "You have successfully updated the order status to "+orderProgressStatus.toString());
-                            }else{
-                                // show error dialog
-                            }
-                        });
+            progressUpdateView.setOnClickListener(view -> {
+                CharSequence[] progressOptions = new CharSequence[]{"Almost Done", "Done"};
+                AlertDialog.Builder progressOptionsBuilder = new AlertDialog.Builder(OrderSummaryActivity.this);
+                progressOptionsBuilder.setTitle(getProgressMessage("Where are you"));
+                progressOptionsBuilder.setSingleChoiceItems(progressOptions,
+                        eMenuOrder.getOrderProgressStatus() != null ?
+                                (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.ALMOST_DONE ?
+                                0 :
+                                (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.DONE ?
+                                1 :
+                                -1))
+                        : -1, (dialogInterface, i) -> {
+                            //Update current customer orders progress
+                            dialogInterface.dismiss();
+                            dialogInterface.cancel();
+                            Globals.OrderProgressStatus orderProgressStatus = i == 0 ?
+                                    Globals.OrderProgressStatus.ALMOST_DONE :
+                                    Globals.OrderProgressStatus.DONE;
+//
+//                            if (AppPrefs.getUseType() == Globals.KITCHEN){
+//                                if (i == 1){
+//                                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.KITCHEN_ACCEPTED);
+//                                }
+//                            }else{
+//                                if (i == 1){
+//                                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.BAR_ACCEPTED);
+//                                }
+//                            }
+//                            eMenuOrder.update();
+                            Log.d("sunsin2", i + orderProgressStatus.toString());
+                            showOperationsDialog("Updating order status", "Please wait...");
+                            DataStoreClient.updateEMenuOrderProgress(eMenuOrder.getEMenuOrderId(), orderProgressStatus, (order, e) -> {
+                                dismissProgressDialog();
+                                if (e == null) {
+                                    // show success dialog
+                                    showSuccessMessage("Order Status Updated", "You have successfully updated the order status to " + orderProgressStatus.toString());
+                                } else {
+                                    // show error dialog
+                                }
+                            });
 
-                    });
-            progressOptionsBuilder.create().show();
-        });
+                        });
+                progressOptionsBuilder.create().show();
+
+            });
+
     }
 //    private void initEventHandlers() {
 //        closeActivityView.setOnClickListener(view -> finish());
