@@ -38,9 +38,9 @@ public class EMenuGenUtils {
     public static String computeAccumulatedPrice(EMenuItem eMenuItem) {
         long itemPrice = Long.parseLong(eMenuItem.getMenuItemPrice().replace(",", ""));
         int orderedQuantity = eMenuItem.getOrderedQuantity();
-//        if (orderedQuantity == 0) {
-//            orderedQuantity = 1;
-//        }
+        if (orderedQuantity == 0) {
+            orderedQuantity = 1;
+        }
         long totalPack = orderedQuantity * itemPrice;
         String newPrice = String.valueOf(totalPack);
         newPrice = EMenuGenUtils.getDecimalFormattedString(newPrice);

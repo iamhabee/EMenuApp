@@ -25,13 +25,13 @@
         android:textColor="@color/black"
         android:textAlignment="center"
         android:justificationMode="inter_word"
-        android:text="Welcome to EMenu\nIn order to use this service, kindly input the registration key in the field below"
+        android:text="Welcome to EMenu\nIn order to use this service, kindly input the license key in the field below"
         />
     <EditText
         android:id="@+id/reg_key_editText"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Registration Key"
+        android:hint="License Key"
         android:padding="10dp"
         android:layout_margin="20dp" />
 
@@ -43,11 +43,10 @@
 
         <Button
             android:id="@+id/confirm_btn"
-            android:layout_width="130dp"
+            android:layout_width="135dp"
             android:layout_height="60dp"
-            android:drawableRight="@drawable/ic_check_green"
+            android:drawableRight="@drawable/ic_check_24_black"
             android:drawablePadding="20dp"
-            android:drawableTint="@color/black"
             android:textColor="@color/black"
             android:text="Verify"
             android:textAlignment="center"
@@ -56,11 +55,10 @@
 
         <Button
             android:id="@+id/cancel_btn"
-            android:layout_width="130dp"
+            android:layout_width="135dp"
             android:layout_height="60dp"
-            android:drawableRight="@drawable/close_icon"
+            android:drawableRight="@drawable/ic_close_24_black"
             android:drawablePadding="20dp"
-            android:drawableTint="@color/black"
             android:text="Cancel"
             android:textAlignment="center"
             android:textAllCaps="true"

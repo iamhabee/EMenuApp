@@ -168,18 +168,30 @@ public class InitialAccountSetupActivity extends AppCompatActivity {
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }
-                    Intent intent = new Intent(InitialAccountSetupActivity.this, AdminHomeActivity.class);
-                    finish();
-                    Toast.makeText(InitialAccountSetupActivity.this, "User Created", Toast.LENGTH_LONG).show();
-
+                    showSuccessMessage("Success", "Account created successfully");
                 } else {
                     ParseUser.logOut();
-                    Toast.makeText(InitialAccountSetupActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    showErrorMessage("Account creation Error", e.getMessage());
                 }
             }
         });
     }
 
+
+    private void showSuccessMessage(String title, String description) {
+        LottieAlertDialog operationsSuccessDialog = new LottieAlertDialog
+                .Builder(this, DialogTypes.TYPE_SUCCESS)
+                .setTitle(title).setDescription(description)
+                .setPositiveText("Done")
+                .setPositiveListener((dialog) -> {
+                    dialog.dismiss();
+                    finish();
+                    Intent intent = new Intent(InitialAccountSetupActivity.this, AdminHomeActivity.class);
+                    startActivity(intent);
+                }).build();
+        operationsSuccessDialog.setCancelable(false);
+        operationsSuccessDialog.show();
+    }
 
 
     private void showErrorMessage(String title, String description) {

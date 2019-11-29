@@ -214,10 +214,31 @@ public class EMenuOrderView extends MaterialCardView implements
         List<EMenuItem> eMenuItems = eMenuOrder.getItems();
         if (eMenuItems != null) {
             for (EMenuItem eMenuItem : eMenuItems) {
-                if (photoUrls.size() < 4) {
-                    String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
-                    if (!photoUrls.contains(photoUrl)) {
-                        photoUrls.add(photoUrl);
+                if(AppPrefs.getUseType() != Globals.WAITER){
+                    if(AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)){
+                        // kitchen
+                        if (photoUrls.size() < 4) {
+                            String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
+                            if (!photoUrls.contains(photoUrl)) {
+                                photoUrls.add(photoUrl);
+                            }
+                        }
+                    }else if(AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)){
+                        // bar
+                        if (photoUrls.size() < 4) {
+                            String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
+                            if (!photoUrls.contains(photoUrl)) {
+                                photoUrls.add(photoUrl);
+                            }
+                        }
+                    }
+                }else {
+                    // waiter
+                    if (photoUrls.size() < 4) {
+                        String photoUrl = eMenuItem.getMenuItemDisplayPhotoUrl();
+                        if (!photoUrls.contains(photoUrl)) {
+                            photoUrls.add(photoUrl);
+                        }
                     }
                 }
             }
@@ -286,8 +307,21 @@ public class EMenuOrderView extends MaterialCardView implements
     private long getTotalPrice(List<EMenuItem> eMenuItems) {
         long totalPrice = 0;
         for (EMenuItem eMenuItem : eMenuItems) {
-            String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
-            totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+            if(AppPrefs.getUseType() != Globals.WAITER){
+                if(AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)) {
+                    // kitchen
+                    String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
+                    totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+                }else if(AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)) {
+                    // bar
+                    String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
+                    totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+                }
+                }else{
+                // waiter
+                String accumulatedPrice = EMenuGenUtils.computeAccumulatedPrice(eMenuItem);
+                totalPrice += Integer.parseInt(accumulatedPrice.replace(",", ""));
+            }
         }
         return totalPrice;
     }
@@ -295,12 +329,36 @@ public class EMenuOrderView extends MaterialCardView implements
     private String stringifyEMenuItems(List<EMenuItem> orderedItems) {
         StringBuilder stringBuilder = new StringBuilder();
         for (EMenuItem eMenuItem : orderedItems) {
-            int quantity = eMenuItem.getOrderedQuantity();
-            String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
-            if (quantity > 0) {
-                String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
-                stringBuilder.append(nameTag);
-                stringBuilder.append(", ");
+            if(AppPrefs.getUseType() != Globals.WAITER) {
+                if(AppPrefs.getUseType() == Globals.KITCHEN && eMenuItem.getParentCategory().equals(Globals.FOOD)) {
+                    // kitchen
+                    int quantity = eMenuItem.getOrderedQuantity();
+                    String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
+                    if (quantity > 0) {
+                        String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
+                        stringBuilder.append(nameTag);
+                        stringBuilder.append(", ");
+                    }
+                }
+                else if(AppPrefs.getUseType() == Globals.BAR && eMenuItem.getParentCategory().equals(Globals.DRINKS)) {
+                    // bar
+                    int quantity = eMenuItem.getOrderedQuantity();
+                    String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
+                    if (quantity > 0) {
+                        String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
+                        stringBuilder.append(nameTag);
+                        stringBuilder.append(", ");
+                    }
+                }
+            }else{
+                // waiter
+                int quantity = eMenuItem.getOrderedQuantity();
+                String emenuItemName = WordUtils.capitalize(eMenuItem.getMenuItemName());
+                if (quantity > 0) {
+                    String nameTag = "<b>" + quantity + "</b> " + emenuItemName;
+                    stringBuilder.append(nameTag);
+                    stringBuilder.append(", ");
+                }
             }
         }
         String totalString = stringBuilder.toString();
@@ -324,18 +382,13 @@ public class EMenuOrderView extends MaterialCardView implements
             String currentDeviceId = ParseUser.getCurrentUser().getObjectId();
             // checks if user is in Kitchen
             if (AppPrefs.getUseType() == Globals.KITCHEN){
-                if (!currentDeviceId.equals(eMenuOrder.getBarAttendantDeviceId())){
-                    if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
-                            eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
-                        takeOrder();
-                        Log.d("SunSim", "In the Kitchen1");
-                    }else{
-                        viewOrder();
-                        Log.d("SunSim", "In the Kitchen2");
-                    }
-                }else {
+                if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.BAR_REJECTED || (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING) ||
+                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING || eMenuOrder.getOrderProgressStatus() ==  null ){
+                    takeOrder();
+                    Log.d("SunSim", "In the Kitchen1");
+                }else{
                     viewOrder();
-                    Log.d("SunSim", "Outside");
+                    Log.d("SunSim", "In the Kitchen2");
                 }
 
                 Log.d("SunSim", "In the Kitchen");
@@ -343,7 +396,7 @@ public class EMenuOrderView extends MaterialCardView implements
             }else if (AppPrefs.getUseType() == Globals.BAR){
 
                 if (eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.KITCHEN_REJECTED || eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PROCESSING ||
-                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING){
+                        eMenuOrder.getOrderProgressStatus() == Globals.OrderProgressStatus.PENDING || eMenuOrder.getOrderProgressStatus() == null ){
                     takeOrder();
                     Log.d("SunSim", "In the Bar1");
                 }else {
@@ -390,7 +443,7 @@ public class EMenuOrderView extends MaterialCardView implements
         takeOrderConfirmationBuilder.setNegativeText("NO");
         takeOrderConfirmationBuilder.setPositiveListener(lottieAlertDialog -> {
             dismissConsentDialog(lottieAlertDialog);
-            acceptOrder();
+//            acceptOrder();
             markOrderAsTaken();
         });
         takeOrderConfirmationBuilder.setNegativeListener(lottieAlertDialog -> {
@@ -469,9 +522,11 @@ public class EMenuOrderView extends MaterialCardView implements
             } else {
                 if (getContext() instanceof KitchenHomeActivity) {
                     eMenuOrder.setKitchenAttendantDeviceId(AppPrefs.getDeviceId());
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
                 }
                 if (getContext() instanceof BarHomeActivity) {
                     eMenuOrder.setBarAttendantDeviceId(AppPrefs.getDeviceId());
+                    eMenuOrder.setOrderProgressStatus(Globals.OrderProgressStatus.PENDING);
                 }
                 eMenuOrder.update();
                 new Handler().postDelayed(this::viewOrder, 1000);
@@ -549,13 +604,16 @@ public class EMenuOrderView extends MaterialCardView implements
             /* get the progress status of the order */
             Globals.OrderProgressStatus orderProgressStatus = eMenuOrder.getOrderProgressStatus();
 
+
+
             /* Only delete an order that doesn't contain a done or almost progress report */
             assert orderProgressStatus != null;
             if (orderProgressStatus.equals(Globals.OrderProgressStatus.PENDING)  ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.PROCESSING) ||
                     orderProgressStatus.equals(Globals.OrderProgressStatus.KITCHEN_REJECTED) ||
-                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED)){
+                    orderProgressStatus.equals(Globals.OrderProgressStatus.BAR_REJECTED) || ParseUser.getCurrentUser().getInt("user_type") == Globals.ADMIN_TAG_ID){
                 showOperationsDialog("Deleting Order", "Please wait...");
+                Log.d("AppAdmin", ""+AppPrefs.getUseType());
                 eMenuOrder.delete();
                 DataStoreClient.deleteEMenuOrderRemotely(eMenuOrder.getEMenuOrderId(), (done, e) -> {
                     dismissProgressDialog();

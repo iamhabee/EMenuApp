@@ -106,37 +106,41 @@ public class SignUpActivity extends BaseActivity implements StepperFormListener 
     @Override
     public void onCompletedForm() {
         UiUtils.dismissKeyboard(accountCreationFormView);
-        showOperationsDialog("Setting Up Your Account", "Please wait...");
-        // check if a restaurant account has been created using that license key
-        DataStoreClient.checkIfLicenseHasBeenUsed((result, e) -> {
-            if(e == null){
-                if(result == null){
-                    // no result returned implies that no restaurant has been registered using the
-                    // provided license key
-                    DataStoreClient.registerAccount((_result, ex) -> {
-                        if (_result != null) {
-                            showSuccessMessage("Account creation successful!", "Your Restaurant/Bar was successfully setup for EMenu services.");
-                            new Handler().postDelayed(() -> {
-                                dismissSuccessDialog();
-                                configureDeviceUser();
-                            }, 2000);
-                        } else {
-                            dismissProgressDialog();
-                            showErrorMessage("Oops!", ex.getMessage());
-                        }
-                    });
-                }else{
-                    // invalid license key
+        // check if entered email matches license key email
+        if(regEmail.equals(AppPrefs.getRestaurantOrBarEmailAddress())){
+            showOperationsDialog("Setting Up Your Account", "Please wait...");
+            // check if a restaurant account has been created using that license key
+            DataStoreClient.checkIfLicenseHasBeenUsed((result, e) -> {
+                if (e == null) {
+                    if (result == null) {
+                        // no result returned implies that no restaurant has been registered using the
+                        // provided license key
+                        DataStoreClient.registerAccount((_result, ex) -> {
+                            if (_result != null) {
+                                showSuccessMessage("Account creation successful!", "Your Restaurant/Bar was successfully setup for EMenu services.");
+                                new Handler().postDelayed(() -> {
+                                    dismissSuccessDialog();
+                                    configureDeviceUser();
+                                }, 2000);
+                            } else {
+                                dismissProgressDialog();
+                                showErrorMessage("Oops!", ex.getMessage());
+                            }
+                        });
+                    } else {
+                        // invalid license key
+                        dismissProgressDialog();
+                        showErrorMessage("Invalid License key", "It appears the license key has been used");
+                    }
+                } else {
+                    //
                     dismissProgressDialog();
-                    showErrorMessage("Invalid License key", "It appears the license key has been used");
+                    showErrorMessage("Oops!", e.getMessage());
                 }
-            }else{
-                //
-                dismissProgressDialog();
-                showErrorMessage("Oops!", e.getMessage());
-            }
-
-        });
+            });
+        }else{
+            showErrorMessage("Oops!", "Sorry, the e-mail address entered is not bound to the license key");
+        }
     }
 
     private void dismissSuccessDialog() {
