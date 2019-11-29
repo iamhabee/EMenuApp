@@ -269,4 +269,29 @@ public class AppPrefs {
         getAppPreferences().edit().putString(Globals.BAR_TAG, barTag).apply();
     }
 
+    public static void persistLicenseKeyId(String id) {
+        getAppPreferences().edit().putString(Globals.LICENSE_KEY_ID, id).apply();
+    }
+
+    public static String getLicenseKeyId() {
+        return getAppPreferences().getString(Globals.LICENSE_KEY_ID, null);
+    }
+
+
+    public static void persistLicenseKey(String license_key) {
+        getAppPreferences().edit().putString(Globals.LICENSE_KEY, license_key).apply();
+    }
+
+    public static String getLicenseKey() {
+        return getAppPreferences().getString(Globals.LICENSE_KEY, null);
+    }
+
+
+    public static void persistLicenseAllowedUserAccounts(int user_accounts_allowed) {
+        getAppPreferences().edit().putInt(Globals.USER_ACCOUNTS_ALLOWED, user_accounts_allowed).apply();
+    }
+
+    public static int getLicenseAllowedUserAccounts() {
+        return getAppPreferences().getInt(Globals.USER_ACCOUNTS_ALLOWED, 0);
+    }
 }

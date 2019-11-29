@@ -1,5 +1,6 @@
 package com.arke.sdk.ui.activities;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,9 +8,11 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseIntArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -24,7 +27,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.arke.sdk.R;
+import com.arke.sdk.companions.Globals;
 import com.arke.sdk.contracts.BuildConfig;
+import com.arke.sdk.utilities.DataStoreClient;
 import com.arke.sdk.utilities.UiUtils;
 import com.arke.sdk.preferences.AppPrefs;
 import com.arke.sdk.ui.views.EMenuTextView;
@@ -209,10 +214,10 @@ public class OnBoardingActivity extends BaseActivity {
 //        Toast.makeText(this, "resid = "+resId + "isAppsetup" +isAppSetup, Toast.LENGTH_LONG).show();
 
         if (resId != null && isAppSetup){
-            // Navigate to user login page
-         Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
-         startActivity(userLoginIntent);
-  }else {
+                // Navigate to user login page
+             Intent userLoginIntent = new Intent(this, UserLoginActivity.class);
+             startActivity(userLoginIntent);
+      }else {
         Intent accountCreationIntent = new Intent(this, LogInActivity.class);
         startActivity(accountCreationIntent);
 
@@ -220,8 +225,59 @@ public class OnBoardingActivity extends BaseActivity {
     }
 
     private void initAccountCreation() {
-        Intent accountCreationIntent = new Intent(this, SignUpActivity.class);
-        startActivity(accountCreationIntent);
+        final AlertDialog dialogBuilder = new AlertDialog.Builder(this).create();
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.reg_key_confirm_layout, null);
+
+        final EditText editText = (EditText) dialogView.findViewById(R.id.reg_key_editText);
+        Button confirm = (Button) dialogView.findViewById(R.id.confirm_btn);
+        Button cancel = (Button) dialogView.findViewById(R.id.cancel_btn);
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogBuilder.dismiss();
+            }
+        });
+
+        confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // DO SOMETHINGS
+                dialogBuilder.dismiss();
+                String key = editText.getText().toString().trim();
+                if(key.length() > 0) {
+                    validateRegKey(key);
+                }else{
+                    showErrorMessage("Invalid input", "Please input a valid key");
+                }
+            }
+        });
+
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.show();
+    }
+
+    private void validateRegKey(String key) {
+        showOperationsDialog("Validating Key", "Please wait...");
+        DataStoreClient.validateKey(key, (emenu, e) -> {
+            dismissProgressDialog();
+            if(e == null){
+                AppPrefs.persistLicenseKeyId(emenu.getId());
+                AppPrefs.persistLicenseKey(emenu.getLicense_key());
+                AppPrefs.persistRestaurantOrBarEmailAddress(emenu.getRestaurant_email_add());
+                AppPrefs.persistLicenseAllowedUserAccounts(emenu.getUser_accounts_allowed());
+
+                Intent accountCreationIntent = new Intent(this, SignUpActivity.class);
+                accountCreationIntent.putExtra(Globals.LICENSE_KEY, emenu.getLicense_key());
+                accountCreationIntent.putExtra(Globals.RESTAURANT_OR_BAR_NAME, emenu.getRestaurant_name());
+                accountCreationIntent.putExtra(Globals.RESTAURANT_OR_BAR_EMAIL_ADDRESS, emenu.getRestaurant_email_add());
+                startActivity(accountCreationIntent);
+            }else{
+                // notify user
+                showErrorMessage("Error Encountered", e.getMessage());
+            }
+        });
     }
 
     @Override
