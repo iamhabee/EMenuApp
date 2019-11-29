@@ -296,7 +296,11 @@ public class AppPrefs {
         return getAppPreferences().getInt(Globals.USER_ACCOUNTS_ALLOWED, 0);
     }
 
-    public static int getUserId(){
-        return ParseUser.getCurrentUser().getInt("res_id");
+    public static void persistUserId(String userId) {
+        getAppPreferences().edit().putString(Globals.USER_ID, userId).apply();
+    }
+
+    public static String getUserId(){
+        return getAppPreferences().getString(Globals.USER_ID, null);
     }
 }

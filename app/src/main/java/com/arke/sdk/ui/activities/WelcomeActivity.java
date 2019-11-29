@@ -69,11 +69,20 @@ public class WelcomeActivity extends BaseActivity {
 //            int tag = AppPrefs.getUseType();
             ParseUser user = ParseUser.getCurrentUser();
         if (setup){
-            if(user != null){
-                // grant access
-                transitionWithPreferences(AppPrefs.getUseType());
-            }else{
+            if(user == null){
                 transitionToUserLogin();
+            }else{
+                if (AppPrefs.getUserId() != null){
+                    if (AppPrefs.getUserId().equals(user.getObjectId())){
+
+                        // grant access
+                        transitionWithPreferences(AppPrefs.getUseType());
+                    }else{
+                        transitionToUserLogin();
+                    }
+                }else{
+                    transitionToUserLogin();
+                }
             }
         }
 
